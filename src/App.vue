@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import backgroundImage from './assets/background.png'
 import guideSpeechBubble from './assets/guide-speech-bubble.png'
 import startButton from './assets/start-button.png'
@@ -43,6 +43,52 @@ const courseLabels = { easy: 'かんたん', hard: 'むずかしい', mix: 'ご�
 const howScreens = ['how1', 'how2', 'how3', 'how4']
 const howBackgrounds = { how1, how2, how3, how4 }
 const questionText = computed(() => selectedCourse.value === 'hard' ? 'そのきもちに　なったとき、\nからだは　どんなうごきに　なる？' : 'そのきもちに　なったとき、\nどんな　うごきに　なる？')
+
+function katakanaToHiragana(text) {
+  return [...text].map((character) => {
+    const code = character.charCodeAt(0)
+    return code >= 0x30a1 && code <= 0x30f6 ? String.fromCharCode(code - 0x60) : character
+  }).join('')
+}
+
+function applyKatakanaReadings() {
+  const root = document.querySelector('.viewport')
+  if (!root) return
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!/[ァ-ヴー]/.test(node.nodeValue || '')) return NodeFilter.FILTER_REJECT
+      if (node.parentElement?.closest('ruby, rt, script, style, .terms-body')) return NodeFilter.FILTER_REJECT
+      return NodeFilter.FILTER_ACCEPT
+    }
+  })
+
+  const textNodes = []
+  while (walker.nextNode()) textNodes.push(walker.currentNode)
+
+  textNodes.forEach((node) => {
+    const fragment = document.createDocumentFragment()
+    const parts = node.nodeValue.split(/([ァ-ヴー]+)/g)
+    parts.forEach((part) => {
+      if (!part) return
+      if (/^[ァ-ヴー]+$/.test(part)) {
+        const ruby = document.createElement('ruby')
+        ruby.className = 'katakana-ruby'
+        ruby.append(document.createTextNode(part))
+        const reading = document.createElement('rt')
+        reading.textContent = katakanaToHiragana(part)
+        ruby.append(reading)
+        fragment.append(ruby)
+      } else {
+        fragment.append(document.createTextNode(part))
+      }
+    })
+    node.replaceWith(fragment)
+  })
+}
+
+watch([screen, helpOpen, homeConfirm], () => nextTick(applyKatakanaReadings), { immediate: true })
+onMounted(() => nextTick(applyKatakanaReadings))
 
 function go(next) { history.value.push(screen.value); screen.value = next; helpOpen.value = false }
 function back() { screen.value = history.value.pop() || 'home'; helpOpen.value = false }
@@ -134,6 +180,6 @@ function resetHome() { screen.value = 'home'; history.value = []; helpOpen.value
     <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="backgroundImage"><div class="result failure"><span>💭</span><h1>しっぱい……。</h1><p>もういちど　おきゃくさんに　しつもんを　してみよう！<br>チャンスは　あと{{ attempts }}かい！</p><button @click="go('question')">もういちど</button></div></ScreenFrame>
     <ScreenFrame v-else-if="screen === 'finalFailure'" label="最終失敗画面" :background="backgroundImage"><div class="result failure"><span>🍇</span><h1>しっぱい……。</h1><p>せいかいは「ぶどう」でした…。<br>また　ちょうせんしてね！</p><button @click="resetHome">ホームにもどる</button></div></ScreenFrame>
 
-    <div v-if="homeConfirm" class="modal-backdrop"><div class="home-modal"><h2>ホームに　もどりますか？</h2><p>ゲームを　やめて、ホームがめんに　もどります。</p><div><button @click="homeConfirm = false">いいえ</button><button @click="resetHome">はい</button></div></div></div>
+    <div v-if="homeConfirm" class="modal-backdrop"><div class="home-modal" role="dialog" aria-modal="true" aria-labelledby="home-modal-title"><h2 id="home-modal-title"><ruby>ホーム<rt>ほーむ</rt></ruby>に　もどりますか？</h2><p><ruby>ゲーム<rt>げーむ</rt></ruby>を　やめて、<ruby>ホーム<rt>ほーむ</rt></ruby>がめんに　もどります。</p><div class="home-modal-actions"><button class="home-modal-no" @click="homeConfirm = false"><img :src="yesImage" alt="いいえ"></button><button class="home-modal-yes" @click="resetHome"><img :src="noImage" alt="はい"></button></div></div></div>
   </main>
 </template>
