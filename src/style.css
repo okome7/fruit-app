@@ -160,6 +160,76 @@ button:focus-visible {
   top: 19.5%;
   line-height: 1.9;
 }
+.help-lesson {
+  font-size: 2.45cqw;
+  line-height: 1.9;
+}
+.help-lesson-one {
+  top: 28%;
+}
+.help-lesson-two {
+  top: 17%;
+}
+.help-lesson-three {
+  top: 17%;
+}
+.help-lesson-four {
+  top: 23%;
+}
+.challenge-bubble {
+  position: absolute;
+  left: 29%;
+  top: 50.5%;
+  width: 24%;
+  height: 25%;
+  z-index: 3;
+}
+.challenge-bubble img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+.challenge-bubble p {
+  position: absolute;
+  top: 42%;
+  left: 9%;
+  width: 86%;
+  transform: translateY(-50%);
+  margin: 0;
+  font-size: 1.55cqw;
+  line-height: 1.5;
+  text-align: center;
+}
+.challenge-bubble strong {
+  color: #ff8d02;
+  font-weight: 600;
+}
+.help-close,
+.help-complete {
+  position: absolute;
+  z-index: 8;
+  width: 5.2cqw;
+  height: 5.2cqw;
+  overflow: hidden;
+  background: transparent;
+}
+.help-close img,
+.help-complete img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.help-close {
+  top: 3.5%;
+  right: 5.6%;
+}
+.help-complete {
+  top: 63.7%;
+  right: 4.58%;
+}
 .roles-copy {
   top: 12%;
 }

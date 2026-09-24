@@ -1,7 +1,10 @@
 <script setup>
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import backgroundImage from './assets/background.png'
+import challengeSpeechBubble from './assets/challenge-speech-bubble.png'
 import guideSpeechBubble from './assets/guide-speech-bubble.png'
+import helpCloseButton from './assets/help-close-button.png'
+import helpCompleteButton from './assets/help-complete-button.png'
 import startButton from './assets/start-button.png'
 import guideBg from './assets/screens/guide.png'
 import how1 from './assets/screens/how1.png'
@@ -28,6 +31,7 @@ import FruitCard from './components/FruitCard.vue'
 const screen = ref('home')
 const history = ref([])
 const helpOpen = ref(false)
+const helpReturnScreen = ref('home')
 const homeConfirm = ref(false)
 const selectedCourse = ref('easy')
 const selectedFruit = ref(null)
@@ -42,6 +46,8 @@ const courseImages = { easy: courseEasy, hard: courseHard, mix: courseMix }
 const courseLabels = { easy: 'かんたん', hard: 'むずかしい', mix: 'ごちゃまぜ' }
 const howScreens = ['how1', 'how2', 'how3', 'how4']
 const howBackgrounds = { how1, how2, how3, how4 }
+const helpScreens = ['help1', 'help2', 'help3', 'help4']
+const helpBackgrounds = { help1: rolesBg, help2: how2, help3: how3, help4: how4 }
 const questionText = computed(() => selectedCourse.value === 'hard' ? 'そのきもちに　なったとき、\nからだは　どんなうごきに　なる？' : 'そのきもちに　なったとき、\nどんな　うごきに　なる？')
 
 function katakanaToHiragana(text) {
@@ -90,8 +96,19 @@ function applyKatakanaReadings() {
 watch([screen, helpOpen, homeConfirm], () => nextTick(applyKatakanaReadings), { immediate: true })
 onMounted(() => nextTick(applyKatakanaReadings))
 
-function go(next) { history.value.push(screen.value); screen.value = next; helpOpen.value = false }
+function go(next) {
+  if (next === 'how1' && helpOpen.value) {
+    helpReturnScreen.value = screen.value
+    screen.value = 'help1'
+    helpOpen.value = false
+    return
+  }
+  history.value.push(screen.value)
+  screen.value = next
+  helpOpen.value = false
+}
 function back() { screen.value = history.value.pop() || 'home'; helpOpen.value = false }
+function closeHelp() { screen.value = helpReturnScreen.value; helpOpen.value = false }
 function selectCourse(id) { selectedCourse.value = id; go('courseConfirm') }
 function selectFruit(fruit) { selectedFruit.value = fruit; go(screen.value === 'customerShop' ? 'customerConfirm' : 'productConfirm') }
 function judge() { if (selectedFruit.value?.id === 'grape') go('success'); else if (attempts.value > 1) { attempts.value--; go('failure') } else go('finalFailure') }
@@ -130,8 +147,22 @@ function resetHome() { screen.value = 'home'; history.value = []; helpOpen.value
       <div v-if="screen === 'how1'" class="lesson lesson-one">おみせには、ちょっとふしぎな「きもちのくだもの」が　ならんでいます。<br>うれしい、さみしい、いろんな「きもち」。<br>くだものたちは、みんな　それぞれちがう「きもち」を　もっています。</div>
       <div v-if="screen === 'how2'" class="lesson lesson-two">おきゃくさんは、くだものを　ひとつ　えらびます。<br>えらんだくだものが　もっている「きもち」を<br>よくおぼえておきます。</div>
       <div v-if="screen === 'how3'" class="lesson lesson-three">てんいんさんは、きめられた　しつもんを　しながら、<br>おきゃくさんが　えらんだ　くだものの「きもち」を　あてます。</div>
+      <div v-if="screen === 'how3'" class="challenge-bubble"><img :src="challengeSpeechBubble" alt=""><p>チャレンジできるのは、<br><strong>３かい</strong>までだよ！</p></div>
       <div v-if="screen === 'how4'" class="lesson lesson-four">「どんなときに　そのきもちに　なるかな？」と<br>かんがえたり、おはなししたり　することが<br>たいせつな　ゲームです。</div>
       <NavArrow direction="back" @click="back" /><NavArrow @click="screen === 'how4' ? go('roles') : go(howScreens[howScreens.indexOf(screen) + 1])" />
+    </ScreenFrame>
+
+    <ScreenFrame v-else-if="helpScreens.includes(screen)" :label="`ヘルプ あそびかた ${helpScreens.indexOf(screen) + 1}`" :background="helpBackgrounds[screen]">
+      <div class="step-badge">あそびかた　{{ helpScreens.indexOf(screen) + 1 }} / ４</div>
+      <button class="help-close" type="button" aria-label="あそびかたを閉じる" @click="closeHelp"><img :src="helpCloseButton" alt=""></button>
+      <div v-if="screen === 'help1'" class="lesson help-lesson help-lesson-one">ふたりで　おきゃくさんと　てんいんさんに　わかれよう。</div>
+      <div v-if="screen === 'help2'" class="lesson help-lesson help-lesson-two">おきゃくさんは　くだものを　１つ　えらんで　タップしよう。<br>それぞれの　くだものたちは、きもちを　もっているよ。<br>えらんだ　くだものの　きもちを　おぼえておいてね。</div>
+      <div v-if="screen === 'help3'" class="lesson help-lesson help-lesson-three">てんいんさんが　おきゃくさんに　きめられた　しつもんを　するよ。<br>おきゃくさんは　えらんだ　くだものの　きもちに　なりきって、<br>しつもんに　こたえよう！</div>
+      <div v-if="screen === 'help3'" class="challenge-bubble"><img :src="challengeSpeechBubble" alt=""><p>チャレンジできるのは、<br><strong>３かい</strong>までだよ！</p></div>
+      <div v-if="screen === 'help4'" class="lesson help-lesson help-lesson-four">てんいんさんが　おきゃくさんの　えらんだ　くだものを<br>あてられたら、せいこう！</div>
+      <NavArrow v-if="screen !== 'help1'" direction="back" @click="screen = helpScreens[helpScreens.indexOf(screen) - 1]" />
+      <NavArrow v-if="screen !== 'help4'" @click="screen = helpScreens[helpScreens.indexOf(screen) + 1]" />
+      <button v-else class="help-complete" type="button" aria-label="あそびかたを閉じる" @click="closeHelp"><img :src="helpCompleteButton" alt=""></button>
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'roles'" label="役割を決める画面" :background="rolesBg">
