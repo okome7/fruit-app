@@ -82,7 +82,7 @@ function resetHome() { screen.value = 'home'; history.value = []; helpOpen.value
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'courseConfirm'" label="コース確認画面" :background="confirmBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><h1 class="confirm-title">このコースに　チャレンジする？</h1><img class="chosen-course" :src="courseImages[selectedCourse]" :alt="courseLabels[selectedCourse]" /><button class="choice no" type="button" @click="back"><img :src="noImage" alt="いいえ"></button><button class="choice yes" type="button" @click="go('customerHandoff')"><img :src="yesImage" alt="はい"></button>
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><h1 class="confirm-title">このコースに　チャレンジする？</h1><img class="chosen-course" :src="courseImages[selectedCourse]" :alt="courseLabels[selectedCourse]" /><button class="choice no" type="button" @click="back"><img :src="yesImage" alt="いいえ"></button><button class="choice yes" type="button" @click="go('customerHandoff')"><img :src="noImage" alt="はい"></button>
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'customerHandoff'" label="お客さんに渡してね画面" :background="customerHandoff">
