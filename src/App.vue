@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import backgroundImage from './assets/background.png'
+import guideSpeechBubble from './assets/guide-speech-bubble.png'
 import startButton from './assets/start-button.png'
 import guideBg from './assets/screens/guide.png'
 import how1 from './assets/screens/how1.png'
@@ -75,7 +76,7 @@ function resetHome() { screen.value = 'home'; history.value = []; helpOpen.value
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'guide'" label="ゲーム説明案内" :background="guideBg">
-      <div class="speech intro-speech">いまから　あそびかたを　せつめいするね！</div><NavArrow direction="back" @click="back" /><NavArrow @click="go('how1')" />
+      <div class="speech intro-speech"><img class="speech-bubble-image" :src="guideSpeechBubble" alt=""><span>いまから　あそびかたを　せつめいするね！</span></div><NavArrow direction="back" @click="back" /><NavArrow @click="go('how1')" />
     </ScreenFrame>
 
     <ScreenFrame v-else-if="howScreens.includes(screen)" :label="`あそびかた ${howScreens.indexOf(screen) + 1}`" :background="howBackgrounds[screen]">

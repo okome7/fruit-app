@@ -94,13 +94,30 @@ button:focus-visible {
   font-size: 2.75cqw;
 }
 .intro-speech {
-  left: 13.7%;
-  top: 29%;
-  width: 72.7%;
-  padding: 4% 4% 7%;
-  background: #fff;
-  border: 0.16cqw solid #222;
-  border-radius: 50%;
+  left: 8.5%;
+  top: 23%;
+  width: 83%;
+  height: 38.5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.speech-bubble-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+.intro-speech span {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  white-space: nowrap;
 }
 .step-badge {
   position: absolute;
@@ -484,9 +501,24 @@ button:focus-visible {
   font-size: 1.47cqw;
   line-height: 1.18;
   scrollbar-color: #d09b50 #f7ead7;
+  scrollbar-width: thin;
+}
+.terms-body::-webkit-scrollbar {
+  width: 0.8cqw;
+}
+.terms-body::-webkit-scrollbar-track {
+  background: #f7ead7;
+}
+.terms-body::-webkit-scrollbar-thumb {
+  border: 0.15cqw solid #f7ead7;
+  border-radius: 1cqw;
+  background: #d09b50;
 }
 .terms-body p {
   margin: 0 0 1.8cqw;
+}
+.terms-body p:last-child {
+  margin-bottom: 0;
 }
 .terms-action {
   position: absolute;
