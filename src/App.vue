@@ -1,118 +1,97 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import backgroundImage from './assets/background.png'
-import challengeSpeechBubble from './assets/challenge-speech-bubble.png'
-import guideSpeechBubble from './assets/guide-speech-bubble.png'
-import helpCloseButton from './assets/help-close-button.png'
-import helpCompleteButton from './assets/help-complete-button.png'
-import startButton from './assets/start-button.png'
-import guideBg from './assets/screens/guide.png'
-import how1 from './assets/screens/how1.png'
-import how2 from './assets/screens/how2.png'
-import how3 from './assets/screens/how3.png'
-import how4 from './assets/screens/how4.png'
-import rolesBg from './assets/screens/roles.png'
-import courseBg from './assets/screens/course-bg.png'
-import courseEasy from './assets/screens/course-easy.png'
-import courseHard from './assets/screens/course-hard.png'
-import courseMix from './assets/screens/course-mix.png'
-import confirmBg from './assets/screens/confirm-bg.png'
-import yesImage from './assets/screens/yes.png'
-import noImage from './assets/screens/no.png'
-import customerHandoff from './assets/screens/customer-handoff.png'
-import shopBg from './assets/screens/shop.png'
-import FruitHero from './components/FruitHero.vue'
-import ImageButton from './components/ImageButton.vue'
-import ScreenFrame from './components/ScreenFrame.vue'
-import NavArrow from './components/NavArrow.vue'
-import HelpMenu from './components/HelpMenu.vue'
-import FruitCard from './components/FruitCard.vue'
+function onDrop(event) {
+  console.log('drop:', event.dataTransfer.getData('fruitId'));
+  const id = event.dataTransfer.getData('fruitId');
+  const fruit = fruits.find((f) => f.id === id);
+  selectFruit(fruit);
+  go('customerConfirm');
+}
 
-const screen = ref('home')
-const history = ref([])
-const helpOpen = ref(false)
-const helpReturnScreen = ref('home')
-const homeConfirm = ref(false)
-const selectedCourse = ref('easy')
-const selectedFruit = ref(null)
-const attempts = ref(3)
+import { computed, ref } from 'vue';
+import backgroundImage from './assets/background.png';
+import startButton from './assets/start-button.png';
+import guideBg from './assets/screens/guide.png';
+import how1 from './assets/screens/how1.png';
+import how2 from './assets/screens/how2.png';
+import how3 from './assets/screens/how3.png';
+import how4 from './assets/screens/how4.png';
+import rolesBg from './assets/screens/roles.png';
+import courseBg from './assets/screens/course-bg.png';
+import courseEasy from './assets/screens/course-easy.png';
+import courseHard from './assets/screens/course-hard.png';
+import courseMix from './assets/screens/course-mix.png';
+import confirmBg from './assets/screens/confirm-bg.png';
+import yesImage from './assets/screens/yes.png';
+import noImage from './assets/screens/no.png';
+import customerHandoff from './assets/screens/customer-handoff.png';
+import shopBg from './assets/screens/shop.png';
+import shopping from './assets/screens/froutback.png';
+import FruitHero from './components/FruitHero.vue';
+import ImageButton from './components/ImageButton.vue';
+import ScreenFrame from './components/ScreenFrame.vue';
+import NavArrow from './components/NavArrow.vue';
+import HelpMenu from './components/HelpMenu.vue';
+import FruitCard from './components/FruitCard.vue';
+
+const screen = ref('home');
+const history = ref([]);
+const helpOpen = ref(false);
+const homeConfirm = ref(false);
+const selectedCourse = ref('easy');
+const selectedFruit = ref(null);
+const attempts = ref(3);
 const fruits = [
-  { id: 'apple', emoji: '🍎', feeling: 'おこる' }, { id: 'orange', emoji: '🍊', feeling: 'こわい' },
-  { id: 'banana', emoji: '🍌', feeling: 'あぶない' }, { id: 'grape', emoji: '🍇', feeling: 'うれしい' },
-  { id: 'peach', emoji: '🍑', feeling: 'かなしい' }, { id: 'kiwi', emoji: '🥝', feeling: 'つかれる' },
-  { id: 'strawberry', emoji: '🍓', feeling: 'きらく\nのんびり' }, { id: 'pear', emoji: '🍐', feeling: 'やさしい\nしんせつ' }
-]
-const courseImages = { easy: courseEasy, hard: courseHard, mix: courseMix }
-const courseLabels = { easy: 'かんたん', hard: 'むずかしい', mix: 'ごちゃまぜ' }
-const howScreens = ['how1', 'how2', 'how3', 'how4']
-const howBackgrounds = { how1, how2, how3, how4 }
-const helpScreens = ['help1', 'help2', 'help3', 'help4']
-const helpBackgrounds = { help1: rolesBg, help2: how2, help3: how3, help4: how4 }
-const questionText = computed(() => selectedCourse.value === 'hard' ? 'そのきもちに　なったとき、\nからだは　どんなうごきに　なる？' : 'そのきもちに　なったとき、\nどんな　うごきに　なる？')
-
-function katakanaToHiragana(text) {
-  return [...text].map((character) => {
-    const code = character.charCodeAt(0)
-    return code >= 0x30a1 && code <= 0x30f6 ? String.fromCharCode(code - 0x60) : character
-  }).join('')
-}
-
-function applyKatakanaReadings() {
-  const root = document.querySelector('.viewport')
-  if (!root) return
-
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-    acceptNode(node) {
-      if (!/[ァ-ヴー]/.test(node.nodeValue || '')) return NodeFilter.FILTER_REJECT
-      if (node.parentElement?.closest('ruby, rt, script, style, .terms-body')) return NodeFilter.FILTER_REJECT
-      return NodeFilter.FILTER_ACCEPT
-    }
-  })
-
-  const textNodes = []
-  while (walker.nextNode()) textNodes.push(walker.currentNode)
-
-  textNodes.forEach((node) => {
-    const fragment = document.createDocumentFragment()
-    const parts = node.nodeValue.split(/([ァ-ヴー]+)/g)
-    parts.forEach((part) => {
-      if (!part) return
-      if (/^[ァ-ヴー]+$/.test(part)) {
-        const ruby = document.createElement('ruby')
-        ruby.className = 'katakana-ruby'
-        ruby.append(document.createTextNode(part))
-        const reading = document.createElement('rt')
-        reading.textContent = katakanaToHiragana(part)
-        ruby.append(reading)
-        fragment.append(ruby)
-      } else {
-        fragment.append(document.createTextNode(part))
-      }
-    })
-    node.replaceWith(fragment)
-  })
-}
-
-watch([screen, helpOpen, homeConfirm], () => nextTick(applyKatakanaReadings), { immediate: true })
-onMounted(() => nextTick(applyKatakanaReadings))
+  { id: 'apple', emoji: '🍎', feeling: 'おこる' },
+  { id: 'orange', emoji: '🍊', feeling: 'こわい' },
+  { id: 'banana', emoji: '🍌', feeling: 'あぶない' },
+  { id: 'grape', emoji: '🍇', feeling: 'うれしい' },
+  { id: 'peach', emoji: '🍑', feeling: 'かなしい' },
+  { id: 'kiwi', emoji: '🥝', feeling: 'つかれる' },
+  { id: 'strawberry', emoji: '🍓', feeling: 'きらく\nのんびり' },
+  { id: 'pear', emoji: '🍐', feeling: 'やさしい\nしんせつ' }
+];
+const courseImages = { easy: courseEasy, hard: courseHard, mix: courseMix };
+const courseLabels = { easy: 'かんたん', hard: 'むずかしい', mix: 'ごちゃまぜ' };
+const howScreens = ['how1', 'how2', 'how3', 'how4'];
+const howBackgrounds = { how1, how2, how3, how4 };
+const questionText = computed(() =>
+  selectedCourse.value === 'hard'
+    ? 'そのきもちに　なったとき、\nからだは　どんなうごきに　なる？'
+    : 'そのきもちに　なったとき、\nどんな　うごきに　なる？'
+);
 
 function go(next) {
-  if (next === 'how1' && helpOpen.value) {
-    helpReturnScreen.value = screen.value
-    screen.value = 'help1'
-    helpOpen.value = false
-    return
-  }
-  history.value.push(screen.value)
-  screen.value = next
-  helpOpen.value = false
+  history.value.push(screen.value);
+  screen.value = next;
+  helpOpen.value = false;
 }
-function back() { screen.value = history.value.pop() || 'home'; helpOpen.value = false }
-function closeHelp() { screen.value = helpReturnScreen.value; helpOpen.value = false }
-function selectCourse(id) { selectedCourse.value = id; go('courseConfirm') }
-function selectFruit(fruit) { selectedFruit.value = fruit; go(screen.value === 'customerShop' ? 'customerConfirm' : 'productConfirm') }
-function judge() { if (selectedFruit.value?.id === 'grape') go('success'); else if (attempts.value > 1) { attempts.value--; go('failure') } else go('finalFailure') }
-function resetHome() { screen.value = 'home'; history.value = []; helpOpen.value = false; homeConfirm.value = false; selectedFruit.value = null; attempts.value = 3 }
+function back() {
+  screen.value = history.value.pop() || 'home';
+  helpOpen.value = false;
+}
+function selectCourse(id) {
+  selectedCourse.value = id;
+  go('courseConfirm');
+}
+function selectFruit(fruit) {
+  selectedFruit.value = fruit;
+  go(screen.value === 'customerShop' ? 'customerConfirm' : 'productConfirm');
+}
+function judge() {
+  if (selectedFruit.value?.id === 'grape') go('success');
+  else if (attempts.value > 1) {
+    attempts.value--;
+    go('failure');
+  } else go('finalFailure');
+}
+function resetHome() {
+  screen.value = 'home';
+  history.value = [];
+  helpOpen.value = false;
+  homeConfirm.value = false;
+  selectedFruit.value = null;
+  attempts.value = 3;
+}
 </script>
 
 <template>
@@ -142,7 +121,11 @@ function resetHome() { screen.value = 'home'; history.value = []; helpOpen.value
       <div class="speech intro-speech"><img class="speech-bubble-image" :src="guideSpeechBubble" alt=""><span>いまから　あそびかたを　せつめいするね！</span></div><NavArrow direction="back" @click="back" /><NavArrow @click="go('how1')" />
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="howScreens.includes(screen)" :label="`あそびかた ${howScreens.indexOf(screen) + 1}`" :background="howBackgrounds[screen]">
+    <ScreenFrame
+      v-else-if="howScreens.includes(screen)"
+      :label="`あそびかた ${howScreens.indexOf(screen) + 1}`"
+      :background="howBackgrounds[screen]"
+    >
       <div class="step-badge">あそびかた　{{ howScreens.indexOf(screen) + 1 }} / ４</div>
       <div v-if="screen === 'how1'" class="lesson lesson-one">おみせには、ちょっとふしぎな「きもちのくだもの」が　ならんでいます。<br>うれしい、さみしい、いろんな「きもち」。<br>くだものたちは、みんな　それぞれちがう「きもち」を　もっています。</div>
       <div v-if="screen === 'how2'" class="lesson lesson-two">おきゃくさんは、くだものを　ひとつ　えらびます。<br>えらんだくだものが　もっている「きもち」を<br>よくおぼえておきます。</div>
@@ -167,50 +150,164 @@ function resetHome() { screen.value = 'home'; history.value = []; helpOpen.value
 
     <ScreenFrame v-else-if="screen === 'roles'" label="役割を決める画面" :background="rolesBg">
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
-      <div class="lesson roles-copy">さっそくゲームをはじめよう！<br>ふたりで　おきゃくさんと　てんいんさんの<br>どちらにするか　きめてね。</div><NavArrow direction="back" @click="back" /><NavArrow @click="go('courses')" />
+      <div class="lesson roles-copy">
+        さっそくゲームをはじめよう！<br />ふたりで　おきゃくさんと　てんいんさんの<br />どちらにするか　きめてね。
+      </div>
+      <NavArrow direction="back" @click="back" /><NavArrow @click="go('courses')" />
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'courses'" label="コース選択画面" :background="courseBg">
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
-      <h1 class="course-title">つぎに　やりたいコースを　えらんでね！</h1><div class="course-list"><button v-for="id in ['easy','hard','mix']" :key="id" type="button" @click="selectCourse(id)"><img :src="courseImages[id]" :alt="courseLabels[id]" /></button></div><NavArrow direction="back" @click="back" />
+      <h1 class="course-title">つぎに　やりたいコースを　えらんでね！</h1>
+      <div class="course-list">
+        <button v-for="id in ['easy', 'hard', 'mix']" :key="id" type="button" @click="selectCourse(id)">
+          <img :src="courseImages[id]" :alt="courseLabels[id]" />
+        </button>
+      </div>
+      <NavArrow direction="back" @click="back" />
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'courseConfirm'" label="コース確認画面" :background="confirmBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><h1 class="confirm-title">このコースに　チャレンジする？</h1><img class="chosen-course" :src="courseImages[selectedCourse]" :alt="courseLabels[selectedCourse]" /><button class="choice no" type="button" @click="back"><img :src="yesImage" alt="いいえ"></button><button class="choice yes" type="button" @click="go('customerHandoff')"><img :src="noImage" alt="はい"></button>
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <h1 class="confirm-title">このコースに　チャレンジする？</h1>
+      <img class="chosen-course" :src="courseImages[selectedCourse]" :alt="courseLabels[selectedCourse]" /><button
+        class="choice no"
+        type="button"
+        @click="back"
+      >
+        <img :src="yesImage" alt="いいえ" /></button
+      ><button class="choice yes" type="button" @click="go('customerHandoff')">
+        <img :src="noImage" alt="はい" />
+      </button>
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'customerHandoff'" label="お客さんに渡してね画面" :background="customerHandoff">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><div class="lesson handoff-copy">はじめは、おきゃくさんの　ばんです。<br>おきゃくさんが　スマホを　もってね。<br>てんいんさんに　みえないように、くだものを　ひとつ　えらぼう。</div><NavArrow direction="back" @click="back" /><NavArrow @click="go('customerShop')" />
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <div class="lesson handoff-copy">
+        はじめは、おきゃくさんの　ばんです。<br />おきゃくさんが　スマホを　もってね。<br />てんいんさんに　みえないように、くだものを　ひとつ　えらぼう。
+      </div>
+      <NavArrow direction="back" @click="back" /><NavArrow @click="go('customerShop')" />
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'customerShop' || screen === 'clerkShop'" :label="screen === 'customerShop' ? 'お客さんの商品選択画面' : '店員さんの商品選択画面'" :background="shopBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><div class="fruit-grid"><div v-for="fruit in fruits" :key="fruit.id" class="fruit-slot"><FruitCard :fruit="fruit" :selected="selectedFruit?.id === fruit.id" @select="selectFruit" /><span>{{ fruit.feeling }}</span></div></div><div v-if="screen === 'clerkShop'" class="timer">のこり　03:00</div>
+    <ScreenFrame
+      v-else-if="screen === 'customerShop' || screen === 'clerkShop'"
+      :label="screen === 'customerShop' ? 'お客さんの商品選択画面' : '店員さんの商品選択画面'"
+      :background="screen === 'clerkShop' ? shopping : shopBg"
+    >
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <div class="fruit-grid">
+        <div v-for="fruit in fruits" :key="fruit.id" class="fruit-slot">
+          <FruitCard :fruit="fruit" :selected="selectedFruit?.id === fruit.id" @select="selectFruit" /><span>{{
+            fruit.feeling
+          }}</span>
+        </div>
+      </div>
+      <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
+
+      <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
+      <div v-if="screen === 'clerkShop'" class="timer">のこり　03:00</div>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'customerConfirm' || screen === 'productConfirm'" label="商品確認画面" :background="shopBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><div class="confirm-card"><span class="big-fruit">{{ selectedFruit?.emoji }}</span><h1>このくだもので　いい？</h1><div class="confirm-actions"><button type="button" @click="back">いいえ</button><button type="button" @click="screen === 'customerConfirm' ? go('clerkHandoff') : judge()">はい</button></div></div>
+    <ScreenFrame
+      v-else-if="screen === 'customerConfirm' || screen === 'productConfirm'"
+      label="商品確認画面"
+      :background="shopBg"
+    >
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <div class="confirm-card">
+        <span class="big-fruit">{{ selectedFruit?.emoji }}</span>
+        <h1>このくだもので　いい？</h1>
+        <div class="confirm-actions">
+          <button type="button" @click="back">いいえ</button
+          ><button type="button" @click="screen === 'customerConfirm' ? go('clerkHandoff') : judge()">はい</button>
+        </div>
+      </div>
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'clerkHandoff'" label="店員さんにスマホを渡す画面" :background="backgroundImage">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><div class="lesson center-message">つぎは、てんいんさんの　ばんだよ！<br>てんいんさんに　スマホを　わたそう！<div class="phone">📱</div></div><NavArrow direction="back" @click="back" /><NavArrow @click="go('clerkRules')" />
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <div class="lesson center-message">
+        つぎは、てんいんさんの　ばんだよ！<br />てんいんさんに　スマホを　わたそう！
+        <div class="phone">📱</div>
+      </div>
+      <NavArrow direction="back" @click="back" /><NavArrow @click="go('clerkRules')" />
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'clerkRules'" label="店員さんのルール説明" :background="backgroundImage">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><div class="lesson center-message">てんいんさんは、おきゃくさんが　えらんだ<br>くだものの　きもちを　あてよう！<br>つぎの　がめんに　でてくる　しつもんを<br>おきゃくさんに　しよう！</div><NavArrow direction="back" @click="back" /><NavArrow @click="go('question')" />
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <div class="lesson center-message">
+        てんいんさんは、おきゃくさんが　えらんだ<br />くだものの　きもちを　あてよう！<br />つぎの　がめんに　でてくる　しつもんを<br />おきゃくさんに　しよう！
+      </div>
+      <NavArrow direction="back" @click="back" /><NavArrow @click="go('question')" />
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'question' || screen === 'questionConfirm'" label="質問画面" :background="shopBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><div class="question-card"><span>しつもん１</span><p>{{ questionText }}</p></div><template v-if="screen === 'question'"><NavArrow direction="back" @click="back" /><NavArrow @click="go('questionConfirm')" /></template><div v-else class="question-actions"><button @click="back">もういちど</button><button @click="go('productIntro')">つぎへ</button></div>
+    <ScreenFrame
+      v-else-if="screen === 'question' || screen === 'questionConfirm'"
+      label="質問画面"
+      :background="shopBg"
+    >
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <div class="question-card">
+        <span>しつもん１</span>
+        <p>{{ questionText }}</p>
+      </div>
+      <template v-if="screen === 'question'"
+        ><NavArrow direction="back" @click="back" /><NavArrow @click="go('questionConfirm')"
+      /></template>
+      <div v-else class="question-actions">
+        <button @click="back">もういちど</button><button @click="go('productIntro')">つぎへ</button>
+      </div>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="shopBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" /><div class="instruction-panel">そのうごきになる　くだものを<br>ゆびで　レジまで　はこんでね！<br>じかんは　3ふんかんだよ！<button @click="go('clerkShop')">はじめる</button></div>
+    <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="shopping">
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <div class="instruction-panel">
+        そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！<button
+          @click="go('clerkShop')"
+        >
+          はじめる
+        </button>
+      </div>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="backgroundImage"><div class="result success"><span>🎉</span><h1>せいかい！</h1><p>きもちのくだものを　みつけられたね！</p><button @click="resetHome">ホームにもどる</button></div></ScreenFrame>
-    <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="backgroundImage"><div class="result failure"><span>💭</span><h1>しっぱい……。</h1><p>もういちど　おきゃくさんに　しつもんを　してみよう！<br>チャンスは　あと{{ attempts }}かい！</p><button @click="go('question')">もういちど</button></div></ScreenFrame>
-    <ScreenFrame v-else-if="screen === 'finalFailure'" label="最終失敗画面" :background="backgroundImage"><div class="result failure"><span>🍇</span><h1>しっぱい……。</h1><p>せいかいは「ぶどう」でした…。<br>また　ちょうせんしてね！</p><button @click="resetHome">ホームにもどる</button></div></ScreenFrame>
+    <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="backgroundImage"
+      ><div class="result success">
+        <span>🎉</span>
+        <h1>せいかい！</h1>
+        <p>きもちのくだものを　みつけられたね！</p>
+        <button @click="resetHome">ホームにもどる</button>
+      </div></ScreenFrame
+    >
+    <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="backgroundImage"
+      ><div class="result failure">
+        <span>💭</span>
+        <h1>しっぱい……。</h1>
+        <p>もういちど　おきゃくさんに　しつもんを　してみよう！<br />チャンスは　あと{{ attempts }}かい！</p>
+        <button @click="go('question')">もういちど</button>
+      </div></ScreenFrame
+    >
+    <ScreenFrame v-else-if="screen === 'finalFailure'" label="最終失敗画面" :background="backgroundImage"
+      ><div class="result failure">
+        <span>🍇</span>
+        <h1>しっぱい……。</h1>
+        <p>せいかいは「ぶどう」でした…。<br />また　ちょうせんしてね！</p>
+        <button @click="resetHome">ホームにもどる</button>
+      </div></ScreenFrame
+    >
 
     <div v-if="homeConfirm" class="modal-backdrop"><div class="home-modal" role="dialog" aria-modal="true" aria-labelledby="home-modal-title"><h2 id="home-modal-title"><ruby>ホーム<rt>ほーむ</rt></ruby>に　もどりますか？</h2><p><ruby>ゲーム<rt>げーむ</rt></ruby>を　やめて、<ruby>ホーム<rt>ほーむ</rt></ruby>がめんに　もどります。</p><div class="home-modal-actions"><button class="home-modal-no" @click="homeConfirm = false"><img :src="yesImage" alt="いいえ"></button><button class="home-modal-yes" @click="resetHome"><img :src="noImage" alt="はい"></button></div></div></div>
   </main>
 </template>
+
+<style>
+.drop-zone {
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  width: 200px;
+  height: 150px;
+  background: rgba(255, 0, 0, 0.3);
+  border: 2px solid red;
+  z-index: 20;
+}
+</style>
