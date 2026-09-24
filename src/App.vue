@@ -97,17 +97,28 @@ function resetHome() {
 <template>
   <main class="viewport">
     <ScreenFrame v-if="screen === 'home'" label="ホーム画面" :background="backgroundImage">
-      <FruitHero />
-      <p class="home-description">
-        <span>てんいんさんがしつもんして、おきゃくさんのえらんだ</span
-        ><span>「きもちのくだもの」をあてるゲームです！</span>
-      </p>
-      <ImageButton class="start-button" :src="startButton" alt="スタート" @click="go('guide')" />
+      <FruitHero /><p class="home-description"><span>てんいんさんがしつもんして、おきゃくさんのえらんだ</span><span>「きもちのくだもの」をあてるゲームです！</span></p>
+      <ImageButton class="start-button" :src="startButton" alt="スタート" @click="go('terms')" />
+    </ScreenFrame>
+
+    <ScreenFrame v-else-if="screen === 'terms'" label="利用規約画面" :background="backgroundImage">
+      <h1 class="terms-title">利用規約</h1>
+      <div class="terms-body" tabindex="0" aria-label="利用規約本文">
+        <p>この規約（以下、「本規約」といいます。）は、本サービスを利用する全ての方（以下、「利用者」といいます。）が、武庫川女子大学和泉ゼミ・榎並ゼミの提供する「おしゃべりココロのくだものやさん」（以下、「本サービス」といいます。）をご利用頂く際の取扱いにつき定めるものです。本規約に同意した上で本サービスをご利用ください。</p>
+        <p><strong>第1条（適用）</strong><br>1.本規約は、利用者と当ゼミとの間の本サービスの利用に関わる一切の関係に適用されるものとします。<br>2.当ゼミは本サービスに関し、本規約のほか、ご利用にあたってのルール等、各種の定め（以下、「個別規定」といいます。）をすることがあります。これら個別規定はその名称のいかんに関わらず、本規約の一部を構成するものとします。<br>3.本規約の規定が前条の個別規定の規定と矛盾する場合には、個別規定において特段の定めなき限り、個別規定の規定が優先されるものとします。</p>
+        <p><strong>第2条（禁止事項）</strong><br>利用者は、本サービスの利用にあたり、以下の行為をしてはなりません。<br>1.法令または公序良俗に違反する行為<br>2.犯罪行為に関連する行為<br>3.本サービスに含まれる知的財産権を侵害する行為<br>4.サーバーまたはネットワークの機能を破壊・妨害する行為<br>5.本サービスによって得られた情報を商業的に利用する行為<br>6.本サービスの運営を妨害するおそれのある行為<br>7.不正アクセスをし、またはこれを試みる行為<br>8.不正な目的を持って本サービスを利用する行為<br>9.その他、当ゼミが不適切と判断する行為</p>
+        <p><strong>第3条（保証の否認および免責事項）</strong><br>1.当ゼミは、本サービスに事実上または法律上の瑕疵がないことを保証しておりません。<br>2.当ゼミは、本サービスに起因して利用者に生じた損害について、当ゼミの故意又は重過失による場合を除き、一切の責任を負いません。</p>
+        <p><strong>第4条（サービス内容の変更等）</strong><br>当ゼミは、利用者への事前の告知をもって、本サービスの内容を変更、追加または廃止することがあり、利用者はこれを承諾するものとします。</p>
+        <p><strong>第5条（権利義務の譲渡の禁止）</strong><br>利用者は、本規約に基づく権利または義務を第三者に譲渡し、または担保に供することはできません。</p>
+        <p><strong>第6条（個人情報の取り扱い）</strong><br>当ゼミは、本サービスの利用にあたり、利用者の個人情報（氏名、メールアドレス等）の取得および保存は一切行いません。</p>
+        <p>以上</p>
+      </div>
+      <button class="terms-action terms-back" type="button" @click="back">もどる</button>
+      <button class="terms-action terms-agree" type="button" @click="go('guide')">同意する</button>
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'guide'" label="ゲーム説明案内" :background="guideBg">
-      <div class="speech intro-speech">いまから　あそびかたを　せつめいするね！</div>
-      <NavArrow direction="back" @click="back" /><NavArrow @click="go('how1')" />
+      <div class="speech intro-speech"><img class="speech-bubble-image" :src="guideSpeechBubble" alt=""><span>いまから　あそびかたを　せつめいするね！</span></div><NavArrow direction="back" @click="back" /><NavArrow @click="go('how1')" />
     </ScreenFrame>
 
     <ScreenFrame
@@ -116,21 +127,25 @@ function resetHome() {
       :background="howBackgrounds[screen]"
     >
       <div class="step-badge">あそびかた　{{ howScreens.indexOf(screen) + 1 }} / ４</div>
-      <div v-if="screen === 'how1'" class="lesson lesson-one">
-        おみせには、ちょっとふしぎな「きもちのくだもの」が　ならんでいます。<br />うれしい、さみしい、いろんな「きもち」。<br />くだものたちは、みんな　それぞれちがう「きもち」を　もっています。
-      </div>
-      <div v-if="screen === 'how2'" class="lesson lesson-two">
-        おきゃくさんは、くだものを　ひとつ　えらびます。<br />えらんだくだものが　もっている「きもち」を<br />よくおぼえておきます。
-      </div>
-      <div v-if="screen === 'how3'" class="lesson lesson-three">
-        てんいんさんは、きめられた　しつもんを　しながら、<br />おきゃくさんが　えらんだ　くだものの「きもち」を　あてます。
-      </div>
-      <div v-if="screen === 'how4'" class="lesson lesson-four">
-        「どんなときに　そのきもちに　なるかな？」と<br />かんがえたり、おはなししたり　することが<br />たいせつな　ゲームです。
-      </div>
-      <NavArrow direction="back" @click="back" /><NavArrow
-        @click="screen === 'how4' ? go('roles') : go(howScreens[howScreens.indexOf(screen) + 1])"
-      />
+      <div v-if="screen === 'how1'" class="lesson lesson-one">おみせには、ちょっとふしぎな「きもちのくだもの」が　ならんでいます。<br>うれしい、さみしい、いろんな「きもち」。<br>くだものたちは、みんな　それぞれちがう「きもち」を　もっています。</div>
+      <div v-if="screen === 'how2'" class="lesson lesson-two">おきゃくさんは、くだものを　ひとつ　えらびます。<br>えらんだくだものが　もっている「きもち」を<br>よくおぼえておきます。</div>
+      <div v-if="screen === 'how3'" class="lesson lesson-three">てんいんさんは、きめられた　しつもんを　しながら、<br>おきゃくさんが　えらんだ　くだものの「きもち」を　あてます。</div>
+      <div v-if="screen === 'how3'" class="challenge-bubble"><img :src="challengeSpeechBubble" alt=""><p>チャレンジできるのは、<br><strong>３かい</strong>までだよ！</p></div>
+      <div v-if="screen === 'how4'" class="lesson lesson-four">「どんなときに　そのきもちに　なるかな？」と<br>かんがえたり、おはなししたり　することが<br>たいせつな　ゲームです。</div>
+      <NavArrow direction="back" @click="back" /><NavArrow @click="screen === 'how4' ? go('roles') : go(howScreens[howScreens.indexOf(screen) + 1])" />
+    </ScreenFrame>
+
+    <ScreenFrame v-else-if="helpScreens.includes(screen)" :label="`ヘルプ あそびかた ${helpScreens.indexOf(screen) + 1}`" :background="helpBackgrounds[screen]">
+      <div class="step-badge">あそびかた　{{ helpScreens.indexOf(screen) + 1 }} / ４</div>
+      <button class="help-close" type="button" aria-label="あそびかたを閉じる" @click="closeHelp"><img :src="helpCloseButton" alt=""></button>
+      <div v-if="screen === 'help1'" class="lesson help-lesson help-lesson-one">ふたりで　おきゃくさんと　てんいんさんに　わかれよう。</div>
+      <div v-if="screen === 'help2'" class="lesson help-lesson help-lesson-two">おきゃくさんは　くだものを　１つ　えらんで　タップしよう。<br>それぞれの　くだものたちは、きもちを　もっているよ。<br>えらんだ　くだものの　きもちを　おぼえておいてね。</div>
+      <div v-if="screen === 'help3'" class="lesson help-lesson help-lesson-three">てんいんさんが　おきゃくさんに　きめられた　しつもんを　するよ。<br>おきゃくさんは　えらんだ　くだものの　きもちに　なりきって、<br>しつもんに　こたえよう！</div>
+      <div v-if="screen === 'help3'" class="challenge-bubble"><img :src="challengeSpeechBubble" alt=""><p>チャレンジできるのは、<br><strong>３かい</strong>までだよ！</p></div>
+      <div v-if="screen === 'help4'" class="lesson help-lesson help-lesson-four">てんいんさんが　おきゃくさんの　えらんだ　くだものを<br>あてられたら、せいこう！</div>
+      <NavArrow v-if="screen !== 'help1'" direction="back" @click="screen = helpScreens[helpScreens.indexOf(screen) - 1]" />
+      <NavArrow v-if="screen !== 'help4'" @click="screen = helpScreens[helpScreens.indexOf(screen) + 1]" />
+      <button v-else class="help-complete" type="button" aria-label="あそびかたを閉じる" @click="closeHelp"><img :src="helpCompleteButton" alt=""></button>
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'roles'" label="役割を決める画面" :background="rolesBg">
@@ -280,13 +295,7 @@ function resetHome() {
       </div></ScreenFrame
     >
 
-    <div v-if="homeConfirm" class="modal-backdrop">
-      <div class="home-modal">
-        <h2>ホームに　もどりますか？</h2>
-        <p>ゲームを　やめて、ホームがめんに　もどります。</p>
-        <div><button @click="homeConfirm = false">いいえ</button><button @click="resetHome">はい</button></div>
-      </div>
-    </div>
+    <div v-if="homeConfirm" class="modal-backdrop"><div class="home-modal" role="dialog" aria-modal="true" aria-labelledby="home-modal-title"><h2 id="home-modal-title"><ruby>ホーム<rt>ほーむ</rt></ruby>に　もどりますか？</h2><p><ruby>ゲーム<rt>げーむ</rt></ruby>を　やめて、<ruby>ホーム<rt>ほーむ</rt></ruby>がめんに　もどります。</p><div class="home-modal-actions"><button class="home-modal-no" @click="homeConfirm = false"><img :src="yesImage" alt="いいえ"></button><button class="home-modal-yes" @click="resetHome"><img :src="noImage" alt="はい"></button></div></div></div>
   </main>
 </template>
 
