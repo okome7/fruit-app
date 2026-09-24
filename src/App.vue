@@ -55,7 +55,23 @@ function resetHome() { screen.value = 'home'; history.value = []; helpOpen.value
   <main class="viewport">
     <ScreenFrame v-if="screen === 'home'" label="ホーム画面" :background="backgroundImage">
       <FruitHero /><p class="home-description"><span>てんいんさんがしつもんして、おきゃくさんのえらんだ</span><span>「きもちのくだもの」をあてるゲームです！</span></p>
-      <ImageButton class="start-button" :src="startButton" alt="スタート" @click="go('guide')" />
+      <ImageButton class="start-button" :src="startButton" alt="スタート" @click="go('terms')" />
+    </ScreenFrame>
+
+    <ScreenFrame v-else-if="screen === 'terms'" label="利用規約画面" :background="backgroundImage">
+      <h1 class="terms-title">利用規約</h1>
+      <div class="terms-body" tabindex="0" aria-label="利用規約本文">
+        <p>この規約（以下、「本規約」といいます。）は、本サービスを利用する全ての方（以下、「利用者」といいます。）が、武庫川女子大学和泉ゼミ・榎並ゼミの提供する「おしゃべりココロのくだものやさん」（以下、「本サービス」といいます。）をご利用頂く際の取扱いにつき定めるものです。本規約に同意した上で本サービスをご利用ください。</p>
+        <p><strong>第1条（適用）</strong><br>1.本規約は、利用者と当ゼミとの間の本サービスの利用に関わる一切の関係に適用されるものとします。<br>2.当ゼミは本サービスに関し、本規約のほか、ご利用にあたってのルール等、各種の定め（以下、「個別規定」といいます。）をすることがあります。これら個別規定はその名称のいかんに関わらず、本規約の一部を構成するものとします。<br>3.本規約の規定が前条の個別規定の規定と矛盾する場合には、個別規定において特段の定めなき限り、個別規定の規定が優先されるものとします。</p>
+        <p><strong>第2条（禁止事項）</strong><br>利用者は、本サービスの利用にあたり、以下の行為をしてはなりません。<br>1.法令または公序良俗に違反する行為<br>2.犯罪行為に関連する行為<br>3.本サービスに含まれる知的財産権を侵害する行為<br>4.サーバーまたはネットワークの機能を破壊・妨害する行為<br>5.本サービスによって得られた情報を商業的に利用する行為<br>6.本サービスの運営を妨害するおそれのある行為<br>7.不正アクセスをし、またはこれを試みる行為<br>8.不正な目的を持って本サービスを利用する行為<br>9.その他、当ゼミが不適切と判断する行為</p>
+        <p><strong>第3条（保証の否認および免責事項）</strong><br>1.当ゼミは、本サービスに事実上または法律上の瑕疵がないことを保証しておりません。<br>2.当ゼミは、本サービスに起因して利用者に生じた損害について、当ゼミの故意又は重過失による場合を除き、一切の責任を負いません。</p>
+        <p><strong>第4条（サービス内容の変更等）</strong><br>当ゼミは、利用者への事前の告知をもって、本サービスの内容を変更、追加または廃止することがあり、利用者はこれを承諾するものとします。</p>
+        <p><strong>第5条（権利義務の譲渡の禁止）</strong><br>利用者は、本規約に基づく権利または義務を第三者に譲渡し、または担保に供することはできません。</p>
+        <p><strong>第6条（個人情報の取り扱い）</strong><br>当ゼミは、本サービスの利用にあたり、利用者の個人情報（氏名、メールアドレス等）の取得および保存は一切行いません。</p>
+        <p>以上</p>
+      </div>
+      <button class="terms-action terms-back" type="button" @click="back">もどる</button>
+      <button class="terms-action terms-agree" type="button" @click="go('guide')">同意する</button>
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'guide'" label="ゲーム説明案内" :background="guideBg">
