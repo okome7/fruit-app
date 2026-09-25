@@ -1,14 +1,10 @@
 <script setup>
-function onDrop(event) {
-  console.log('drop:', event.dataTransfer.getData('fruitId'));
-  const id = event.dataTransfer.getData('fruitId');
-  const fruit = fruits.find((f) => f.id === id);
-  selectFruit(fruit);
-  go('customerConfirm');
-}
-
-import { computed, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import backgroundImage from './assets/background.png';
+import challengeSpeechBubble from './assets/challenge-speech-bubble.png';
+import guideSpeechBubble from './assets/guide-speech-bubble.png';
+import helpCloseButton from './assets/help-close-button.png';
+import helpCompleteButton from './assets/help-complete-button.png';
 import startButton from './assets/start-button.png';
 import guideBg from './assets/screens/guide.png';
 import how1 from './assets/screens/how1.png';
@@ -36,6 +32,7 @@ import FruitCard from './components/FruitCard.vue';
 const screen = ref('home');
 const history = ref([]);
 const helpOpen = ref(false);
+const helpReturnScreen = ref('home');
 const homeConfirm = ref(false);
 const selectedCourse = ref('easy');
 const selectedFruit = ref(null);
@@ -54,13 +51,61 @@ const courseImages = { easy: courseEasy, hard: courseHard, mix: courseMix };
 const courseLabels = { easy: 'かんたん', hard: 'むずかしい', mix: 'ごちゃまぜ' };
 const howScreens = ['how1', 'how2', 'how3', 'how4'];
 const howBackgrounds = { how1, how2, how3, how4 };
+const helpScreens = ['help1', 'help2', 'help3', 'help4'];
+const helpBackgrounds = { help1: rolesBg, help2: how2, help3: how3, help4: how4 };
 const questionText = computed(() =>
   selectedCourse.value === 'hard'
     ? 'そのきもちに　なったとき、\nからだは　どんなうごきに　なる？'
     : 'そのきもちに　なったとき、\nどんな　うごきに　なる？'
 );
 
+function katakanaToHiragana(text) {
+  return [...text].map((character) => {
+    const code = character.charCodeAt(0);
+    return code >= 0x30a1 && code <= 0x30f6 ? String.fromCharCode(code - 0x60) : character;
+  }).join('');
+}
+
+function applyKatakanaReadings() {
+  const root = document.querySelector('.viewport');
+  if (!root) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!/[ァ-ヴー]/.test(node.nodeValue || '')) return NodeFilter.FILTER_REJECT;
+      if (node.parentElement?.closest('ruby, rt, script, style, .terms-body')) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const textNodes = [];
+  while (walker.nextNode()) textNodes.push(walker.currentNode);
+  textNodes.forEach((node) => {
+    const fragment = document.createDocumentFragment();
+    node.nodeValue.split(/([ァ-ヴー]+)/g).forEach((part) => {
+      if (!part) return;
+      if (/^[ァ-ヴー]+$/.test(part)) {
+        const ruby = document.createElement('ruby');
+        ruby.className = 'katakana-ruby';
+        ruby.append(document.createTextNode(part));
+        const reading = document.createElement('rt');
+        reading.textContent = katakanaToHiragana(part);
+        ruby.append(reading);
+        fragment.append(ruby);
+      } else fragment.append(document.createTextNode(part));
+    });
+    node.replaceWith(fragment);
+  });
+}
+
+watch([screen, helpOpen, homeConfirm], () => nextTick(applyKatakanaReadings), { immediate: true });
+onMounted(() => nextTick(applyKatakanaReadings));
+
 function go(next) {
+  if (next === 'how1' && helpOpen.value) {
+    helpReturnScreen.value = screen.value;
+    screen.value = 'help1';
+    helpOpen.value = false;
+    return;
+  }
   history.value.push(screen.value);
   screen.value = next;
   helpOpen.value = false;
@@ -69,13 +114,22 @@ function back() {
   screen.value = history.value.pop() || 'home';
   helpOpen.value = false;
 }
+function closeHelp() {
+  screen.value = helpReturnScreen.value;
+  helpOpen.value = false;
+}
 function selectCourse(id) {
   selectedCourse.value = id;
   go('courseConfirm');
 }
 function selectFruit(fruit) {
+  if (!fruit) return;
   selectedFruit.value = fruit;
   go(screen.value === 'customerShop' ? 'customerConfirm' : 'productConfirm');
+}
+function onDrop(event) {
+  const id = event.dataTransfer?.getData('fruitId');
+  selectFruit(fruits.find((fruit) => fruit.id === id));
 }
 function judge() {
   if (selectedFruit.value?.id === 'grape') go('success');
@@ -202,9 +256,7 @@ function resetHome() {
           }}</span>
         </div>
       </div>
-      <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
-
-      <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
+      <div class="drop-zone" role="button" aria-label="くだものをレジへ運ぶ" @dragover.prevent @drop="onDrop"></div>
       <div v-if="screen === 'clerkShop'" class="timer">のこり　03:00</div>
     </ScreenFrame>
 
@@ -302,12 +354,11 @@ function resetHome() {
 <style>
 .drop-zone {
   position: absolute;
-  right: 20px;
-  bottom: 10px;
-  width: 200px;
-  height: 150px;
-  background: rgba(255, 0, 0, 0.3);
-  border: 2px solid red;
+  right: 2.5%;
+  bottom: 3%;
+  width: 23%;
+  height: 39%;
+  border-radius: 18px;
   z-index: 20;
 }
 </style>
