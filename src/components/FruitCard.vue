@@ -11,7 +11,13 @@ function onDragStart(event) {
 </script>
 
 <template>
-  <div class="fruit-card" :class="{ selected: props.selected }" draggable="true" @dragstart="onDragStart">
+  <div
+    class="fruit-card"
+    draggable="true"
+    role="img"
+    :aria-label="`${props.fruit.fruitName}、${props.fruit.feeling.replace('\\n', '')}のくだもの`"
+    @dragstart="onDragStart"
+  >
     <span class="fruit-emoji">{{ props.fruit.emoji }}</span>
     <span class="fruit-face">•ᴗ•</span>
   </button>

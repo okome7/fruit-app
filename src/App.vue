@@ -47,15 +47,59 @@ const selectedFruit = ref(null);
 const attempts = ref(3);
 const correctFruit = ref(null);
 const fruits = [
-  { id: 'apple', emoji: '🍎', feeling: 'おこる' },
-  { id: 'orange', emoji: '🍊', feeling: 'こわい' },
-  { id: 'banana', emoji: '🍌', feeling: 'あぶない' },
-  { id: 'grape', emoji: '🍇', feeling: 'うれしい' },
-  { id: 'peach', emoji: '🍑', feeling: 'かなしい' },
-  { id: 'kiwi', emoji: '🥝', feeling: 'つかれる' },
-  { id: 'strawberry', emoji: '🍓', feeling: 'きらく\nのんびり' },
-  { id: 'pear', emoji: '🍐', feeling: 'やさしい\nしんせつ' }
+  { id: 'anger-apple', emoji: '🍎', fruitName: 'りんご', feeling: 'おこる' },
+  { id: 'fear-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'こわい' },
+  { id: 'startled-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: '（びびり）びっくり' },
+  { id: 'happy-surprise-banana', emoji: '🍌', fruitName: 'バナナ', feeling: '（うれしくて）びっくり' },
+  { id: 'funny-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'おもしろい' },
+  { id: 'motivated-strawberry', emoji: '🍓', fruitName: 'いちご', feeling: 'やるきがある' },
+  { id: 'noisy-persimmon', emoji: '🟠', fruitName: '柿', feeling: 'うるさい' },
+  { id: 'danger-apple', emoji: '🍎', fruitName: 'りんご', feeling: 'あぶない' },
+  { id: 'anxious-pear', emoji: '🍐', fruitName: '梨', feeling: 'ふあん・しんぱい' },
+  { id: 'happy-banana', emoji: '🍌', fruitName: 'バナナ', feeling: 'うれしい' },
+  { id: 'excited-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'こうふんした' },
+  { id: 'joy-banana', emoji: '🍌', fruitName: 'バナナ', feeling: 'よろこぶ' },
+  { id: 'dislike-grape', emoji: '🍇', fruitName: 'ぶどう', feeling: 'いや' },
+  { id: 'troubled-grape', emoji: '🍇', fruitName: 'ぶどう', feeling: 'こまる' },
+  { id: 'embarrassed-peach', emoji: '🍑', fruitName: '桃', feeling: 'はずかしい' },
+  { id: 'irritated-persimmon', emoji: '🟠', fruitName: '柿', feeling: 'いらいら' },
+  { id: 'enjoyable-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'たのしい' },
+  { id: 'happiness-peach', emoji: '🍑', fruitName: '桃', feeling: 'しあわせ' },
+  { id: 'love-strawberry', emoji: '🍓', fruitName: 'いちご', feeling: 'あい' },
+  { id: 'like-peach', emoji: '🍑', fruitName: '桃', feeling: 'すき' },
+  { id: 'persistent-grape', emoji: '🍇', fruitName: 'ぶどう', feeling: 'しつこい' },
+  { id: 'shock-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'しょっく' },
+  { id: 'boring-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'おもしろくない' },
+  { id: 'relaxed-kiwi', emoji: '🥝', fruitName: 'キウイ', feeling: 'きらく・のんびり' },
+  { id: 'wonderful-banana', emoji: '🍌', fruitName: 'バナナ', feeling: 'すてき' },
+  { id: 'moved-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'かんどう' },
+  { id: 'tearful-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'なきたい' },
+  { id: 'sympathy-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'かわいそう' },
+  { id: 'lonely-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'さびしい' },
+  { id: 'disappointed-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'がっかりする' },
+  { id: 'relax-watermelon', emoji: '🍉', fruitName: 'スイカ', feeling: 'りらっくす' },
+  { id: 'relief-watermelon', emoji: '🍉', fruitName: 'スイカ', feeling: 'あんしんする・ほっとする' },
+  { id: 'gratitude-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'かんしゃ' },
+  { id: 'kind-kiwi', emoji: '🥝', fruitName: 'キウイ', feeling: 'やさしい・しんせつ' },
+  { id: 'sad-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'かなしい' },
+  { id: 'frustrated-grape', emoji: '🍇', fruitName: 'ぶどう', feeling: 'くやしい' },
+  { id: 'tired-pear', emoji: '🍐', fruitName: '梨', feeling: 'つかれた' },
+  { id: 'calm-kiwi', emoji: '🥝', fruitName: 'キウイ', feeling: 'おだやか' },
+  { id: 'unconcerned-pear', emoji: '🍐', fruitName: '梨', feeling: 'きにしない' },
+  { id: 'pleasant-watermelon', emoji: '🍉', fruitName: 'スイカ', feeling: 'きもちいい' }
 ];
+const displayedFruits = ref([]);
+
+function pickRandomFruits() {
+  const shuffled = [...fruits];
+  for (let index = shuffled.length - 1; index > 0; index--) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+  displayedFruits.value = shuffled.slice(0, 8);
+}
+
+pickRandomFruits();
 const courseImages = { easy: courseEasy, hard: courseHard, mix: courseMix };
 const courseLabels = { easy: 'かんたん', hard: 'むずかしい', mix: 'ごちゃまぜ' };
 const howScreens = ['how1', 'how2', 'how3', 'how4'];
@@ -117,6 +161,7 @@ function go(next) {
     helpOpen.value = false;
     return;
   }
+  if (next === 'customerShop' && screen.value === 'customerHandoff') pickRandomFruits();
   history.value.push(screen.value);
   screen.value = next;
   helpOpen.value = false;
@@ -138,9 +183,8 @@ function selectFruit(fruit) {
   go(screen.value === 'customerShop' ? 'customerConfirm' : 'productConfirm');
 }
 function judge() {
-  if (selectedFruit.value?.id === correctFruit.value?.id) {
-    go('success');
-  } else if (attempts.value > 1) {
+  if (selectedFruit.value?.fruitName === 'ぶどう') go('success');
+  else if (attempts.value > 1) {
     attempts.value--;
     go('failure');
   } else {
@@ -320,10 +364,9 @@ function resetHome() {
     <!-- お客さんの画面 -->
     <ScreenFrame v-else-if="screen === 'customerShop'" label="お客さんの商品選択画面" :background="shopBg">
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
-
-      <div class="fruit-grid">
-        <div v-for="fruit in fruits" :key="fruit.id" class="fruit-slot">
-          <FruitCard :fruit="fruit" :selected="selectedFruit?.id === fruit.id" @select="selectFruit" /><span>{{
+      <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
+        <div v-for="fruit in displayedFruits" :key="fruit.id" class="fruit-slot">
+          <FruitCard :fruit="fruit" /><span>{{
             fruit.feeling
           }}</span>
         </div>
