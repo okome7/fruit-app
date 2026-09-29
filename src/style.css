@@ -380,10 +380,6 @@ button:focus-visible {
 .fruit-card:hover {
   transform: scale(1.07);
 }
-.fruit-card.selected {
-  filter: drop-shadow(0 0 0.8cqw #ffe100);
-  transform: scale(1.08);
-}
 .fruit-emoji {
   display: block;
   font-size: 8cqw;

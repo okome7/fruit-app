@@ -251,7 +251,7 @@ function resetHome() {
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="fruit-grid">
         <div v-for="fruit in fruits" :key="fruit.id" class="fruit-slot">
-          <FruitCard :fruit="fruit" :selected="selectedFruit?.id === fruit.id" /><span>{{
+          <FruitCard :fruit="fruit" /><span>{{
             fruit.feeling
           }}</span>
         </div>
