@@ -1,13 +1,6 @@
 <script setup>
-function onDrop(event) {
-  console.log('drop:', event.dataTransfer.getData('fruitId'));
-  const id = event.dataTransfer.getData('fruitId');
-  const fruit = fruits.find((f) => f.id === id);
-  selectFruit(fruit);
-  go('customerConfirm');
-}
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue';
 
-import { computed, ref } from 'vue';
 import backgroundImage from './assets/background.png';
 import challengeSpeechBubble from './assets/challenge-speech-bubble.png';
 import guideSpeechBubble from './assets/guide-speech-bubble.png';
@@ -36,6 +29,21 @@ import ScreenFrame from './components/ScreenFrame.vue';
 import NavArrow from './components/NavArrow.vue';
 import HelpMenu from './components/HelpMenu.vue';
 import FruitCard from './components/FruitCard.vue';
+
+function onDrop(event) {
+  console.log('drop:', event.dataTransfer.getData('fruitId'));
+  const id = event.dataTransfer.getData('fruitId');
+  const fruit = fruits.find((f) => f.id === id);
+
+  selectedFruit.value = fruit;
+
+  if (screen.value === 'customerShop') {
+    correctFruit.value = fruit; // お客さんの選択を正解として保存
+    go('customerConfirm'); // お客さんの確認画面へ
+  } else {
+    go('productConfirm'); // 店員さんの確認画面へ
+  }
+}
 
 const screen = ref('home');
 const history = ref([]);
@@ -317,7 +325,7 @@ function resetHome() {
       <NavArrow direction="back" @click="back" /><NavArrow @click="go('customerShop')" />
     </ScreenFrame>
 
-    <!-- お客さんの画面 -->
+    <!-- さんの画面 -->
     <ScreenFrame v-else-if="screen === 'customerShop'" label="お客さんの商品選択画面" :background="shopBg">
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
 
@@ -328,10 +336,23 @@ function resetHome() {
           }}</span>
         </div>
       </div>
-      <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
 
       <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
-      <div v-if="screen === 'clerkShop'" class="timer">のこり　03:00</div>
+    </ScreenFrame>
+
+    <ScreenFrame v-else-if="screen === 'clerkShop'" label="店員さんの商品選択画面" :background="shopBg">
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+
+      <div class="fruit-grid">
+        <div v-for="fruit in fruits" :key="fruit.id" class="fruit-slot">
+          <FruitCard :fruit="fruit" :selected="selectedFruit?.id === fruit.id" @select="selectFruit" />
+          <span>{{ fruit.feeling }}</span>
+        </div>
+      </div>
+
+      <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
+
+      <div class="timer">のこり　03:00</div>
     </ScreenFrame>
 
     <ScreenFrame
