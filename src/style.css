@@ -353,32 +353,47 @@ button:focus-visible {
 }
 .fruit-slot {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .fruit-slot > span {
   position: absolute;
-  bottom: -1.6cqw;
+  bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
-  min-width: 11.8cqw;
+  width: 92%;
   color: #fff;
-  font-size: 1.65cqw;
+  font-size: 1.4cqw;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.08;
   text-align: center;
   white-space: pre-line;
 }
 .fruit-card {
-  position: relative;
+  position: absolute;
+  top: 1%;
+  left: 50%;
+  display: grid;
+  place-items: center;
   width: 75%;
   aspect-ratio: 1;
   border-radius: 50%;
+  text-align: center;
+  transform: translateX(-50%);
   transition: transform 0.14s;
 }
 .fruit-card:hover {
-  transform: scale(1.07);
+  transform: translateX(-50%) scale(1.07);
+}
+.fruit-grid--clerk .fruit-slot:nth-child(-n + 4) .fruit-card {
+  top: -4%;
+}
+.fruit-grid--clerk .fruit-slot:nth-child(n + 5) .fruit-card {
+  top: -12%;
+}
+.fruit-grid--clerk .fruit-slot:nth-child(-n + 4) > span {
+  bottom: 15%;
+}
+.fruit-grid--clerk .fruit-slot:nth-child(n + 5) > span {
+  bottom: 21%;
 }
 .fruit-emoji {
   display: block;
@@ -389,7 +404,7 @@ button:focus-visible {
 .fruit-face {
   position: absolute;
   left: 50%;
-  top: 48%;
+  top: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.9cqw;
   font-weight: 900;

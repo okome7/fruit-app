@@ -13,7 +13,7 @@ function onDragStart(event) {
     class="fruit-card"
     draggable="true"
     role="img"
-    :aria-label="`${props.fruit.feeling.replace('\\n', '')}のくだもの`"
+    :aria-label="`${props.fruit.fruitName}、${props.fruit.feeling.replace('\\n', '')}のくだもの`"
     @dragstart="onDragStart"
   >
     <span class="fruit-emoji">{{ props.fruit.emoji }}</span>
