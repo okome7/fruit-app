@@ -1,7 +1,6 @@
 <script setup>
 const props = defineProps({
-  fruit: { type: Object, required: true },
-  selected: Boolean
+  fruit: { type: Object, required: true }
 });
 
 const emit = defineEmits(['select']);
@@ -12,14 +11,7 @@ function onDragStart(event) {
 </script>
 
 <template>
-  <button
-    class="fruit-card"
-    :class="{ selected: props.selected }"
-    draggable="true"
-    @dragstart="onDragStart"
-    @click="emit('select', props.fruit)"
-    type="button"
-  >
+  <div class="fruit-card" :class="{ selected: props.selected }" draggable="true" @dragstart="onDragStart">
     <span class="fruit-emoji">{{ props.fruit.emoji }}</span>
     <span class="fruit-face">•ᴗ•</span>
   </button>
