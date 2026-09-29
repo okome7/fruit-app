@@ -3,8 +3,6 @@ const props = defineProps({
   fruit: { type: Object, required: true }
 });
 
-const emit = defineEmits(['select']);
-
 function onDragStart(event) {
   event.dataTransfer.setData('fruitId', props.fruit.id);
 }
@@ -20,5 +18,5 @@ function onDragStart(event) {
   >
     <span class="fruit-emoji">{{ props.fruit.emoji }}</span>
     <span class="fruit-face">•ᴗ•</span>
-  </button>
+  </div>
 </template>
