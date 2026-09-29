@@ -1,7 +1,6 @@
 <script setup>
 const props = defineProps({
-  fruit: { type: Object, required: true },
-  selected: Boolean
+  fruit: { type: Object, required: true }
 });
 
 function onDragStart(event) {
@@ -12,7 +11,6 @@ function onDragStart(event) {
 <template>
   <div
     class="fruit-card"
-    :class="{ selected: props.selected }"
     draggable="true"
     role="img"
     :aria-label="`${props.fruit.feeling.replace('\\n', '')}のくだもの`"
