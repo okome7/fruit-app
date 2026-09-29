@@ -4,25 +4,23 @@ const props = defineProps({
   selected: Boolean
 });
 
+const emit = defineEmits(['select']);
+
 function onDragStart(event) {
   event.dataTransfer.setData('fruitId', props.fruit.id);
 }
 </script>
 
 <template>
-  <div class="fruit-card" :class="{ selected: props.selected }" draggable="true" @dragstart="onDragStart">
+  <button
+    class="fruit-card"
+    :class="{ selected: props.selected }"
+    draggable="true"
+    @dragstart="onDragStart"
+    @click="emit('select', props.fruit)"
+    type="button"
+  >
     <span class="fruit-emoji">{{ props.fruit.emoji }}</span>
     <span class="fruit-face">•ᴗ•</span>
-  </div>
+  </button>
 </template>
-
-<style scoped>
-.fruit-card {
-  cursor: grab;
-  border: none;
-  background: transparent;
-}
-.fruit-card:active {
-  cursor: grabbing;
-}
-</style>

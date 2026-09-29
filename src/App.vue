@@ -4,7 +4,6 @@ function onDrop(event) {
   const id = event.dataTransfer.getData('fruitId');
   const fruit = fruits.find((f) => f.id === id);
   selectFruit(fruit);
-  go('customerConfirm');
 }
 
 import { computed, ref } from 'vue';
@@ -40,6 +39,7 @@ const homeConfirm = ref(false);
 const selectedCourse = ref('easy');
 const selectedFruit = ref(null);
 const attempts = ref(3);
+const correctFruit = ref(null);
 const fruits = [
   { id: 'apple', emoji: '🍎', feeling: 'おこる' },
   { id: 'orange', emoji: '🍊', feeling: 'こわい' },
@@ -74,15 +74,30 @@ function selectCourse(id) {
   go('courseConfirm');
 }
 function selectFruit(fruit) {
+  console.log('現在の画面:', screen.value);
+  console.log('選んだフルーツ:', fruit);
+
+  if (screen.value === 'customerShop') {
+    correctFruit.value = fruit;
+  }
   selectedFruit.value = fruit;
-  go(screen.value === 'customerShop' ? 'customerConfirm' : 'productConfirm');
+
+  if (screen.value === 'customerShop') {
+    go('customerConfirm');
+  } else if (screen.value === 'clerkShop') {
+    go('productConfirm');
+  }
 }
+
 function judge() {
-  if (selectedFruit.value?.id === 'grape') go('success');
-  else if (attempts.value > 1) {
+  if (selectedFruit.value?.id === correctFruit.value?.id) {
+    go('success');
+  } else if (attempts.value > 1) {
     attempts.value--;
     go('failure');
-  } else go('finalFailure');
+  } else {
+    go('finalFailure');
+  }
 }
 function resetHome() {
   screen.value = 'home';
@@ -174,23 +189,31 @@ function resetHome() {
       <NavArrow direction="back" @click="back" /><NavArrow @click="go('customerShop')" />
     </ScreenFrame>
 
-    <ScreenFrame
-      v-else-if="screen === 'customerShop' || screen === 'clerkShop'"
-      :label="screen === 'customerShop' ? 'お客さんの商品選択画面' : '店員さんの商品選択画面'"
-      :background="screen === 'clerkShop' ? shopping : shopBg"
-    >
+    <!-- お客さんの画面 -->
+    <ScreenFrame v-else-if="screen === 'customerShop'" label="お客さんの商品選択画面" :background="shopBg">
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+
       <div class="fruit-grid">
         <div v-for="fruit in fruits" :key="fruit.id" class="fruit-slot">
-          <FruitCard :fruit="fruit" :selected="selectedFruit?.id === fruit.id" @select="selectFruit" /><span>{{
-            fruit.feeling
-          }}</span>
+          <FruitCard :fruit="fruit" :selected="selectedFruit?.id === fruit.id" @select="(f) => selectFruit(f)" />
+          <span>{{ fruit.feeling }}</span>
         </div>
       </div>
       <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
+    </ScreenFrame>
 
+    <!-- 店員さんの画面 -->
+    <ScreenFrame v-else-if="screen === 'clerkShop'" label="店員さんの商品選択画面" :background="shopping">
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+
+      <div class="fruit-grid">
+        <div v-for="fruit in fruits" :key="fruit.id" class="fruit-slot">
+          <FruitCard :fruit="fruit" :selected="selectedFruit?.id === fruit.id" @select="(f) => selectFruit(f)" />
+          <span>{{ fruit.feeling }}</span>
+        </div>
+      </div>
       <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
-      <div v-if="screen === 'clerkShop'" class="timer">のこり　03:00</div>
+      <div class="timer">のこり 03:00</div>
     </ScreenFrame>
 
     <ScreenFrame
@@ -236,11 +259,15 @@ function resetHome() {
         <span>しつもん１</span>
         <p>{{ questionText }}</p>
       </div>
-      <template v-if="screen === 'question'"
-        ><NavArrow direction="back" @click="back" /><NavArrow @click="go('questionConfirm')"
-      /></template>
+
+      <template v-if="screen === 'question'">
+        <NavArrow direction="back" @click="back" />
+        <NavArrow @click="go('productIntro')" />
+      </template>
+
       <div v-else class="question-actions">
-        <button @click="back">もういちど</button><button @click="go('productIntro')">つぎへ</button>
+        <button @click="back">もういちど</button>
+        <button @click="go('productIntro')">つぎへ</button>
       </div>
     </ScreenFrame>
 
@@ -297,8 +324,8 @@ function resetHome() {
   bottom: 10px;
   width: 200px;
   height: 150px;
-  background: rgba(255, 0, 0, 0.3);
-  border: 2px solid red;
+  background: transparent;
+  border: note;
   z-index: 20;
 }
 </style>
