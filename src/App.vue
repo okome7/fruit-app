@@ -1,13 +1,5 @@
 <script setup>
-function onDrop(event) {
-  console.log('drop:', event.dataTransfer.getData('fruitId'));
-  const id = event.dataTransfer.getData('fruitId');
-  const fruit = fruits.find((f) => f.id === id);
-  selectFruit(fruit);
-  go('customerConfirm');
-}
-
-import { computed, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import backgroundImage from './assets/background.png';
 import challengeSpeechBubble from './assets/challenge-speech-bubble.png';
 import guideSpeechBubble from './assets/guide-speech-bubble.png';
@@ -179,8 +171,13 @@ function selectCourse(id) {
   go('courseConfirm');
 }
 function selectFruit(fruit) {
+  if (!fruit) return;
   selectedFruit.value = fruit;
   go(screen.value === 'customerShop' ? 'customerConfirm' : 'productConfirm');
+}
+function onDrop(event) {
+  const id = event.dataTransfer?.getData('fruitId');
+  selectFruit(fruits.find((fruit) => fruit.id === id));
 }
 function judge() {
   if (selectedFruit.value?.fruitName === 'ぶどう') go('success');
@@ -361,8 +358,11 @@ function resetHome() {
       <NavArrow direction="back" @click="back" /><NavArrow @click="go('customerShop')" />
     </ScreenFrame>
 
-    <!-- お客さんの画面 -->
-    <ScreenFrame v-else-if="screen === 'customerShop'" label="お客さんの商品選択画面" :background="shopBg">
+    <ScreenFrame
+      v-else-if="screen === 'customerShop' || screen === 'clerkShop'"
+      :label="screen === 'customerShop' ? 'お客さんの商品選択画面' : '店員さんの商品選択画面'"
+      :background="screen === 'clerkShop' ? shopping : shopBg"
+    >
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
         <div v-for="fruit in displayedFruits" :key="fruit.id" class="fruit-slot">
@@ -371,9 +371,7 @@ function resetHome() {
           }}</span>
         </div>
       </div>
-      <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
-
-      <div class="drop-zone" @dragover.prevent @drop="onDrop"></div>
+      <div class="drop-zone" role="button" aria-label="くだものをレジへ運ぶ" @dragover.prevent @drop="onDrop"></div>
       <div v-if="screen === 'clerkShop'" class="timer">のこり　03:00</div>
     </ScreenFrame>
 
@@ -491,12 +489,11 @@ function resetHome() {
 <style>
 .drop-zone {
   position: absolute;
-  right: 20px;
-  bottom: 10px;
-  width: 200px;
-  height: 150px;
-  background: rgba(255, 0, 0, 0.3);
-  border: 2px solid red;
+  right: 2.5%;
+  bottom: 3%;
+  width: 23%;
+  height: 39%;
+  border-radius: 18px;
   z-index: 20;
 }
 </style>
