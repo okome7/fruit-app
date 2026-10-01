@@ -342,7 +342,7 @@ button:focus-visible {
 .fruit-grid {
   position: absolute;
   left: 4.4%;
-  top: 16%;
+  top: 12%;
   width: 65.5%;
   height: 79%;
   display: grid;
@@ -359,8 +359,8 @@ button:focus-visible {
 }
 .fruit-slot > span {
   position: absolute;
-  bottom: -1.6cqw;
-  left: 50%;
+  bottom: 1.5cqw;
+  left: calc(50% + 0.3cqw);
   transform: translateX(-50%);
   min-width: 11.8cqw;
   color: #fff;
@@ -370,12 +370,31 @@ button:focus-visible {
   text-align: center;
   white-space: pre-line;
 }
+.fruit-slot:nth-child(-n + 4) > span {
+  bottom: 0.5cqw;
+}
 .fruit-card {
   position: relative;
   width: 75%;
   aspect-ratio: 1;
   border-radius: 50%;
   transition: transform 0.14s;
+}
+.fruit-slot:nth-child(-n + 4) > .fruit-card {
+  top: -1.5cqw;
+}
+.fruit-slot:nth-child(1) > .fruit-card,
+.fruit-slot:nth-child(2) > .fruit-card,
+.fruit-slot:nth-child(3) > .fruit-card,
+.fruit-slot:nth-child(6) > .fruit-card,
+.fruit-slot:nth-child(5) > .fruit-card {
+  left: 1.5cqw;
+}
+.fruit-slot:nth-child(n + 5) > .fruit-card {
+  top: -3cqw;
+}
+.fruit-slot:nth-child(6) > .fruit-card {
+  left: 0.5cqw;
 }
 .fruit-card:hover {
   transform: scale(1.07);
@@ -400,15 +419,63 @@ button:focus-visible {
   color: #3b2417;
   text-shadow: 0 0.08cqw #fff;
 }
+.drop-zone {
+  position: absolute;
+  right: 2%;
+  bottom: 8%;
+  width: 23%;
+  height: 25%;
+}
 .timer {
   position: absolute;
-  right: 4%;
-  bottom: 4%;
-  padding: 0.8cqw 1.8cqw;
-  background: #fff1c5;
-  border: 0.25cqw solid #8f5426;
-  border-radius: 1cqw;
-  font-size: 2cqw;
+  left: 50%;
+  top: -125%;
+  transform: translate(-50%, -50%) rotate(4deg);
+  padding: 0.3cqw 0.8cqw;
+  background: #000;
+  color: #fff;
+  font-size: 1.6cqw;
+  white-space: nowrap;
+}
+.one-minute-warning,
+.time-up-warning {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  padding: 3.2cqw 6.5cqw 3.5cqw;
+  border: 0.35cqw solid #dd8b00;
+  border-radius: 1.5cqw;
+  background: #fffdf4;
+  color: #5a2a13;
+  text-align: center;
+}
+.time-up-warning {
+  padding: 3.2cqw 4.5cqw 3.5cqw;
+}
+.time-up-warning p {
+  margin: 0 0 1cqw;
+  font-size: 2.6cqw;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+.one-minute-warning p {
+  margin: 0 0 1cqw;
+  font-size: 3cqw;
+  white-space: nowrap;
+}
+.one-minute-warning button,
+.time-up-warning button {
+  margin-top: 1cqw;
+  min-width: 14cqw;
+  padding: 0.8cqw 2cqw;
+  border: 0.3cqw solid #dd8b00;
+  border-radius: 4cqw;
+  background: linear-gradient(#ffd948, #ffae00);
+  color: #5a2a13;
+  font-size: 2.1cqw;
+  font-weight: 700;
 }
 .confirm-card {
   position: absolute;
@@ -638,11 +705,16 @@ button:focus-visible {
   border: 0.3cqw solid #fff;
   border-radius: 4cqw;
   background: linear-gradient(#ffdd52, #ffad00);
-  box-shadow: inset 0 0 0 0.3cqw #ffed92, 0 0.35cqw 0 #ff8b00;
+  box-shadow:
+    inset 0 0 0 0.3cqw #ffed92,
+    0 0.35cqw 0 #ff8b00;
   color: #54260f;
   font-size: 3.5cqw;
   font-weight: 800;
-  text-shadow: 0 0.15cqw #fff, -0.12cqw 0 #fff, 0.12cqw 0 #fff;
+  text-shadow:
+    0 0.15cqw #fff,
+    -0.12cqw 0 #fff,
+    0.12cqw 0 #fff;
 }
 .terms-back {
   left: 8.3%;
