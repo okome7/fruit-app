@@ -961,7 +961,6 @@ function retryGame() {
         </button>
       </div>
     </ScreenFrame>
-    >
 
     <div v-if="homeConfirm" class="modal-backdrop">
       <div
