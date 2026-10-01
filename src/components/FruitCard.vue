@@ -3,8 +3,13 @@ const props = defineProps({
   fruit: { type: Object, required: true }
 });
 
+const emit = defineEmits(['select']);
+
 function onDragStart(event) {
   event.dataTransfer.setData('fruitId', props.fruit.id);
+
+  // ★ ここで選択イベントを発火させる ★
+  emit('select', props.fruit);
 }
 </script>
 

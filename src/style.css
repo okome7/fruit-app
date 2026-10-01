@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, "Noto Sans JP", "Yu Gothic", sans-serif;
+  font-family: Inter, 'Noto Sans JP', 'Yu Gothic', sans-serif;
   color: #000;
   background: #f4f1e9;
   font-synthesis: none;
@@ -530,11 +530,13 @@ button:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   border: 0.5cqw solid #d09050;
   border-radius: 3cqw;
   background: #fffdf4e8;
   text-align: center;
 }
+
 .result > span {
   font-size: 9cqw;
   line-height: 1;
@@ -547,7 +549,7 @@ button:focus-visible {
 .result p {
   margin: 0.7cqw 0 1.5cqw;
   font-size: 2.2cqw;
-  line-height: 1.6;
+  line-height: 1.3;
 }
 .modal-backdrop {
   position: fixed;
@@ -661,11 +663,16 @@ button:focus-visible {
   border: 0.3cqw solid #fff;
   border-radius: 4cqw;
   background: linear-gradient(#ffdd52, #ffad00);
-  box-shadow: inset 0 0 0 0.3cqw #ffed92, 0 0.35cqw 0 #ff8b00;
+  box-shadow:
+    inset 0 0 0 0.3cqw #ffed92,
+    0 0.35cqw 0 #ff8b00;
   color: #54260f;
   font-size: 3.5cqw;
   font-weight: 800;
-  text-shadow: 0 0.15cqw #fff, -0.12cqw 0 #fff, 0.12cqw 0 #fff;
+  text-shadow:
+    0 0.15cqw #fff,
+    -0.12cqw 0 #fff,
+    0.12cqw 0 #fff;
 }
 .terms-back {
   left: 8.3%;

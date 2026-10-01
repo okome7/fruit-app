@@ -419,7 +419,8 @@ function retryGame() {
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
         <div v-for="fruit in displayedFruits" :key="fruit.id" class="fruit-slot">
-          <FruitCard :fruit="fruit" /><span>{{ fruit.feeling }}</span>
+          <FruitCard :fruit="fruit" @select="screen === 'clerkShop' ? chooseStaffFruit(fruit) : chooseFruit(fruit)" />
+          <span>{{ fruit.feeling }}</span>
         </div>
       </div>
       <div class="drop-zone" role="button" aria-label="くだものをレジへ運ぶ" @dragover.prevent @drop="onDrop"></div>
@@ -490,11 +491,10 @@ function retryGame() {
     </ScreenFrame>
 
     <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="backgroundImage">
-      <br />
-      <h2 class="success-title">せいかい！　おめでとう！！</h2>
-      <br />
-      <div class="result-card">
-        <p class="message">
+      <div class="result success">
+        <h1>せいかい！　おめでとう！！</h1>
+
+        <p>
           たのしいって どんな きもち？<br />
           すきなことを　したときや、<br />
           うれしいことが　あったときに<br />
@@ -502,19 +502,13 @@ function retryGame() {
           「たのしい！」「もっと　やりたい！」と<br />
           ことばで　つたえてみよう！
         </p>
-      </div>
-      <br />
-      <div class="button-row edge">
-        <button class="home-button" @click="resetHome">
-          <span class="home-kana"></span>
-          ホームにもどる
-        </button>
-
-        <button class="retry-button" @click="retryGame">
-          <span class="retry-kana">もういちどあそぶ</span>
-        </button>
+        <div class="button-row">
+          <button @click="resetHome">ホームにもどる</button>
+          <button @click="retryGame">もういちどあそぶ</button>
+        </div>
       </div>
     </ScreenFrame>
+
     <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="backgroundImage"
       ><div class="result failure">
         <span>💭</span>
@@ -525,11 +519,12 @@ function retryGame() {
     >
     <ScreenFrame v-else-if="screen === 'finalFailure'" label="最終失敗画面" :background="backgroundImage"
       ><div class="result failure">
-        <span>🍇</span>
         <h1>しっぱい……。</h1>
-        <p>せいかいは「ぶどう」でした…。<br />また　ちょうせんしてね！</p>
-        <button class="orange - button">ホームにもどる</button>
-        <button @click="orange - botton">もういちどあそぶ</button>
+        <p>せいかいは「{{ correctFruit?.feeling }}」でした…。<br />また　ちょうせんしてね！</p>
+        <div class="button-row">
+          <button @click="resetHome">ホームにもどる</button>
+          <button @click="retryGame">もういちどあそぶ</button>
+        </div>
       </div></ScreenFrame
     >
 
@@ -550,6 +545,67 @@ function retryGame() {
   </main>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      screen: 'home',
+      selectedFruit: null,
+      selectedEmotion: null,
+      staffEmotion: null,
+      attempts: 3
+    };
+  },
+
+  methods: {
+    // お客さんがくだものを選んだときに呼ばれる処理
+    chooseFruit(fruit) {
+      this.selectedFruit = fruit;
+      this.selectedEmotion = fruit.feeling;
+    },
+
+    chooseStaffFruit(fruit) {
+      this.staffEmotion = fruit.feeling;
+    },
+
+    finalFail() {
+      this.screen = 'finalFailure';
+    },
+
+    retryGame() {
+      this.screen = 'customerShop';
+      this.attempts = 3;
+    },
+
+    resetHome() {
+      this.screen = 'home';
+      this.selectedFruit = null;
+      this.selectedEmotion = null;
+      this.attempts = 3;
+    },
+
+    // 画面遷移の共通処理
+    go(next) {
+      this.screen = next;
+    },
+
+    back() {
+      // あなたの既存の戻る処理
+    },
+
+    judge() {
+      const isCorrect = this.selectedEmotion === this.staffEmotion;
+
+      if (isCorrect) {
+        this.go('finalSuccess');
+      } else {
+        this.finalFail();
+      }
+    }
+  }
+};
+</script>
+
 <style>
 .orange-button {
   background: #ffb84d;
@@ -566,7 +622,7 @@ function retryGame() {
   display: flex;
   justify-content: center;
   gap: 24px;
-  margin-top: 20px;
+  margin-top: 1cqw;
 }
 
 /* ⭐ オレンジボタン（文字が確実に見える設定） */
