@@ -500,20 +500,28 @@ button:focus-visible {
 }
 .instruction-panel {
   position: absolute;
-  left: 28%;
-  top: 22%;
-  width: 46%;
-  padding: 4cqw;
+  left: 20%;
+  top: 24%;
+  width: 60%;
+  height: 52%;
+  padding: 4% 4% 2%;
   border: 0.45cqw solid #d09050;
   border-radius: 2cqw;
   background: #fffdf4f2;
-  font-size: 2.8cqw;
-  line-height: 1.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2cqw;
+  line-height: 1.65;
   text-align: center;
+}
+.instruction-panel p {
+  margin: 0;
 }
 .instruction-panel button {
   display: block;
-  margin: 2cqw auto 0;
+  margin: 1.5cqw auto 0;
 }
 .result {
   position: absolute;

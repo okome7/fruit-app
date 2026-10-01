@@ -460,9 +460,8 @@ function resetHome() {
     <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="shopping">
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="instruction-panel">
-        そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！<button
-          @click="go('clerkShop')"
-        >
+        <p>そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！</p>
+        <button @click="go('clerkShop')">
           はじめる
         </button>
       </div>
