@@ -425,11 +425,16 @@ function resetHome() {
   selectedFruit.value = null;
   correctFruit.value = null;
   attempts.value = 3;
-  remainingSeconds.value = 180;
-  oneMinuteAcknowledged.value = false;
-  timeUpAcknowledged.value = false;
-  gestureQuestion.value = pickRandomQuestion(gestureQuestions);
-  associationQuestion.value = pickRandomQuestion(associationQuestions);
+}
+
+function retryGame() {
+  selectedFruit.value = null;
+  correctFruit.value = null;
+  clerkFruit.value = null;
+  attempts.value = 3;
+
+  pickRandomFruits();
+  go('roles');
 }
 </script>
 
@@ -987,6 +992,61 @@ function resetHome() {
 </template>
 
 <style>
+.orange-button {
+  background: #ffb84d;
+  border: 3px solid #ffb84d;
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+/* ⭐ オレンジボタン（文字が確実に見える設定） */
+.button-row button {
+  background: #ffb84d !important; /* オレンジ背景を強制 */
+  border: 3px solid #ffb84d !important;
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333 !important; /* ⭐ 黒文字に変更（絶対に見える） */
+  cursor: pointer;
+}
+
+.button-row button:hover {
+  background: #ffa733 !important;
+}
+
+.message {
+  font-size: 20px; /* 他の画面と同じサイズに揃える */
+  line-height: 1.8; /* 読みやすい行間 */
+}
+
+.result-card {
+  background: #fff;
+  border: 4px solid #ffb84d; /* ⭐ オレンジの枠 */
+  border-radius: 20px; /* 角丸 */
+  padding: 24px;
+  width: 90%;
+  max-width: 480px;
+  margin: 0 auto; /* 中央に配置 */
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ふんわり影 */
+}
+
+.button-row button:hover {
+  background: #ffe6ec; /* ほんのり色が変わる */
+}
+
 .drop-zone {
   position: absolute;
   right: 2.5%;
@@ -995,5 +1055,13 @@ function resetHome() {
   height: 39%;
   border-radius: 18px;
   z-index: 20;
+}
+
+.success-title {
+  text-align: center; /* ⭐ 中央寄せ */
+  width: 100%; /* 横幅いっぱいに広げる */
+  margin: 20px 0; /* 上下の余白 */
+  font-size: 28px; /* 見やすい大きさ */
+  font-weight: bold; /* 太字 */
 }
 </style>
