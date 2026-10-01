@@ -1,5 +1,5 @@
 <script setup>
-import heroImage from '../assets/hero.png'
+import heroImage from '../assets/hero.png';
 </script>
 
 <template>

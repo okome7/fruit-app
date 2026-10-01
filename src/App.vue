@@ -1,5 +1,6 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue';
+
 import backgroundImage from './assets/background.png';
 import challengeSpeechBubble from './assets/challenge-speech-bubble.png';
 import guideSpeechBubble from './assets/guide-speech-bubble.png';
@@ -28,6 +29,21 @@ import ScreenFrame from './components/ScreenFrame.vue';
 import NavArrow from './components/NavArrow.vue';
 import HelpMenu from './components/HelpMenu.vue';
 import FruitCard from './components/FruitCard.vue';
+
+function onDrop(event) {
+  console.log('drop:', event.dataTransfer.getData('fruitId'));
+  const id = event.dataTransfer.getData('fruitId');
+  const fruit = fruits.find((f) => f.id === id);
+
+  selectedFruit.value = fruit;
+
+  if (screen.value === 'customerShop') {
+    correctFruit.value = fruit; // お客さんの選択を正解として保存
+    go('customerConfirm'); // お客さんの確認画面へ
+  } else {
+    go('productConfirm'); // 店員さんの確認画面へ
+  }
+}
 
 const screen = ref('home');
 const history = ref([]);
