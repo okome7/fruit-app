@@ -506,7 +506,10 @@ function resetHome() {
     >
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="confirm-card">
-        <span class="big-fruit">{{ selectedFruit?.emoji }}</span>
+        <div class="big-fruit" role="img" :aria-label="selectedFruit?.fruitName">
+          <span class="big-fruit-emoji">{{ selectedFruit?.emoji }}</span>
+          <span class="big-fruit-face">•ᴗ•</span>
+        </div>
         <h1>このくだもので　いい？</h1>
         <div class="confirm-actions">
           <button type="button" @click="back">いいえ</button
