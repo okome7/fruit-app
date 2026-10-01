@@ -44,6 +44,7 @@ const remainingSeconds = ref(180);
 const oneMinuteAcknowledged = ref(false);
 const timeUpAcknowledged = ref(false);
 const timerStarted = ref(false);
+const questionPreviewOpen = ref(false);
 let timerInterval;
 const fruits = [
   { id: 'anger-apple', emoji: '🍎', fruitName: 'りんご', feeling: 'おこる' },
@@ -178,6 +179,7 @@ function applyKatakanaReadings() {
 
 watch([screen, helpOpen, homeConfirm], () => nextTick(applyKatakanaReadings), { immediate: true });
 watch(screen, (nextScreen) => {
+  if (nextScreen !== 'clerkShop') questionPreviewOpen.value = false;
   if (timerStarted.value && (nextScreen === 'clerkShop' || nextScreen === 'productConfirm')) return;
 
   if (timerInterval) clearInterval(timerInterval);
@@ -441,6 +443,15 @@ function resetHome() {
       :background="screen === 'clerkShop' ? shopping : shopBg"
     >
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <button
+        v-if="screen === 'clerkShop'"
+        class="question-sign"
+        type="button"
+        aria-label="しつもんをみる"
+        @click="questionPreviewOpen = true"
+      >
+        しつもんを<br />みる
+      </button>
       <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
         <div v-for="fruit in displayedFruits" :key="fruit.id" class="fruit-slot">
           <FruitCard :fruit="fruit" /><span :class="{ 'fruit-feeling--multiline': fruit.feeling.includes('\n') }">{{
@@ -464,6 +475,27 @@ function resetHome() {
       >
         <p>じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
         <button type="button" @click="timeUpAcknowledged = true">わかった</button>
+      </div>
+      <div
+        v-if="screen === 'clerkShop' && questionPreviewOpen"
+        class="question-preview-backdrop"
+        role="dialog"
+        aria-modal="true"
+        aria-label="しつもんのかくにん"
+        @click="questionPreviewOpen = false"
+      >
+        <button
+          class="question-preview-close"
+          type="button"
+          aria-label="しつもんを閉じる"
+          @click.stop="questionPreviewOpen = false"
+        >
+          <img :src="helpCloseButton" alt="" />
+        </button>
+        <div class="question-card question-preview-card">
+          <span>しつもん{{ questionNumber }}</span>
+          <p>{{ questionText }}</p>
+        </div>
       </div>
     </ScreenFrame>
 
