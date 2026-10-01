@@ -418,8 +418,8 @@ button:focus-visible {
 }
 .timer {
   position: absolute;
-  left: 50%;
-  top: -125%;
+  left: calc(50% + 0.3cqw);
+  top: -58%;
   transform: translate(-50%, -50%) rotate(4deg);
   padding: 0.3cqw 0.8cqw;
   background: #000;
@@ -708,11 +708,16 @@ button:focus-visible {
   border: 0.3cqw solid #fff;
   border-radius: 4cqw;
   background: linear-gradient(#ffdd52, #ffad00);
-  box-shadow: inset 0 0 0 0.3cqw #ffed92, 0 0.35cqw 0 #ff8b00;
+  box-shadow:
+    inset 0 0 0 0.3cqw #ffed92,
+    0 0.35cqw 0 #ff8b00;
   color: #54260f;
   font-size: 3.5cqw;
   font-weight: 800;
-  text-shadow: 0 0.15cqw #fff, -0.12cqw 0 #fff, 0.12cqw 0 #fff;
+  text-shadow:
+    0 0.15cqw #fff,
+    -0.12cqw 0 #fff,
+    0.12cqw 0 #fff;
 }
 .terms-back {
   left: 8.3%;
