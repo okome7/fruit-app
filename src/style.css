@@ -342,7 +342,7 @@ button:focus-visible {
 .fruit-grid {
   position: absolute;
   left: 4.4%;
-  top: 12%;
+  top: 16%;
   width: 65.5%;
   height: 79%;
   display: grid;
@@ -353,55 +353,52 @@ button:focus-visible {
 }
 .fruit-slot {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .fruit-slot > span {
   position: absolute;
-  bottom: 1.5cqw;
-  left: calc(50% + 0.3cqw);
+  bottom: 10%;
+  left: 50%;
   transform: translateX(-50%);
-  min-width: 11.8cqw;
+  width: 92%;
   color: #fff;
-  font-size: 1.65cqw;
+  font-size: 1.4cqw;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.08;
   text-align: center;
   white-space: pre-line;
 }
-.fruit-slot:nth-child(-n + 4) > span {
-  bottom: 0.5cqw;
+.fruit-slot > .fruit-feeling--multiline {
+  font-size: 1.2cqw;
+  line-height: 1.05;
+  transform: translate(-50%, 11%);
 }
 .fruit-card {
-  position: relative;
+  position: absolute;
+  top: 1%;
+  left: 50%;
+  display: grid;
+  place-items: center;
   width: 75%;
   aspect-ratio: 1;
   border-radius: 50%;
+  text-align: center;
+  transform: translateX(-50%);
   transition: transform 0.14s;
 }
-.fruit-slot:nth-child(-n + 4) > .fruit-card {
-  top: -1.5cqw;
-}
-.fruit-slot:nth-child(1) > .fruit-card,
-.fruit-slot:nth-child(2) > .fruit-card,
-.fruit-slot:nth-child(3) > .fruit-card,
-.fruit-slot:nth-child(6) > .fruit-card,
-.fruit-slot:nth-child(5) > .fruit-card {
-  left: 1.5cqw;
-}
-.fruit-slot:nth-child(n + 5) > .fruit-card {
-  top: -3cqw;
-}
-.fruit-slot:nth-child(6) > .fruit-card {
-  left: 0.5cqw;
-}
 .fruit-card:hover {
-  transform: scale(1.07);
+  transform: translateX(-50%) scale(1.07);
 }
-.fruit-card.selected {
-  filter: drop-shadow(0 0 0.8cqw #ffe100);
-  transform: scale(1.08);
+.fruit-grid--clerk .fruit-slot:nth-child(-n + 4) .fruit-card {
+  top: -4%;
+}
+.fruit-grid--clerk .fruit-slot:nth-child(n + 5) .fruit-card {
+  top: -12%;
+}
+.fruit-grid--clerk .fruit-slot:nth-child(-n + 4) > span {
+  bottom: 15%;
+}
+.fruit-grid--clerk .fruit-slot:nth-child(n + 5) > span {
+  bottom: 21%;
 }
 .fruit-emoji {
   display: block;
@@ -412,19 +409,12 @@ button:focus-visible {
 .fruit-face {
   position: absolute;
   left: 50%;
-  top: 48%;
+  top: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.9cqw;
   font-weight: 900;
   color: #3b2417;
   text-shadow: 0 0.08cqw #fff;
-}
-.drop-zone {
-  position: absolute;
-  right: 2%;
-  bottom: 8%;
-  width: 23%;
-  height: 25%;
 }
 .timer {
   position: absolute;
@@ -442,7 +432,7 @@ button:focus-visible {
   position: absolute;
   left: 50%;
   top: 48%;
-  z-index: 5;
+  z-index: 30;
   transform: translate(-50%, -50%);
   padding: 3.2cqw 6.5cqw 3.5cqw;
   border: 0.35cqw solid #dd8b00;
@@ -454,16 +444,17 @@ button:focus-visible {
 .time-up-warning {
   padding: 3.2cqw 4.5cqw 3.5cqw;
 }
+.one-minute-warning p,
 .time-up-warning p {
   margin: 0 0 1cqw;
-  font-size: 2.6cqw;
-  line-height: 1.7;
   white-space: nowrap;
 }
 .one-minute-warning p {
-  margin: 0 0 1cqw;
   font-size: 3cqw;
-  white-space: nowrap;
+}
+.time-up-warning p {
+  font-size: 2.6cqw;
+  line-height: 1.7;
 }
 .one-minute-warning button,
 .time-up-warning button {
@@ -519,14 +510,17 @@ button:focus-visible {
 }
 .question-card {
   position: absolute;
-  left: 27%;
-  top: 20%;
-  width: 47%;
-  min-height: 52%;
-  padding: 8% 4% 4%;
+  left: 20%;
+  top: 25%;
+  width: 60%;
+  height: 48%;
+  padding: 4.5% 4% 2%;
   border: 0.45cqw solid #d09050;
   border-radius: 2cqw;
   background: #fffdf4f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 .question-card span {
@@ -538,11 +532,12 @@ button:focus-visible {
   border-radius: 3cqw;
   background: #ffdd78;
   font-size: 2.2cqw;
+  white-space: nowrap;
 }
 .question-card p {
-  white-space: pre-line;
-  font-size: 3cqw;
-  line-height: 1.8;
+  white-space: pre;
+  font-size: 2.2cqw;
+  line-height: 1.65;
   margin: 0;
 }
 .question-actions {
@@ -552,20 +547,28 @@ button:focus-visible {
 }
 .instruction-panel {
   position: absolute;
-  left: 28%;
-  top: 22%;
-  width: 46%;
-  padding: 4cqw;
+  left: 20%;
+  top: 24%;
+  width: 60%;
+  height: 52%;
+  padding: 4% 4% 2%;
   border: 0.45cqw solid #d09050;
   border-radius: 2cqw;
   background: #fffdf4f2;
-  font-size: 2.8cqw;
-  line-height: 1.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2cqw;
+  line-height: 1.65;
   text-align: center;
+}
+.instruction-panel p {
+  margin: 0;
 }
 .instruction-panel button {
   display: block;
-  margin: 2cqw auto 0;
+  margin: 1.5cqw auto 0;
 }
 .result {
   position: absolute;
@@ -705,16 +708,11 @@ button:focus-visible {
   border: 0.3cqw solid #fff;
   border-radius: 4cqw;
   background: linear-gradient(#ffdd52, #ffad00);
-  box-shadow:
-    inset 0 0 0 0.3cqw #ffed92,
-    0 0.35cqw 0 #ff8b00;
+  box-shadow: inset 0 0 0 0.3cqw #ffed92, 0 0.35cqw 0 #ff8b00;
   color: #54260f;
   font-size: 3.5cqw;
   font-weight: 800;
-  text-shadow:
-    0 0.15cqw #fff,
-    -0.12cqw 0 #fff,
-    0.12cqw 0 #fff;
+  text-shadow: 0 0.15cqw #fff, -0.12cqw 0 #fff, 0.12cqw 0 #fff;
 }
 .terms-back {
   left: 8.3%;
