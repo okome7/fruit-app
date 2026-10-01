@@ -463,14 +463,17 @@ button:focus-visible {
 }
 .question-card {
   position: absolute;
-  left: 27%;
-  top: 20%;
-  width: 47%;
-  min-height: 52%;
-  padding: 8% 4% 4%;
+  left: 20%;
+  top: 25%;
+  width: 60%;
+  height: 48%;
+  padding: 4.5% 4% 2%;
   border: 0.45cqw solid #d09050;
   border-radius: 2cqw;
   background: #fffdf4f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 .question-card span {
@@ -482,11 +485,12 @@ button:focus-visible {
   border-radius: 3cqw;
   background: #ffdd78;
   font-size: 2.2cqw;
+  white-space: nowrap;
 }
 .question-card p {
-  white-space: pre-line;
-  font-size: 3cqw;
-  line-height: 1.8;
+  white-space: pre;
+  font-size: 2.2cqw;
+  line-height: 1.65;
   margin: 0;
 }
 .question-actions {

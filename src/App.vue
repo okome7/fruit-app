@@ -99,11 +99,34 @@ const howScreens = ['how1', 'how2', 'how3', 'how4'];
 const howBackgrounds = { how1, how2, how3, how4 };
 const helpScreens = ['help1', 'help2', 'help3', 'help4'];
 const helpBackgrounds = { help1: rolesBg, help2: how2, help3: how3, help4: how4 };
-const questionText = computed(() =>
-  selectedCourse.value === 'hard'
-    ? 'そのきもちに　なったとき、\nからだは　どんなうごきに　なる？'
-    : 'そのきもちに　なったとき、\nどんな　うごきに　なる？'
-);
+const gestureQuestions = [
+  'そのきもちのとき、からだは\nどんなうごきを　したくなる？\nやってみて！',
+  'そのきもちのとき、いちばん　やりたくなる\nポーズを　やってみて！',
+  'そのきもちのとき、かおは\nどんなひょうじょうに　なっちゃう？\nかおまねしてみて！',
+  'そのきもちのとき、ダンスを　おどるなら\nどんなダンス？\nじっさいに　おどってみてね！',
+  'そのきもちに　なりきって　あるいてみて！\nはしったり、スキップしても　いいよ！',
+  'そのきもちのとき、もし\n「ネコちゃん」だったら　どんなポーズを\nしてる？'
+];
+const associationQuestions = [
+  'そのきもちから　どんなおとが　おもいうかぶ？',
+  'なにを　もらったら　そのきもちに　なる？',
+  'ゆうえんちや　ほいくえんでは、\nどんなときに　そのきもちに　なる？',
+  'そのきもちを　たべたら　どんなあじが　すると思う？',
+  'そのきもちを　どうぶつで　あらわすと、\nどんなどうぶつ？'
+];
+
+function pickRandomQuestion(questions) {
+  return questions[Math.floor(Math.random() * questions.length)];
+}
+
+const gestureQuestion = ref(pickRandomQuestion(gestureQuestions));
+const associationQuestion = ref(pickRandomQuestion(associationQuestions));
+const questionNumber = computed(() => 4 - attempts.value);
+const questionText = computed(() => {
+  if (questionNumber.value === 1) return gestureQuestion.value;
+  if (questionNumber.value === 2) return associationQuestion.value;
+  return 'そのきもちに　なりきって\n「くだもの」って　いってみて！';
+});
 
 function katakanaToHiragana(text) {
   return [...text]
@@ -197,6 +220,8 @@ function resetHome() {
   homeConfirm.value = false;
   selectedFruit.value = null;
   attempts.value = 3;
+  gestureQuestion.value = pickRandomQuestion(gestureQuestions);
+  associationQuestion.value = pickRandomQuestion(associationQuestions);
 }
 </script>
 
@@ -417,7 +442,7 @@ function resetHome() {
     >
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="question-card">
-        <span>しつもん１</span>
+        <span>しつもん{{ questionNumber }}</span>
         <p>{{ questionText }}</p>
       </div>
 
