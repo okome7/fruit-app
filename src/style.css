@@ -653,6 +653,83 @@ button:focus-visible {
   font-size: 2.2cqw;
   line-height: 1.6;
 }
+.failure-screen {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+}
+.failure-screen h1 {
+  position: absolute;
+  top: 23%;
+  width: 100%;
+  margin: 0;
+  font-size: 3.2cqw;
+  font-weight: 400;
+}
+.failure-screen p {
+  position: absolute;
+  top: 35%;
+  width: 100%;
+  margin: 0;
+  font-size: 2.75cqw;
+  line-height: 1.8;
+}
+.failure-screen button {
+  position: absolute;
+  left: 35.5%;
+  top: 77%;
+  width: 29%;
+  padding: 1.3cqw 1cqw;
+  border: 0.3cqw solid #dd8b00;
+  border-radius: 4cqw;
+  background: linear-gradient(#ffd948, #ffae00);
+  color: #5a2a13;
+  font-size: 3.2cqw;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.final-failure-screen {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+}
+.final-failure-screen h1 {
+  position: absolute;
+  top: 20%;
+  width: 100%;
+  margin: 0;
+  font-size: 3cqw;
+  font-weight: 400;
+}
+.final-failure-screen p {
+  position: absolute;
+  top: 32%;
+  width: 100%;
+  margin: 0;
+  font-size: 2.5cqw;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+.final-failure-screen button {
+  position: absolute;
+  top: 78%;
+  width: 22%;
+  padding: 1.2cqw 0.8cqw;
+  border: 0.3cqw solid #dd8b00;
+  border-radius: 4cqw;
+  color: #5a2a13;
+  font-size: 2.1cqw;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.final-failure-screen button:first-of-type {
+  left: 23%;
+  background: #fffdf4;
+}
+.final-failure-screen button:last-of-type {
+  left: 54%;
+  background: linear-gradient(#ffd948, #ffae00);
+}
 .modal-backdrop {
   position: fixed;
   inset: 0;
