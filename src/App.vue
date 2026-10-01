@@ -43,13 +43,13 @@ const correctFruit = ref(null);
 const fruits = [
   { id: 'anger-apple', emoji: '🍎', fruitName: 'りんご', feeling: 'おこる' },
   { id: 'fear-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'こわい' },
-  { id: 'startled-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: '（びびり）びっくり' },
-  { id: 'happy-surprise-banana', emoji: '🍌', fruitName: 'バナナ', feeling: '（うれしくて）びっくり' },
+  { id: 'startled-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: '（びびり）\nびっくり' },
+  { id: 'happy-surprise-banana', emoji: '🍌', fruitName: 'バナナ', feeling: '（うれしくて）\nびっくり' },
   { id: 'funny-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'おもしろい' },
   { id: 'motivated-strawberry', emoji: '🍓', fruitName: 'いちご', feeling: 'やるきがある' },
   { id: 'noisy-persimmon', emoji: '🟠', fruitName: '柿', feeling: 'うるさい' },
   { id: 'danger-apple', emoji: '🍎', fruitName: 'りんご', feeling: 'あぶない' },
-  { id: 'anxious-pear', emoji: '🍐', fruitName: '梨', feeling: 'ふあん・しんぱい' },
+  { id: 'anxious-pear', emoji: '🍐', fruitName: '梨', feeling: 'ふあん・\nしんぱい' },
   { id: 'happy-banana', emoji: '🍌', fruitName: 'バナナ', feeling: 'うれしい' },
   { id: 'excited-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'こうふんした' },
   { id: 'joy-banana', emoji: '🍌', fruitName: 'バナナ', feeling: 'よろこぶ' },
@@ -64,7 +64,7 @@ const fruits = [
   { id: 'persistent-grape', emoji: '🍇', fruitName: 'ぶどう', feeling: 'しつこい' },
   { id: 'shock-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'しょっく' },
   { id: 'boring-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'おもしろくない' },
-  { id: 'relaxed-kiwi', emoji: '🥝', fruitName: 'キウイ', feeling: 'きらく・のんびり' },
+  { id: 'relaxed-kiwi', emoji: '🥝', fruitName: 'キウイ', feeling: 'きらく・\nのんびり' },
   { id: 'wonderful-banana', emoji: '🍌', fruitName: 'バナナ', feeling: 'すてき' },
   { id: 'moved-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'かんどう' },
   { id: 'tearful-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'なきたい' },
@@ -72,9 +72,9 @@ const fruits = [
   { id: 'lonely-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'さびしい' },
   { id: 'disappointed-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'がっかりする' },
   { id: 'relax-watermelon', emoji: '🍉', fruitName: 'スイカ', feeling: 'りらっくす' },
-  { id: 'relief-watermelon', emoji: '🍉', fruitName: 'スイカ', feeling: 'あんしんする・ほっとする' },
+  { id: 'relief-watermelon', emoji: '🍉', fruitName: 'スイカ', feeling: 'あんしんする・\nほっとする' },
   { id: 'gratitude-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'かんしゃ' },
-  { id: 'kind-kiwi', emoji: '🥝', fruitName: 'キウイ', feeling: 'やさしい・しんせつ' },
+  { id: 'kind-kiwi', emoji: '🥝', fruitName: 'キウイ', feeling: 'やさしい・\nしんせつ' },
   { id: 'sad-blueberry', emoji: '🫐', fruitName: 'ブルーベリー', feeling: 'かなしい' },
   { id: 'frustrated-grape', emoji: '🍇', fruitName: 'ぶどう', feeling: 'くやしい' },
   { id: 'tired-pear', emoji: '🍐', fruitName: '梨', feeling: 'つかれた' },
@@ -411,7 +411,9 @@ function resetHome() {
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
         <div v-for="fruit in displayedFruits" :key="fruit.id" class="fruit-slot">
-          <FruitCard :fruit="fruit" /><span>{{ fruit.feeling }}</span>
+          <FruitCard :fruit="fruit" /><span :class="{ 'fruit-feeling--multiline': fruit.feeling.includes('\n') }">{{
+            fruit.feeling
+          }}</span>
         </div>
       </div>
       <div class="drop-zone" role="button" aria-label="くだものをレジへ運ぶ" @dragover.prevent @drop="onDrop"></div>

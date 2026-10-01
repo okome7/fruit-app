@@ -367,6 +367,11 @@ button:focus-visible {
   text-align: center;
   white-space: pre-line;
 }
+.fruit-slot > .fruit-feeling--multiline {
+  font-size: 1.2cqw;
+  line-height: 1.05;
+  transform: translate(-50%, 11%);
+}
 .fruit-card {
   position: absolute;
   top: 1%;
