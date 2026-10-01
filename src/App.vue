@@ -990,6 +990,67 @@ function retryGame() {
   </main>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      screen: 'home',
+      selectedFruit: null,
+      selectedEmotion: null,
+      staffEmotion: null,
+      attempts: 3
+    };
+  },
+
+  methods: {
+    // お客さんがくだものを選んだときに呼ばれる処理
+    chooseFruit(fruit) {
+      this.selectedFruit = fruit;
+      this.selectedEmotion = fruit.feeling;
+    },
+
+    chooseStaffFruit(fruit) {
+      this.staffEmotion = fruit.feeling;
+    },
+
+    finalFail() {
+      this.screen = 'finalFailure';
+    },
+
+    retryGame() {
+      this.screen = 'customerShop';
+      this.attempts = 3;
+    },
+
+    resetHome() {
+      this.screen = 'home';
+      this.selectedFruit = null;
+      this.selectedEmotion = null;
+      this.attempts = 3;
+    },
+
+    // 画面遷移の共通処理
+    go(next) {
+      this.screen = next;
+    },
+
+    back() {
+      // あなたの既存の戻る処理
+    },
+
+    judge() {
+      const isCorrect = this.selectedEmotion === this.staffEmotion;
+
+      if (isCorrect) {
+        this.go('finalSuccess');
+      } else {
+        this.finalFail();
+      }
+    }
+  }
+};
+</script>
+
 <style>
 .orange-button {
   background: #ffb84d;
@@ -1006,7 +1067,7 @@ function retryGame() {
   display: flex;
   justify-content: center;
   gap: 24px;
-  margin-top: 20px;
+  margin-top: 1cqw;
 }
 
 /* ⭐ オレンジボタン（文字が確実に見える設定） */
