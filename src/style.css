@@ -42,6 +42,9 @@ button {
   cursor: pointer;
   font: inherit;
 }
+button:active {
+  filter: brightness(0.68) saturate(1.35);
+}
 button:focus-visible {
   outline: 0.45cqw solid #8a4b16;
   outline-offset: 0.35cqw;
