@@ -52,6 +52,7 @@ const remainingSeconds = ref(180);
 const oneMinuteAcknowledged = ref(false);
 const timeUpAcknowledged = ref(false);
 const timerStarted = ref(false);
+const questionPreviewOpen = ref(false);
 let timerInterval;
 const fruits = [
   { id: "anger-apple", emoji: "🍎", fruitName: "りんご", feeling: "おこる" },
@@ -701,27 +702,21 @@ function resetHome() {
       "
       :background="screen === 'clerkShop' ? shopping : shopBg"
     >
-      <HelpMenu
-        :open="helpOpen"
-        @toggle="helpOpen = !helpOpen"
-        @guide="go('how1')"
-        @home="homeConfirm = true"
-      />
-      <div
-        class="fruit-grid"
-        :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }"
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <button
+        v-if="screen === 'clerkShop'"
+        class="question-sign"
+        type="button"
+        aria-label="しつもんをみる"
+        @click="questionPreviewOpen = true"
       >
-        <div
-          v-for="fruit in displayedFruits"
-          :key="fruit.id"
-          class="fruit-slot"
-        >
-          <FruitCard :fruit="fruit" /><span
-            :class="{
-              'fruit-feeling--multiline': fruit.feeling.includes('\n'),
-            }"
-            >{{ fruit.feeling }}</span
-          >
+        しつもんを<br />みる
+      </button>
+      <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
+        <div v-for="fruit in displayedFruits" :key="fruit.id" class="fruit-slot">
+          <FruitCard :fruit="fruit" /><span :class="{ 'fruit-feeling--multiline': fruit.feeling.includes('\n') }">{{
+            fruit.feeling
+          }}</span>
         </div>
       </div>
       <div
@@ -762,6 +757,27 @@ function resetHome() {
           わかった
         </button>
       </div>
+      <div
+        v-if="screen === 'clerkShop' && questionPreviewOpen"
+        class="question-preview-backdrop"
+        role="dialog"
+        aria-modal="true"
+        aria-label="しつもんのかくにん"
+        @click="questionPreviewOpen = false"
+      >
+        <button
+          class="question-preview-close"
+          type="button"
+          aria-label="しつもんを閉じる"
+          @click.stop="questionPreviewOpen = false"
+        >
+          <img :src="helpCloseButton" alt="" />
+        </button>
+        <div class="question-card question-preview-card">
+          <span>しつもん{{ questionNumber }}</span>
+          <p>{{ questionText }}</p>
+        </div>
+      </div>
     </ScreenFrame>
 
     <ScreenFrame
@@ -776,7 +792,10 @@ function resetHome() {
         @home="homeConfirm = true"
       />
       <div class="confirm-card">
-        <span class="big-fruit">{{ selectedFruit?.emoji }}</span>
+        <div class="big-fruit" role="img" :aria-label="selectedFruit?.fruitName">
+          <span class="big-fruit-emoji">{{ selectedFruit?.emoji }}</span>
+          <span class="big-fruit-face">•ᴗ•</span>
+        </div>
         <h1>このくだもので　いい？</h1>
         <div class="confirm-actions">
           <button type="button" @click="back">いいえ</button
