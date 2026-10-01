@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 
 import backgroundImage from './assets/background.png';
 import challengeSpeechBubble from './assets/challenge-speech-bubble.png';
@@ -40,6 +40,11 @@ const selectedCourse = ref('easy');
 const selectedFruit = ref(null);
 const attempts = ref(3);
 const correctFruit = ref(null);
+const remainingSeconds = ref(180);
+const oneMinuteAcknowledged = ref(false);
+const timeUpAcknowledged = ref(false);
+const timerStarted = ref(false);
+let timerInterval;
 const fruits = [
   { id: 'anger-apple', emoji: '🍎', fruitName: 'りんご', feeling: 'おこる' },
   { id: 'fear-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'こわい' },
@@ -126,6 +131,11 @@ const questionText = computed(() => {
   if (questionNumber.value === 2) return associationQuestion.value;
   return 'そのきもちに　なりきって\n「くだもの」って　いってみて！';
 });
+const formattedTime = computed(() => {
+  const minutes = Math.floor(remainingSeconds.value / 60);
+  const seconds = remainingSeconds.value % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+});
 
 function katakanaToHiragana(text) {
   return [...text]
@@ -167,7 +177,26 @@ function applyKatakanaReadings() {
 }
 
 watch([screen, helpOpen, homeConfirm], () => nextTick(applyKatakanaReadings), { immediate: true });
+watch(screen, (nextScreen) => {
+  if (timerStarted.value && (nextScreen === 'clerkShop' || nextScreen === 'productConfirm')) return;
+
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = undefined;
+  timerStarted.value = false;
+  if (nextScreen !== 'clerkShop') return;
+
+  remainingSeconds.value = 180;
+  oneMinuteAcknowledged.value = false;
+  timeUpAcknowledged.value = false;
+  timerStarted.value = true;
+  timerInterval = setInterval(() => {
+    if (remainingSeconds.value > 0) remainingSeconds.value--;
+  }, 1000);
+});
 onMounted(() => nextTick(applyKatakanaReadings));
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
 
 function go(next) {
   if (next === 'how1' && helpOpen.value) {
@@ -238,6 +267,9 @@ function resetHome() {
   homeConfirm.value = false;
   selectedFruit.value = null;
   attempts.value = 3;
+  remainingSeconds.value = 180;
+  oneMinuteAcknowledged.value = false;
+  timeUpAcknowledged.value = false;
   gestureQuestion.value = pickRandomQuestion(gestureQuestions);
   associationQuestion.value = pickRandomQuestion(associationQuestions);
 }
@@ -416,8 +448,23 @@ function resetHome() {
           }}</span>
         </div>
       </div>
-      <div class="drop-zone" role="button" aria-label="くだものをレジへ運ぶ" @dragover.prevent @drop="onDrop"></div>
-      <div v-if="screen === 'clerkShop'" class="timer">のこり　03:00</div>
+      <div class="drop-zone" role="button" aria-label="くだものをレジへ運ぶ" @dragover.prevent @drop="onDrop">
+        <div v-if="screen === 'clerkShop'" class="timer">のこり　{{ formattedTime }}</div>
+      </div>
+      <div
+        v-if="screen === 'clerkShop' && remainingSeconds > 0 && remainingSeconds <= 60 && !oneMinuteAcknowledged"
+        class="one-minute-warning"
+      >
+        <p>あと１ぷん！</p>
+        <button type="button" @click="oneMinuteAcknowledged = true">わかった</button>
+      </div>
+      <div
+        v-if="screen === 'clerkShop' && remainingSeconds === 0 && !timeUpAcknowledged"
+        class="time-up-warning"
+      >
+        <p>じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
+        <button type="button" @click="timeUpAcknowledged = true">わかった</button>
+      </div>
     </ScreenFrame>
 
     <ScreenFrame

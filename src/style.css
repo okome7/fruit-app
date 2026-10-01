@@ -418,13 +418,55 @@ button:focus-visible {
 }
 .timer {
   position: absolute;
-  right: 4%;
-  bottom: 4%;
-  padding: 0.8cqw 1.8cqw;
-  background: #fff1c5;
-  border: 0.25cqw solid #8f5426;
-  border-radius: 1cqw;
-  font-size: 2cqw;
+  left: calc(50% + 0.3cqw);
+  top: -58%;
+  transform: translate(-50%, -50%) rotate(4deg);
+  padding: 0.3cqw 0.8cqw;
+  background: #000;
+  color: #fff;
+  font-size: 1.6cqw;
+  white-space: nowrap;
+}
+.one-minute-warning,
+.time-up-warning {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  z-index: 30;
+  transform: translate(-50%, -50%);
+  padding: 3.2cqw 6.5cqw 3.5cqw;
+  border: 0.35cqw solid #dd8b00;
+  border-radius: 1.5cqw;
+  background: #fffdf4;
+  color: #5a2a13;
+  text-align: center;
+}
+.time-up-warning {
+  padding: 3.2cqw 4.5cqw 3.5cqw;
+}
+.one-minute-warning p,
+.time-up-warning p {
+  margin: 0 0 1cqw;
+  white-space: nowrap;
+}
+.one-minute-warning p {
+  font-size: 3cqw;
+}
+.time-up-warning p {
+  font-size: 2.6cqw;
+  line-height: 1.7;
+}
+.one-minute-warning button,
+.time-up-warning button {
+  margin-top: 1cqw;
+  min-width: 14cqw;
+  padding: 0.8cqw 2cqw;
+  border: 0.3cqw solid #dd8b00;
+  border-radius: 4cqw;
+  background: linear-gradient(#ffd948, #ffae00);
+  color: #5a2a13;
+  font-size: 2.1cqw;
+  font-weight: 700;
 }
 .confirm-card {
   position: absolute;
@@ -666,11 +708,16 @@ button:focus-visible {
   border: 0.3cqw solid #fff;
   border-radius: 4cqw;
   background: linear-gradient(#ffdd52, #ffad00);
-  box-shadow: inset 0 0 0 0.3cqw #ffed92, 0 0.35cqw 0 #ff8b00;
+  box-shadow:
+    inset 0 0 0 0.3cqw #ffed92,
+    0 0.35cqw 0 #ff8b00;
   color: #54260f;
   font-size: 3.5cqw;
   font-weight: 800;
-  text-shadow: 0 0.15cqw #fff, -0.12cqw 0 #fff, 0.12cqw 0 #fff;
+  text-shadow:
+    0 0.15cqw #fff,
+    -0.12cqw 0 #fff,
+    0.12cqw 0 #fff;
 }
 .terms-back {
   left: 8.3%;
