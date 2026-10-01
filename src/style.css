@@ -522,8 +522,24 @@ button:focus-visible {
   box-shadow: 0 0.6cqw 1.5cqw #4d27082b;
 }
 .big-fruit {
+  position: relative;
   font-size: 12cqw;
   line-height: 1;
+}
+.big-fruit-emoji {
+  display: block;
+  filter: drop-shadow(0 0.4cqw 0.3cqw #0003);
+}
+.big-fruit-face {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #3b2417;
+  font-size: 2.85cqw;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0.12cqw #fff;
 }
 .confirm-card h1 {
   margin: 1cqw 0 1.6cqw;
