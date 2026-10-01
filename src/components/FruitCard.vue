@@ -14,5 +14,5 @@ function onDragStart(event) {
   <div class="fruit-card" :class="{ selected: props.selected }" draggable="true" @dragstart="onDragStart">
     <span class="fruit-emoji">{{ props.fruit.emoji }}</span>
     <span class="fruit-face">•ᴗ•</span>
-  </button>
+  </div>
 </template>
