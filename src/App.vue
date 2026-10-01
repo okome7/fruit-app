@@ -238,8 +238,16 @@ function resetHome() {
   homeConfirm.value = false;
   selectedFruit.value = null;
   attempts.value = 3;
-  gestureQuestion.value = pickRandomQuestion(gestureQuestions);
-  associationQuestion.value = pickRandomQuestion(associationQuestions);
+}
+
+function retryGame() {
+  selectedFruit.value = null;
+  correctFruit.value = null;
+  clerkFruit.value = null;
+  attempts.value = 3;
+
+  pickRandomFruits();
+  go('roles');
 }
 </script>
 
@@ -477,20 +485,36 @@ function resetHome() {
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="instruction-panel">
         <p>そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！</p>
-        <button @click="go('clerkShop')">
-          はじめる
-        </button>
+        <button @click="go('clerkShop')">はじめる</button>
       </div>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="backgroundImage"
-      ><div class="result success">
-        <span>🎉</span>
-        <h1>せいかい！</h1>
-        <p>きもちのくだものを　みつけられたね！</p>
-        <button @click="resetHome">ホームにもどる</button>
-      </div></ScreenFrame
-    >
+    <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="backgroundImage">
+      <br />
+      <h2 class="success-title">せいかい！　おめでとう！！</h2>
+      <br />
+      <div class="result-card">
+        <p class="message">
+          たのしいって どんな きもち？<br />
+          すきなことを　したときや、<br />
+          うれしいことが　あったときに<br />
+          でてくる　きもちだよ。<br />
+          「たのしい！」「もっと　やりたい！」と<br />
+          ことばで　つたえてみよう！
+        </p>
+      </div>
+      <br />
+      <div class="button-row edge">
+        <button class="home-button" @click="resetHome">
+          <span class="home-kana"></span>
+          ホームにもどる
+        </button>
+
+        <button class="retry-button" @click="retryGame">
+          <span class="retry-kana">もういちどあそぶ</span>
+        </button>
+      </div>
+    </ScreenFrame>
     <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="backgroundImage"
       ><div class="result failure">
         <span>💭</span>
@@ -504,16 +528,14 @@ function resetHome() {
         <span>🍇</span>
         <h1>しっぱい……。</h1>
         <p>せいかいは「ぶどう」でした…。<br />また　ちょうせんしてね！</p>
-        <button @click="resetHome">ホームにもどる</button>
+        <button class="orange - button">ホームにもどる</button>
+        <button @click="orange - botton">もういちどあそぶ</button>
       </div></ScreenFrame
     >
 
     <div v-if="homeConfirm" class="modal-backdrop">
       <div class="home-modal" role="dialog" aria-modal="true" aria-labelledby="home-modal-title">
-        <h2 id="home-modal-title">
-          <ruby>ホーム<rt>ほーむ</rt></ruby
-          >に　もどりますか？
-        </h2>
+        <h2 id="home-modal-title"><ruby>ホーム</ruby>に　もどりますか？</h2>
         <p>
           <ruby>ゲーム<rt>げーむ</rt></ruby
           >を　やめて、<ruby>ホーム<rt>ほーむ</rt></ruby
@@ -529,6 +551,61 @@ function resetHome() {
 </template>
 
 <style>
+.orange-button {
+  background: #ffb84d;
+  border: 3px solid #ffb84d;
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+/* ⭐ オレンジボタン（文字が確実に見える設定） */
+.button-row button {
+  background: #ffb84d !important; /* オレンジ背景を強制 */
+  border: 3px solid #ffb84d !important;
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333 !important; /* ⭐ 黒文字に変更（絶対に見える） */
+  cursor: pointer;
+}
+
+.button-row button:hover {
+  background: #ffa733 !important;
+}
+
+.message {
+  font-size: 20px; /* 他の画面と同じサイズに揃える */
+  line-height: 1.8; /* 読みやすい行間 */
+}
+
+.result-card {
+  background: #fff;
+  border: 4px solid #ffb84d; /* ⭐ オレンジの枠 */
+  border-radius: 20px; /* 角丸 */
+  padding: 24px;
+  width: 90%;
+  max-width: 480px;
+  margin: 0 auto; /* 中央に配置 */
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ふんわり影 */
+}
+
+.button-row button:hover {
+  background: #ffe6ec; /* ほんのり色が変わる */
+}
+
 .drop-zone {
   position: absolute;
   right: 2.5%;
@@ -537,5 +614,13 @@ function resetHome() {
   height: 39%;
   border-radius: 18px;
   z-index: 20;
+}
+
+.success-title {
+  text-align: center; /* ⭐ 中央寄せ */
+  width: 100%; /* 横幅いっぱいに広げる */
+  margin: 20px 0; /* 上下の余白 */
+  font-size: 28px; /* 見やすい大きさ */
+  font-weight: bold; /* 太字 */
 }
 </style>
