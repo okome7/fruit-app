@@ -30,6 +30,7 @@ import NavArrow from './components/NavArrow.vue';
 import HelpMenu from './components/HelpMenu.vue';
 import FruitCard from './components/FruitCard.vue';
 
+const clerkFruit = ref(null);
 const screen = ref('home');
 const history = ref([]);
 const helpOpen = ref(false);
@@ -202,17 +203,36 @@ function selectFruit(fruit) {
 }
 function onDrop(event) {
   const id = event.dataTransfer?.getData('fruitId');
-  selectFruit(fruits.find((fruit) => fruit.id === id));
+  const fruit = fruits.find((fruit) => fruit.id === id);
+  if (!fruit) return;
+
+  if (screen.value === 'customerShop') {
+    // お客さんが選んだフルーツ（正解）
+    correctFruit.value = fruit;
+    selectedFruit.value = fruit;
+    go('customerConfirm');
+  } else if (screen.value === 'clerkShop') {
+    // 店員さんが選んだフルーツ
+    clerkFruit.value = fruit;
+    selectedFruit.value = fruit;
+    go('productConfirm');
+  }
 }
 function judge() {
-  if (selectedFruit.value?.fruitName === 'ぶどう') go('success');
-  else if (attempts.value > 1) {
+  // どちらかが未選択なら判定しない
+  if (!correctFruit.value || !clerkFruit.value) return;
+
+  // フルーツの id が同じなら正解
+  if (clerkFruit.value.id === correctFruit.value.id) {
+    go('success');
+  } else if (attempts.value > 1) {
     attempts.value--;
     go('failure');
   } else {
     go('finalFailure');
   }
 }
+
 function resetHome() {
   screen.value = 'home';
   history.value = [];
@@ -393,9 +413,7 @@ function resetHome() {
       <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
       <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
         <div v-for="fruit in displayedFruits" :key="fruit.id" class="fruit-slot">
-          <FruitCard :fruit="fruit" /><span>{{
-            fruit.feeling
-          }}</span>
+          <FruitCard :fruit="fruit" /><span>{{ fruit.feeling }}</span>
         </div>
       </div>
       <div class="drop-zone" role="button" aria-label="くだものをレジへ運ぶ" @dragover.prevent @drop="onDrop"></div>
