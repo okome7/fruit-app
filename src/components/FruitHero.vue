@@ -6,7 +6,7 @@ import heroImage from '../assets/hero.png';
   <img
     class="fruit-hero"
     :src="heroImage"
-    alt="男の子と女の子、気持ちを表すフルーツが並んだ、こころのくだものやさんのタイトル"
+    alt="男の子と女の子、気持ちを表すフルーツが並んだ、おしゃべりきもちのくだものやさんのタイトル"
   />
 </template>
 
