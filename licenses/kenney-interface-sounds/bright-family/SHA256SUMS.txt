@@ -1,0 +1,14 @@
+f7966c773bbed0eca6a9c75081c44a178b38eae112724dbb5fdfbd4192d118a9  ./LICENSE-Kenney.txt
+f6b22328ab758d85d315893c000506a64160692f1be4a27beb408346a2ee0a54  ./PROVENANCE.txt
+47b423f135f50cdda610665b09f80e51a6b296b8a88eee1f0c90c949a94b3b9f  ./QA-RESULTS.json
+3b4ae32d251bf79f25a92d38c343cbd104644325ed9be9f759219aa36efa2339  ./REBUILD-VERIFICATION.json
+2403527b7c9cf30aae0f071e4f1b642bacb2c6de156314c5b31beb4101c5e2f5  ./audition-button-drop-success-retry-v3.wav
+2553ca0ad9a3c6bac8879a034ac2b003cb97622881a2b742d46c88d201fce79a  ./build_sounds.py
+69eae59bb9e02511821655835fe5aed52a8598d73b1cd8d65440c4a02e8ddb25  ./button-soft-pon-v3.wav
+4a1c3098ab3f52a7ea124e3cb425992544d27de2c7ed981a6a7b05f51dd5a60c  ./fruit-soft-koron-v3.wav
+3c8b3b659a976077016d8fef670b931f585ed7c3c069cbd19fb99abdce4abc2c  ./manifest.json
+d21d0f0b782445db579d11e2506b24cd1ac9d664ee33aeaf807761aa7b6fd710  ./originals/bong_001.ogg
+c739c51de393e5400ba0eb83601c39bafc66aaef01325261f55f7341c7f3c4ef  ./reference-v2.json
+798e9e1b0a914301e4264df20aeeb91706e3e6466e92a9124527c780de357afa  ./retry-soft-v3.wav
+ba9f5e429f7b13c51824d080fdb79ad15a8377518f94f4fad89bd2e6dc992817  ./success-soft-v3.wav
+2403527b7c9cf30aae0f071e4f1b642bacb2c6de156314c5b31beb4101c5e2f5  ./くだものやさん_明るい効果音4種類_v3.wav

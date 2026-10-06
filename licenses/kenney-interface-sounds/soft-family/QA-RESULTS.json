@@ -1,0 +1,48 @@
+{
+  "status": "pass",
+  "deterministic_rebuild_from_original_zip": true,
+  "all_audition_segments_bit_identical_to_assets": true,
+  "actual_listening": false,
+  "checks": [
+    {
+      "file": "button-soft-pon-v2.wav",
+      "sha256": "1c66e156914775c83844ad4543aa590eb445f077d1cdd45267f34d838e81a15d",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "peak_below_minus_6_dbfs": "pass"
+    },
+    {
+      "file": "fruit-soft-koron-v2.wav",
+      "sha256": "343ae681fe2e233384afbe8578c365598284ae36640898d842f8a014cdac399e",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "peak_below_minus_6_dbfs": "pass"
+    },
+    {
+      "file": "success-soft-v2.wav",
+      "sha256": "424f9d77ea3b6c68d75c2b7c4d02a9e17d2c1b0222b175d6a1468caccc4817cb",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "peak_below_minus_6_dbfs": "pass"
+    },
+    {
+      "file": "retry-soft-v2.wav",
+      "sha256": "2cf156c261db18991db6f9d2097380bd0c2388995400b57ff40727e559cc384a",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "peak_below_minus_6_dbfs": "pass"
+    },
+    {
+      "file": "audition-button-drop-success-retry.wav",
+      "sha256": "fdb2ccbab6e89f3056c92faaf8652d472897dd4be8038df9fb4b356f0bda2763",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "peak_below_minus_6_dbfs": "pass"
+    }
+  ]
+}

@@ -1,42 +1,65 @@
 <script setup>
-import { ref, reactive, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import {
+  ref,
+  reactive,
+  computed,
+  watch,
+  onMounted,
+  onUnmounted,
+  nextTick,
+} from "vue";
 
-import backgroundImage from './assets/background.png';
-import challengeSpeechBubble from './assets/challenge-speech-bubble.png';
-import guideSpeechBubble from './assets/guide-speech-bubble.png';
-import helpCloseButton from './assets/help-close-button.png';
-import helpCompleteButton from './assets/help-complete-button.png';
-import startButton from './assets/start-button.png';
-import guideBg from './assets/screens/guide.png';
-import how1 from './assets/screens/how1.png';
-import how2 from './assets/screens/how2.png';
-import how3 from './assets/screens/how3.png';
-import how4 from './assets/screens/how4.png';
-import rolesBg from './assets/screens/roles.png';
-import courseBg from './assets/screens/course-bg.png';
-import courseEasy from './assets/screens/course-easy.png';
-import courseHard from './assets/screens/course-hard.png';
-import courseMix from './assets/screens/course-mix.png';
-import confirmBg from './assets/screens/confirm-bg.png';
-import yesImage from './assets/screens/yes.png';
-import noImage from './assets/screens/no.png';
-import customerHandoff from './assets/screens/customer-handoff.png';
-import shopBg from './assets/screens/shop.png';
-import shopping from './assets/screens/froutback.png';
-import FruitHero from './components/FruitHero.vue';
-import ImageButton from './components/ImageButton.vue';
-import ScreenFrame from './components/ScreenFrame.vue';
-import NavArrow from './components/NavArrow.vue';
-import HelpMenu from './components/HelpMenu.vue';
-import FruitCard from './components/FruitCard.vue';
+import heroImage from "./assets/hero.webp";
+import arrowImage from "./assets/screens/arrow-guide.webp";
+import helpIcon from "./assets/screens/help.webp";
+import { createImagePreloader } from "./lib/imagePreloader.js";
+import { fruitSlotStyle } from "./lib/fruitLayout.js";
+import backgroundImage from "./assets/background.webp";
+import challengeSpeechBubble from "./assets/challenge-speech-bubble.webp";
+import guideSpeechBubble from "./assets/guide-speech-bubble.webp";
+import helpCloseButton from "./assets/help-close-button.webp";
+import helpCompleteButton from "./assets/help-complete-button.webp";
+import startButton from "./assets/start-button.webp";
+import guideBg from "./assets/screens/guide.webp";
+import how1 from "./assets/screens/how1.webp";
+import how2 from "./assets/screens/how2.webp";
+import how3 from "./assets/screens/how3.webp";
+import how4 from "./assets/screens/how4.webp";
+import rolesBg from "./assets/screens/roles.webp";
+import courseBg from "./assets/screens/course-bg.webp";
+import courseEasy from "./assets/screens/course-easy.webp";
+import courseHard from "./assets/screens/course-hard.webp";
+import courseMix from "./assets/screens/course-mix.webp";
+import confirmBg from "./assets/screens/confirm-bg.webp";
+import yesImage from "./assets/screens/yes.webp";
+import noImage from "./assets/screens/no.webp";
+import customerHandoff from "./assets/screens/customer-handoff.webp";
+import shopBg from "./assets/screens/shop.webp";
+import shopping from "./assets/screens/froutback.webp";
+import FruitHero from "./components/FruitHero.vue";
+import ImageButton from "./components/ImageButton.vue";
+import ScreenFrame from "./components/ScreenFrame.vue";
+import NavArrow from "./components/NavArrow.vue";
+import HelpMenu from "./components/HelpMenu.vue";
+import FruitCard from "./components/FruitCard.vue";
+import SoundIcon from "./components/SoundIcon.vue";
+import QuestionText from "./components/QuestionText.vue";
+import { gestureQuestions, associationQuestions, finalQuestion, pickRandomQuestion } from "./lib/questions.js";
+import { createCountdown } from "./lib/countdown.js";
+import { useSfx } from "./composables/useSfx.js";
+import { useModalFocus } from "./composables/useModalFocus.js";
 
+const imagePreloader = createImagePreloader();
 const clerkFruit = ref(null);
-const screen = ref('home');
+const screen = ref("home");
 const history = ref([]);
 const helpOpen = ref(false);
-const helpReturnScreen = ref('home');
+const helpReturnScreen = ref("home");
 const homeConfirm = ref(false);
-const selectedCourse = ref('easy');
+const homeDialog = ref(null);
+const gameSurface = ref(null);
+const { open: openHomeConfirm, cancel: cancelHomeConfirm } = useModalFocus(homeConfirm, homeDialog, gameSurface);
+const selectedCourse = ref("easy");
 const selectedFruit = ref(null);
 const attempts = ref(3);
 const correctFruit = ref(null);
@@ -46,172 +69,225 @@ const timeUpAcknowledged = ref(false);
 const timerStarted = ref(false);
 const questionPreviewOpen = ref(false);
 let timerInterval;
-const fruits = [
-  { id: 'anger-apple', emoji: '🍎', fruitName: 'りんご', feeling: 'おこる' },
-  { id: 'fear-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'こわい' },
-  {
-    id: 'startled-blueberry',
-    emoji: '🫐',
-    fruitName: 'ブルーベリー',
-    feeling: '（びびり）\nびっくり'
-  },
-  {
-    id: 'happy-surprise-banana',
-    emoji: '🍌',
-    fruitName: 'バナナ',
-    feeling: '（うれしくて）\nびっくり'
-  },
-  {
-    id: 'funny-orange',
-    emoji: '🍊',
-    fruitName: 'みかん',
-    feeling: 'おもしろい'
-  },
-  {
-    id: 'motivated-strawberry',
-    emoji: '🍓',
-    fruitName: 'いちご',
-    feeling: 'やるきがある'
-  },
-  { id: 'noisy-persimmon', emoji: '🟠', fruitName: '柿', feeling: 'うるさい' },
-  { id: 'danger-apple', emoji: '🍎', fruitName: 'りんご', feeling: 'あぶない' },
-  {
-    id: 'anxious-pear',
-    emoji: '🍐',
-    fruitName: '梨',
-    feeling: 'ふあん・\nしんぱい'
-  },
-  { id: 'happy-banana', emoji: '🍌', fruitName: 'バナナ', feeling: 'うれしい' },
-  {
-    id: 'excited-orange',
-    emoji: '🍊',
-    fruitName: 'みかん',
-    feeling: 'こうふんした'
-  },
-  { id: 'joy-banana', emoji: '🍌', fruitName: 'バナナ', feeling: 'よろこぶ' },
-  { id: 'dislike-grape', emoji: '🍇', fruitName: 'ぶどう', feeling: 'いや' },
-  { id: 'troubled-grape', emoji: '🍇', fruitName: 'ぶどう', feeling: 'こまる' },
-  {
-    id: 'embarrassed-peach',
-    emoji: '🍑',
-    fruitName: '桃',
-    feeling: 'はずかしい'
-  },
-  {
-    id: 'irritated-persimmon',
-    emoji: '🟠',
-    fruitName: '柿',
-    feeling: 'いらいら'
-  },
-  {
-    id: 'enjoyable-orange',
-    emoji: '🍊',
-    fruitName: 'みかん',
-    feeling: 'たのしい'
-  },
-  { id: 'happiness-peach', emoji: '🍑', fruitName: '桃', feeling: 'しあわせ' },
-  { id: 'love-strawberry', emoji: '🍓', fruitName: 'いちご', feeling: 'あい' },
-  { id: 'like-peach', emoji: '🍑', fruitName: '桃', feeling: 'すき' },
-  {
-    id: 'persistent-grape',
-    emoji: '🍇',
-    fruitName: 'ぶどう',
-    feeling: 'しつこい'
-  },
-  { id: 'shock-chestnut', emoji: '🌰', fruitName: '栗', feeling: 'しょっく' },
-  {
-    id: 'boring-chestnut',
-    emoji: '🌰',
-    fruitName: '栗',
-    feeling: 'おもしろくない'
-  },
-  {
-    id: 'relaxed-kiwi',
-    emoji: '🥝',
-    fruitName: 'キウイ',
-    feeling: 'きらく・\nのんびり'
-  },
-  {
-    id: 'wonderful-banana',
-    emoji: '🍌',
-    fruitName: 'バナナ',
-    feeling: 'すてき'
-  },
-  { id: 'moved-orange', emoji: '🍊', fruitName: 'みかん', feeling: 'かんどう' },
-  {
-    id: 'tearful-blueberry',
-    emoji: '🫐',
-    fruitName: 'ブルーベリー',
-    feeling: 'なきたい'
-  },
-  {
-    id: 'sympathy-blueberry',
-    emoji: '🫐',
-    fruitName: 'ブルーベリー',
-    feeling: 'かわいそう'
-  },
-  {
-    id: 'lonely-blueberry',
-    emoji: '🫐',
-    fruitName: 'ブルーベリー',
-    feeling: 'さびしい'
-  },
-  {
-    id: 'disappointed-blueberry',
-    emoji: '🫐',
-    fruitName: 'ブルーベリー',
-    feeling: 'がっかりする'
-  },
-  {
-    id: 'relax-watermelon',
-    emoji: '🍉',
-    fruitName: 'スイカ',
-    feeling: 'りらっくす'
-  },
-  {
-    id: 'relief-watermelon',
-    emoji: '🍉',
-    fruitName: 'スイカ',
-    feeling: 'あんしんする・\nほっとする'
-  },
-  {
-    id: 'gratitude-orange',
-    emoji: '🍊',
-    fruitName: 'みかん',
-    feeling: 'かんしゃ'
-  },
-  {
-    id: 'kind-kiwi',
-    emoji: '🥝',
-    fruitName: 'キウイ',
-    feeling: 'やさしい・\nしんせつ'
-  },
-  {
-    id: 'sad-blueberry',
-    emoji: '🫐',
-    fruitName: 'ブルーベリー',
-    feeling: 'かなしい'
-  },
-  {
-    id: 'frustrated-grape',
-    emoji: '🍇',
-    fruitName: 'ぶどう',
-    feeling: 'くやしい'
-  },
-  { id: 'tired-pear', emoji: '🍐', fruitName: '梨', feeling: 'つかれた' },
-  { id: 'calm-kiwi', emoji: '🥝', fruitName: 'キウイ', feeling: 'おだやか' },
-  {
-    id: 'unconcerned-pear',
-    emoji: '🍐',
-    fruitName: '梨',
-    feeling: 'きにしない'
-  },
-  {
-    id: 'pleasant-watermelon',
-    emoji: '🍉',
-    fruitName: 'スイカ',
-    feeling: 'きもちいい'
+const countdown = createCountdown(180);
+let webMcpLifecycle;
+const dropZone = ref(null);
+const dragging = ref(false);
+const overBasket = ref(false);
+const keyboardFruit = ref(null);
+const sfx = useSfx();
+const muted = sfx.muted;
+const fullscreenAvailable = ref(false);
+const fullscreenActive = ref(false);
+const fullscreenNotice = ref('');
+function syncFullscreen() {
+  fullscreenActive.value = Boolean(document.fullscreenElement);
+}
+async function toggleFullscreen() {
+  fullscreenNotice.value = '';
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await document.documentElement.requestFullscreen();
+  } catch {
+    fullscreenNotice.value = 'このブラウザでは全画面表示に切り替えられませんでした。';
   }
+  syncFullscreen();
+}
+const dragDisabled = computed(() => helpOpen.value || homeConfirm.value || questionPreviewOpen.value ||
+  (screen.value === 'clerkShop' && ((remainingSeconds.value <= 60 && remainingSeconds.value > 0 && !oneMinuteAcknowledged.value) ||
+  (remainingSeconds.value === 0 && !timeUpAcknowledged.value))));
+
+function guardHelpMenuBackground(event) {
+  if (!helpOpen.value || homeConfirm.value || event.target.closest?.('.help-wrap')) return false;
+  // Keep the menu open until click so pointerup cannot reach the game beneath it.
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  return true;
+}
+function onButtonClick(event) {
+  if (guardHelpMenuBackground(event)) {
+    const trigger = event.currentTarget.querySelector('.help-button');
+    const previousScreen = screen.value;
+    helpOpen.value = false;
+    nextTick(() => {
+      if (!helpOpen.value && !homeConfirm.value && screen.value === previousScreen && trigger?.isConnected) {
+        trigger.focus({ preventScroll: true });
+      }
+    });
+    return;
+  }
+  const button = event.target.closest('button');
+  if (!button) { void sfx.unlock(); void sfx.preload(); return; }
+  if (button && !button.disabled && button.getAttribute('aria-disabled') !== 'true' && !button.closest('[data-sfx-skip]')) void sfx.play(button.dataset.sfxKind || 'button');
+}
+function onDragChange(state) { dragging.value = state.active; overBasket.value = state.over; }
+function onFruitDrop(fruit) { void sfx.play('drop'); selectFruit(fruit); }
+const fruits = [
+  { id: "anger-apple", emoji: "🍎", fruitName: "りんご", feeling: "おこる" },
+  { id: "fear-chestnut", emoji: "🌰", fruitName: "栗", feeling: "こわい" },
+  {
+    id: "startled-blueberry",
+    emoji: "🫐",
+    fruitName: "ブルーベリー",
+    feeling: "（びびり）\nびっくり",
+  },
+  {
+    id: "happy-surprise-banana",
+    emoji: "🍌",
+    fruitName: "バナナ",
+    feeling: "（うれしくて）\nびっくり",
+  },
+  {
+    id: "funny-orange",
+    emoji: "🍊",
+    fruitName: "みかん",
+    feeling: "おもしろい",
+  },
+  {
+    id: "motivated-strawberry",
+    emoji: "🍓",
+    fruitName: "いちご",
+    feeling: "やるきがある",
+  },
+  { id: "noisy-persimmon", emoji: "🟠", fruitName: "柿", feeling: "うるさい" },
+  { id: "danger-apple", emoji: "🍎", fruitName: "りんご", feeling: "あぶない" },
+  {
+    id: "anxious-pear",
+    emoji: "🍐",
+    fruitName: "梨",
+    feeling: "ふあん・\nしんぱい",
+  },
+  { id: "happy-banana", emoji: "🍌", fruitName: "バナナ", feeling: "うれしい" },
+  {
+    id: "excited-orange",
+    emoji: "🍊",
+    fruitName: "みかん",
+    feeling: "こうふんした",
+  },
+  { id: "joy-banana", emoji: "🍌", fruitName: "バナナ", feeling: "よろこぶ" },
+  { id: "dislike-grape", emoji: "🍇", fruitName: "ぶどう", feeling: "いや" },
+  { id: "troubled-grape", emoji: "🍇", fruitName: "ぶどう", feeling: "こまる" },
+  {
+    id: "embarrassed-peach",
+    emoji: "🍑",
+    fruitName: "桃",
+    feeling: "はずかしい",
+  },
+  {
+    id: "irritated-persimmon",
+    emoji: "🟠",
+    fruitName: "柿",
+    feeling: "いらいら",
+  },
+  {
+    id: "enjoyable-orange",
+    emoji: "🍊",
+    fruitName: "みかん",
+    feeling: "たのしい",
+  },
+  { id: "happiness-peach", emoji: "🍑", fruitName: "桃", feeling: "しあわせ" },
+  { id: "love-strawberry", emoji: "🍓", fruitName: "いちご", feeling: "あい" },
+  { id: "like-peach", emoji: "🍑", fruitName: "桃", feeling: "すき" },
+  {
+    id: "persistent-grape",
+    emoji: "🍇",
+    fruitName: "ぶどう",
+    feeling: "しつこい",
+  },
+  { id: "shock-chestnut", emoji: "🌰", fruitName: "栗", feeling: "しょっく" },
+  {
+    id: "boring-chestnut",
+    emoji: "🌰",
+    fruitName: "栗",
+    feeling: "おもしろくない",
+  },
+  {
+    id: "relaxed-kiwi",
+    emoji: "🥝",
+    fruitName: "キウイ",
+    feeling: "きらく・\nのんびり",
+  },
+  {
+    id: "wonderful-banana",
+    emoji: "🍌",
+    fruitName: "バナナ",
+    feeling: "すてき",
+  },
+  { id: "moved-orange", emoji: "🍊", fruitName: "みかん", feeling: "かんどう" },
+  {
+    id: "tearful-blueberry",
+    emoji: "🫐",
+    fruitName: "ブルーベリー",
+    feeling: "なきたい",
+  },
+  {
+    id: "sympathy-blueberry",
+    emoji: "🫐",
+    fruitName: "ブルーベリー",
+    feeling: "かわいそう",
+  },
+  {
+    id: "lonely-blueberry",
+    emoji: "🫐",
+    fruitName: "ブルーベリー",
+    feeling: "さびしい",
+  },
+  {
+    id: "disappointed-blueberry",
+    emoji: "🫐",
+    fruitName: "ブルーベリー",
+    feeling: "がっかりする",
+  },
+  {
+    id: "relax-watermelon",
+    emoji: "🍉",
+    fruitName: "スイカ",
+    feeling: "りらっくす",
+  },
+  {
+    id: "relief-watermelon",
+    emoji: "🍉",
+    fruitName: "スイカ",
+    feeling: "あんしんする・\nほっとする",
+  },
+  {
+    id: "gratitude-orange",
+    emoji: "🍊",
+    fruitName: "みかん",
+    feeling: "かんしゃ",
+  },
+  {
+    id: "kind-kiwi",
+    emoji: "🥝",
+    fruitName: "キウイ",
+    feeling: "やさしい・\nしんせつ",
+  },
+  {
+    id: "sad-blueberry",
+    emoji: "🫐",
+    fruitName: "ブルーベリー",
+    feeling: "かなしい",
+  },
+  {
+    id: "frustrated-grape",
+    emoji: "🍇",
+    fruitName: "ぶどう",
+    feeling: "くやしい",
+  },
+  { id: "tired-pear", emoji: "🍐", fruitName: "梨", feeling: "つかれた" },
+  { id: "calm-kiwi", emoji: "🥝", fruitName: "キウイ", feeling: "おだやか" },
+  {
+    id: "unconcerned-pear",
+    emoji: "🍐",
+    fruitName: "梨",
+    feeling: "きにしない",
+  },
+  {
+    id: "pleasant-watermelon",
+    emoji: "🍉",
+    fruitName: "スイカ",
+    feeling: "きもちいい",
+  },
 ];
 const displayedFruits = ref([]);
 
@@ -219,7 +295,10 @@ function pickRandomFruits() {
   const shuffled = [...fruits];
   for (let index = shuffled.length - 1; index > 0; index--) {
     const randomIndex = Math.floor(Math.random() * (index + 1));
-    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    [shuffled[index], shuffled[randomIndex]] = [
+      shuffled[randomIndex],
+      shuffled[index],
+    ];
   }
   displayedFruits.value = shuffled.slice(0, 8);
 }
@@ -227,69 +306,106 @@ function pickRandomFruits() {
 pickRandomFruits();
 const courseImages = { easy: courseEasy, hard: courseHard, mix: courseMix };
 const courseLabels = {
-  easy: 'かんたん',
-  hard: 'むずかしい',
-  mix: 'ごちゃまぜ'
+  easy: "かんたん",
+  hard: "むずかしい",
+  mix: "ごちゃまぜ",
 };
-const howScreens = ['how1', 'how2', 'how3', 'how4'];
+const howScreens = ["how1", "how2", "how3", "how4"];
 const howBackgrounds = { how1, how2, how3, how4 };
-const helpScreens = ['help1', 'help2', 'help3', 'help4'];
+const helpScreens = ["help1", "help2", "help3", "help4"];
 const helpBackgrounds = {
   help1: rolesBg,
   help2: how2,
   help3: how3,
-  help4: how4
+  help4: how4,
 };
-const gestureQuestions = [
-  'そのきもちのとき、からだは\nどんなうごきを　したくなる？\nやってみて！',
-  'そのきもちのとき、いちばん　やりたくなる\nポーズを　やってみて！',
-  'そのきもちのとき、かおは\nどんなひょうじょうに　なっちゃう？\nかおまねしてみて！',
-  'そのきもちのとき、ダンスを　おどるなら\nどんなダンス？\nじっさいに　おどってみてね！',
-  'そのきもちに　なりきって　あるいてみて！\nはしったり、スキップしても　いいよ！',
-  'そのきもちのとき、もし\n「ネコちゃん」だったら　どんなポーズを\nしてる？'
-];
-const associationQuestions = [
-  'そのきもちから　どんなおとが　おもいうかぶ？',
-  'そのきもちを　たべたら　どんなあじが　すると思う？',
-  'そのきもちを　どうぶつで　あらわすと、\nどんなどうぶつ？'
-];
-
-function pickRandomQuestion(questions) {
-  return questions[Math.floor(Math.random() * questions.length)];
+function screenImages(name) {
+  const images = {
+    home: [backgroundImage, heroImage, startButton],
+    terms: [backgroundImage],
+    guide: [guideBg, guideSpeechBubble, arrowImage],
+    how1: [how1, arrowImage], how2: [how2, arrowImage],
+    how3: [how3, challengeSpeechBubble, arrowImage], how4: [how4, arrowImage],
+    help1: [rolesBg, helpCloseButton, arrowImage],
+    help2: [how2, helpCloseButton, arrowImage],
+    help3: [how3, challengeSpeechBubble, helpCloseButton, arrowImage],
+    help4: [how4, helpCloseButton, helpCompleteButton, arrowImage],
+    roles: [rolesBg, arrowImage],
+    courses: [courseBg, courseEasy, courseHard, courseMix, arrowImage],
+    courseConfirm: [confirmBg, courseImages[selectedCourse.value], yesImage, noImage],
+    customerHandoff: [customerHandoff, arrowImage],
+    customerShop: [shopBg], customerConfirm: [shopBg],
+    clerkHandoff: [backgroundImage, arrowImage], clerkRules: [backgroundImage, arrowImage],
+    question: [shopBg, arrowImage], questionConfirm: [shopBg],
+    productIntro: [shopping], clerkShop: [shopping], productConfirm: [shopBg],
+    success: [backgroundImage], failure: [backgroundImage], finalFailure: [backgroundImage],
+  };
+  const withMenu = ['roles', 'courses', 'courseConfirm', 'customerHandoff', 'customerShop',
+    'customerConfirm', 'clerkHandoff', 'clerkRules', 'question', 'questionConfirm',
+    'productIntro', 'clerkShop', 'productConfirm', 'failure', 'finalFailure'];
+  return withMenu.includes(name) ? [...(images[name] || []), helpIcon] : images[name] || [];
 }
-
+function likelyNextScreen(name) {
+  return {
+    home: 'terms', terms: 'guide', guide: 'how1', how1: 'how2', how2: 'how3',
+    how3: 'how4', how4: 'roles', roles: 'courses', courses: 'courseConfirm',
+    courseConfirm: 'customerHandoff', customerHandoff: 'customerShop',
+    customerShop: 'customerConfirm', customerConfirm: 'clerkHandoff',
+    clerkHandoff: 'clerkRules', clerkRules: 'question', question: 'productIntro',
+    questionConfirm: 'productIntro', productIntro: 'clerkShop', clerkShop: 'productConfirm',
+    productConfirm: 'success', success: 'home', failure: 'question', finalFailure: 'roles',
+    help1: 'help2', help2: 'help3', help3: 'help4', help4: helpReturnScreen.value,
+  }[name];
+}
+function prepareScreenImages() {
+  void imagePreloader.plan(screenImages(screen.value), screenImages(likelyNextScreen(screen.value)));
+}
+watch([screen, selectedCourse], prepareScreenImages, { flush: 'post' });
 const gestureQuestion = ref(pickRandomQuestion(gestureQuestions));
 const associationQuestion = ref(pickRandomQuestion(associationQuestions));
 const questionNumber = computed(() => 4 - attempts.value);
 const questionText = computed(() => {
   if (questionNumber.value === 1) return gestureQuestion.value;
   if (questionNumber.value === 2) return associationQuestion.value;
-  return 'そのきもちに　なりきって\n「くだもの」って　いってみて！';
+  return finalQuestion;
 });
+function resampleQuestions() {
+  gestureQuestion.value = pickRandomQuestion(gestureQuestions);
+  associationQuestion.value = pickRandomQuestion(associationQuestions);
+}
+function startGame() {
+  resampleQuestions();
+  attempts.value = 3;
+  go('terms');
+}
 const formattedTime = computed(() => {
   const minutes = Math.floor(remainingSeconds.value / 60);
   const seconds = remainingSeconds.value % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 });
 
 function katakanaToHiragana(text) {
   return [...text]
     .map((character) => {
       const code = character.charCodeAt(0);
-      return code >= 0x30a1 && code <= 0x30f6 ? String.fromCharCode(code - 0x60) : character;
+      return code >= 0x30a1 && code <= 0x30f6
+        ? String.fromCharCode(code - 0x60)
+        : character;
     })
-    .join('');
+    .join("");
 }
 
 function applyKatakanaReadings() {
-  const root = document.querySelector('.viewport');
+  const root = document.querySelector(".viewport");
   if (!root) return;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode(node) {
-      if (!/[ァ-ヴー]/.test(node.nodeValue || '')) return NodeFilter.FILTER_REJECT;
-      if (node.parentElement?.closest('ruby, rt, script, style, .terms-body')) return NodeFilter.FILTER_REJECT;
+      if (!/[ァ-ヴー]/.test(node.nodeValue || ""))
+        return NodeFilter.FILTER_REJECT;
+      if (node.parentElement?.closest("ruby, rt, script, style, .terms-body"))
+        return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
-    }
+    },
   });
   const textNodes = [];
   while (walker.nextNode()) textNodes.push(walker.currentNode);
@@ -298,10 +414,10 @@ function applyKatakanaReadings() {
     node.nodeValue.split(/([ァ-ヴー]+)/g).forEach((part) => {
       if (!part) return;
       if (/^[ァ-ヴー]+$/.test(part)) {
-        const ruby = document.createElement('ruby');
-        ruby.className = 'katakana-ruby';
+        const ruby = document.createElement("ruby");
+        ruby.className = "katakana-ruby";
         ruby.append(document.createTextNode(part));
-        const reading = document.createElement('rt');
+        const reading = document.createElement("rt");
         reading.textContent = katakanaToHiragana(part);
         ruby.append(reading);
         fragment.append(ruby);
@@ -312,43 +428,103 @@ function applyKatakanaReadings() {
 }
 
 watch([screen, helpOpen, homeConfirm], () => nextTick(applyKatakanaReadings), {
-  immediate: true
+  immediate: true,
 });
-watch(screen, (nextScreen) => {
-  if (timerStarted.value && (nextScreen === 'clerkShop' || nextScreen === 'productConfirm')) return;
-
+watch([screen, helpOpen, homeConfirm], ([nextScreen, menuOpen, homeDialogOpen]) => {
+  countdown.pause();
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = undefined;
-  timerStarted.value = false;
-  if (nextScreen !== 'clerkShop') return;
-
-  remainingSeconds.value = 180;
-  oneMinuteAcknowledged.value = false;
-  timeUpAcknowledged.value = false;
-  timerStarted.value = true;
-  timerInterval = setInterval(() => {
-    if (remainingSeconds.value > 0) remainingSeconds.value--;
-  }, 1000);
+  remainingSeconds.value = countdown.seconds;
+  const timedScreen = nextScreen === 'clerkShop' || nextScreen === 'productConfirm';
+  const timedHelp = helpScreens.includes(nextScreen) &&
+    (helpReturnScreen.value === 'clerkShop' || helpReturnScreen.value === 'productConfirm');
+  if (!timedScreen && !timedHelp) { timerStarted.value = false; return; }
+  if (timedHelp) return; // Keep remaining time and warning acknowledgements intact.
+  if (!timerStarted.value) {
+    if (nextScreen !== 'clerkShop') return;
+    countdown.reset();
+    remainingSeconds.value = countdown.seconds;
+    oneMinuteAcknowledged.value = false;
+    timeUpAcknowledged.value = false;
+    timerStarted.value = true;
+  }
+  if (menuOpen || homeDialogOpen) return;
+  countdown.resume();
+  timerInterval = setInterval(() => { remainingSeconds.value = countdown.seconds; }, 250);
 });
-onMounted(() => nextTick(applyKatakanaReadings));
+watch(screen, () => {
+  dragging.value = false;
+  overBasket.value = false;
+  keyboardFruit.value = null;
+  questionPreviewOpen.value = false;
+});
+function registerGameTools() {
+  if (!document.modelContext?.registerTool) return;
+  webMcpLifecycle = new AbortController();
+  const visibleState = () => ({
+    screen: screen.value,
+    remainingSeconds: screen.value === 'clerkShop' ? remainingSeconds.value : null,
+    fruits: ['customerShop', 'clerkShop'].includes(screen.value)
+      ? displayedFruits.value.map(({ id, fruitName, feeling }) => ({ id, fruitName, feeling })) : [],
+    canPlaceFruit: ['customerShop', 'clerkShop'].includes(screen.value) && !dragDisabled.value,
+  });
+  const tools = [{
+    name: 'get_fruit_game_view', title: '果物ゲームの表示を確認',
+    description: 'Read the current visible game screen and fruit choices. Does not reveal hidden answers.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    annotations: { readOnlyHint: true, untrustedContentHint: false },
+    execute: () => visibleState(),
+  }, {
+    name: 'place_fruit_in_basket', title: 'えらんだ果物をレジに置く',
+    description: 'Place a currently visible fruit in the basket and open its confirmation screen, like completing a drag onto the basket.',
+    inputSchema: { type: 'object', properties: { fruit_id: { type: 'string' } }, required: ['fruit_id'], additionalProperties: false },
+    annotations: { readOnlyHint: false, untrustedContentHint: false },
+    async execute(input) {
+      if (!input || typeof input.fruit_id !== 'string' || Object.keys(input).some(key => key !== 'fruit_id'))
+        throw new Error('A fruit_id is required.');
+      if (!visibleState().canPlaceFruit) throw new Error('Fruit selection is not available on this screen.');
+      const fruit = displayedFruits.value.find(item => item.id === input.fruit_id);
+      if (!fruit) throw new Error('Choose a fruit from the visible list.');
+      selectFruit(fruit);
+      await nextTick();
+      return { screen: screen.value, selectedFruit: { id: fruit.id, fruitName: fruit.fruitName } };
+    },
+  }];
+  for (const tool of tools) {
+    try { void Promise.resolve(document.modelContext.registerTool(tool, { signal: webMcpLifecycle.signal })).catch(() => {}); }
+    catch { /* This optional browser interface must never affect play. */ }
+  }
+}
+onMounted(() => {
+  nextTick(applyKatakanaReadings); void sfx.preload(); registerGameTools();
+  prepareScreenImages();
+  fullscreenAvailable.value = Boolean(document.fullscreenEnabled && document.documentElement.requestFullscreen);
+  syncFullscreen();
+  document.addEventListener('fullscreenchange', syncFullscreen);
+});
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
+  sfx.dispose();
+  imagePreloader.dispose();
+  document.removeEventListener('fullscreenchange', syncFullscreen);
+  webMcpLifecycle?.abort();
 });
 
 function go(next) {
-  if (next === 'how1' && helpOpen.value) {
+  if (next === "how1" && helpOpen.value) {
     helpReturnScreen.value = screen.value;
-    screen.value = 'help1';
+    screen.value = "help1";
     helpOpen.value = false;
     return;
   }
-  if (next === 'customerShop' && screen.value === 'customerHandoff') pickRandomFruits();
+  if (next === "customerShop" && screen.value === "customerHandoff")
+    pickRandomFruits();
   history.value.push(screen.value);
   screen.value = next;
   helpOpen.value = false;
 }
 function back() {
-  screen.value = history.value.pop() || 'home';
+  screen.value = history.value.pop() || "home";
   helpOpen.value = false;
 }
 function closeHelp() {
@@ -357,48 +533,37 @@ function closeHelp() {
 }
 function selectCourse(id) {
   selectedCourse.value = id;
-  go('courseConfirm');
+  go("courseConfirm");
 }
 function selectFruit(fruit) {
-  if (!fruit) return;
+  if (!fruit || !displayedFruits.value.some(item => item.id === fruit.id)) return;
+  if (screen.value !== 'customerShop' && screen.value !== 'clerkShop') return;
   selectedFruit.value = fruit;
   if (screen.value === 'customerShop') correctFruit.value = fruit;
+  else clerkFruit.value = fruit;
   go(screen.value === 'customerShop' ? 'customerConfirm' : 'productConfirm');
 }
-function onDrop(event) {
-  const id = event.dataTransfer?.getData('fruitId');
-  const fruit = fruits.find((fruit) => fruit.id === id);
-  if (!fruit) return;
 
-  if (screen.value === 'customerShop') {
-    // お客さんが選んだフルーツ（正解）
-    correctFruit.value = fruit;
-    selectedFruit.value = fruit;
-    go('customerConfirm');
-  } else if (screen.value === 'clerkShop') {
-    // 店員さんが選んだフルーツ
-    clerkFruit.value = fruit;
-    selectedFruit.value = fruit;
-    go('productConfirm');
-  }
-}
 function judge() {
   // どちらかが未選択なら判定しない
   if (!correctFruit.value || !clerkFruit.value) return;
 
   // フルーツの id が同じなら正解
   if (clerkFruit.value.id === correctFruit.value.id) {
-    go('success');
+    void sfx.play('success');
+    go("success");
   } else if (attempts.value > 1) {
+    void sfx.play('retry');
     attempts.value--;
-    go('failure');
+    go("failure");
   } else {
-    go('finalFailure');
+    void sfx.play('retry');
+    go("finalFailure");
   }
 }
 
 function resetHome() {
-  screen.value = 'home';
+  screen.value = "home";
   history.value = [];
   helpOpen.value = false;
   homeConfirm.value = false;
@@ -408,28 +573,71 @@ function resetHome() {
 }
 
 function retryGame() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = undefined;
+  countdown.reset();
+  remainingSeconds.value = 180;
+  timerStarted.value = false;
+  oneMinuteAcknowledged.value = false;
+  timeUpAcknowledged.value = false;
   selectedFruit.value = null;
   correctFruit.value = null;
   clerkFruit.value = null;
   attempts.value = 3;
-
+  helpOpen.value = false;
+  homeConfirm.value = false;
+  helpReturnScreen.value = 'roles';
+  questionPreviewOpen.value = false;
+  keyboardFruit.value = null;
+  dragging.value = false;
+  overBasket.value = false;
+  selectedCourse.value = 'easy';
+  resampleQuestions();
   pickRandomFruits();
-  go('roles');
+  // A new game has no route back into the previous answer or failure screens.
+  history.value = ['home'];
+  screen.value = 'roles';
 }
 </script>
 
 <template>
-  <main class="viewport">
-    <ScreenFrame v-if="screen === 'home'" label="ホーム画面" :background="backgroundImage">
+  <main class="viewport" :class="{ 'help-menu-open': helpOpen }" @click.capture="onButtonClick"
+    @pointerdown.capture="guardHelpMenuBackground" @pointerup.capture="guardHelpMenuBackground"
+    @mousedown.capture="guardHelpMenuBackground" @mouseup.capture="guardHelpMenuBackground">
+    <div ref="gameSurface" class="game-surface" :inert="homeConfirm">
+    <div class="viewport-controls">
+      <button v-if="fullscreenAvailable" class="fullscreen-toggle" type="button" data-sfx-skip
+        :aria-label="fullscreenActive ? '全画面表示をやめる' : '全画面表示にする'"
+        :aria-pressed="fullscreenActive" @click="toggleFullscreen">{{ fullscreenActive ? 'もどす' : '全画面' }}</button>
+      <button class="sound-toggle" type="button" data-sfx-skip
+        :aria-label="muted ? '音をオンにする' : '音をオフにする'"
+        :title="muted ? '音をオンにする' : '音をオフにする'"
+        :aria-pressed="!muted" @click="sfx.toggle()"><SoundIcon :muted="muted" /></button>
+    </div>
+    <p v-if="fullscreenNotice" class="fullscreen-notice" role="status">{{ fullscreenNotice }}</p>
+    <ScreenFrame
+      v-if="screen === 'home'"
+      label="ホーム画面"
+      :background="backgroundImage"
+    >
       <FruitHero />
       <p class="home-description">
         <span>てんいんさんがしつもんして、おきゃくさんのえらんだ</span
         ><span>「きもちのくだもの」をあてるゲームです！</span>
       </p>
-      <ImageButton class="start-button" :src="startButton" alt="スタート" @click="go('terms')" />
+      <ImageButton
+        class="start-button"
+        :src="startButton"
+        alt="スタート"
+        @click="startGame"
+      />
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'terms'" label="利用規約画面" :background="backgroundImage">
+    <ScreenFrame
+      v-else-if="screen === 'terms'"
+      label="利用規約画面"
+      :background="backgroundImage"
+    >
       <h1 class="terms-title">利用規約</h1>
       <div class="terms-body" tabindex="0" aria-label="利用規約本文">
         <p>
@@ -461,17 +669,31 @@ function retryGame() {
         </p>
         <p>以上</p>
       </div>
-      <button class="terms-action terms-back" type="button" @click="back">もどる</button>
-      <button class="terms-action terms-agree" type="button" @click="go('guide')">同意する</button>
+      <button class="terms-action terms-back" type="button" @click="back">
+        もどる
+      </button>
+      <button
+        class="terms-action terms-agree"
+        type="button"
+        @click="go('guide')"
+      >
+        同意する
+      </button>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'guide'" label="ゲーム説明案内" :background="guideBg">
+    <ScreenFrame
+      v-else-if="screen === 'guide'"
+      label="ゲーム説明案内"
+      :background="guideBg"
+    >
       <div class="speech intro-speech">
         <img class="speech-bubble-image" :src="guideSpeechBubble" alt="" /><span
           >いまから　あそびかたを　せつめいするね！</span
         >
       </div>
-      <NavArrow direction="back" @click="back" /><NavArrow @click="go('how1')" />
+      <NavArrow direction="back" @click="back" /><NavArrow
+        @click="go('how1')"
+      />
     </ScreenFrame>
 
     <ScreenFrame
@@ -479,7 +701,9 @@ function retryGame() {
       :label="`あそびかた ${howScreens.indexOf(screen) + 1}`"
       :background="howBackgrounds[screen]"
     >
-      <div class="step-badge">あそびかた　{{ howScreens.indexOf(screen) + 1 }} / ４</div>
+      <div class="step-badge">
+        あそびかた　{{ howScreens.indexOf(screen) + 1 }} / ４
+      </div>
       <div v-if="screen === 'how1'" class="lesson lesson-one">
         おみせには、ちょっとふしぎな「きもちのくだもの」が　ならんでいます。<br />うれしい、さみしい、いろんな「きもち」。<br />くだものたちは、みんな　それぞれちがう「きもち」を　もっています。
       </div>
@@ -497,7 +721,11 @@ function retryGame() {
         「どんなときに　そのきもちに　なるかな？」と<br />かんがえたり、おはなししたり　することが<br />たいせつな　ゲームです。
       </div>
       <NavArrow direction="back" @click="back" /><NavArrow
-        @click="screen === 'how4' ? go('roles') : go(howScreens[howScreens.indexOf(screen) + 1])"
+        @click="
+          screen === 'how4'
+            ? go('roles')
+            : go(howScreens[howScreens.indexOf(screen) + 1])
+        "
       />
     </ScreenFrame>
 
@@ -506,24 +734,37 @@ function retryGame() {
       :label="`ヘルプ あそびかた ${helpScreens.indexOf(screen) + 1}`"
       :background="helpBackgrounds[screen]"
     >
-      <div class="step-badge">あそびかた　{{ helpScreens.indexOf(screen) + 1 }} / ４</div>
-      <button class="help-close" type="button" aria-label="あそびかたを閉じる" @click="closeHelp">
+      <div class="step-badge">
+        あそびかた　{{ helpScreens.indexOf(screen) + 1 }} / ４
+      </div>
+      <button
+        class="help-close"
+        type="button"
+        aria-label="あそびかたを閉じる"
+        @click="closeHelp"
+      >
         <img :src="helpCloseButton" alt="" />
       </button>
       <div v-if="screen === 'help1'" class="lesson help-lesson help-lesson-one">
         ふたりで　おきゃくさんと　てんいんさんに　わかれよう。
       </div>
       <div v-if="screen === 'help2'" class="lesson help-lesson help-lesson-two">
-        おきゃくさんは　くだものを　１つ　えらんで　タップしよう。<br />それぞれの　くだものたちは、きもちを　もっているよ。<br />えらんだ　くだものの　きもちを　おぼえておいてね。
+        くだものを　ひとつ　えらんで、ゆびを　のせよう。<br />ゆびを　はなさず　<ruby class="katakana-ruby register-word"><span class="register-base">レジ</span><rt>れじ</rt></ruby>まで　うごかして、はなしてね。<br />えらんだ　くだものの　きもちを　おぼえておこう！
       </div>
-      <div v-if="screen === 'help3'" class="lesson help-lesson help-lesson-three">
+      <div
+        v-if="screen === 'help3'"
+        class="lesson help-lesson help-lesson-three"
+      >
         てんいんさんが　おきゃくさんに　きめられた　しつもんを　するよ。<br />おきゃくさんは　えらんだ　くだものの　きもちに　なりきって、<br />しつもんに　こたえよう！
       </div>
       <div v-if="screen === 'help3'" class="challenge-bubble">
         <img :src="challengeSpeechBubble" alt="" />
         <p>チャレンジできるのは、<br /><strong>３かい</strong>までだよ！</p>
       </div>
-      <div v-if="screen === 'help4'" class="lesson help-lesson help-lesson-four">
+      <div
+        v-if="screen === 'help4'"
+        class="lesson help-lesson help-lesson-four"
+      >
         てんいんさんが　おきゃくさんの　えらんだ　くだものを<br />あてられたら、せいこう！
       </div>
       <NavArrow
@@ -531,59 +772,117 @@ function retryGame() {
         direction="back"
         @click="screen = helpScreens[helpScreens.indexOf(screen) - 1]"
       />
-      <NavArrow v-if="screen !== 'help4'" @click="screen = helpScreens[helpScreens.indexOf(screen) + 1]" />
-      <button v-else class="help-complete" type="button" aria-label="あそびかたを閉じる" @click="closeHelp">
+      <NavArrow
+        v-if="screen !== 'help4'"
+        @click="screen = helpScreens[helpScreens.indexOf(screen) + 1]"
+      />
+      <button
+        v-else
+        class="help-complete"
+        type="button"
+        aria-label="あそびかたを閉じる"
+        @click="closeHelp"
+      >
         <img :src="helpCompleteButton" alt="" />
       </button>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'roles'" label="役割を決める画面" :background="rolesBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'roles'"
+      label="役割を決める画面"
+      :background="rolesBg"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="lesson roles-copy">
         さっそくゲームをはじめよう！<br />ふたりで　おきゃくさんと　てんいんさんの<br />どちらにするか　きめてね。
       </div>
-      <NavArrow direction="back" @click="back" /><NavArrow @click="go('courses')" />
+      <NavArrow direction="back" @click="back" /><NavArrow
+        @click="go('courses')"
+      />
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'courses'" label="コース選択画面" :background="courseBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'courses'"
+      label="コース選択画面"
+      :background="courseBg"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <h1 class="course-title">つぎに　やりたいコースを　えらんでね！</h1>
       <div class="course-list">
-        <button v-for="id in ['easy', 'hard', 'mix']" :key="id" type="button" @click="selectCourse(id)">
+        <button
+          v-for="id in ['easy', 'hard', 'mix']"
+          :key="id"
+          type="button"
+          @click="selectCourse(id)"
+        >
           <img :src="courseImages[id]" :alt="courseLabels[id]" />
         </button>
       </div>
       <NavArrow direction="back" @click="back" />
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'courseConfirm'" label="コース確認画面" :background="confirmBg">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'courseConfirm'"
+      label="コース確認画面"
+      :background="confirmBg"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <h1 class="confirm-title">このコースに　チャレンジする？</h1>
-      <img class="chosen-course" :src="courseImages[selectedCourse]" :alt="courseLabels[selectedCourse]" /><button
-        class="choice no"
-        type="button"
-        @click="back"
-      >
+      <img
+        class="chosen-course"
+        :src="courseImages[selectedCourse]"
+        :alt="courseLabels[selectedCourse]"
+      /><button class="choice no" type="button" @click="back">
         <img :src="yesImage" alt="いいえ" /></button
       ><button class="choice yes" type="button" @click="go('customerHandoff')">
         <img :src="noImage" alt="はい" />
       </button>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'customerHandoff'" label="お客さんに渡してね画面" :background="customerHandoff">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'customerHandoff'"
+      label="お客さんに渡してね画面"
+      :background="customerHandoff"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="lesson handoff-copy">
         はじめは、おきゃくさんの　ばんです。<br />おきゃくさんが　スマホを　もってね。<br />てんいんさんに　みえないように、くだものを　ひとつ　えらぼう。
       </div>
-      <NavArrow direction="back" @click="back" /><NavArrow @click="go('customerShop')" />
+      <NavArrow direction="back" @click="back" /><NavArrow
+        @click="go('customerShop')"
+      />
     </ScreenFrame>
 
     <ScreenFrame
       v-else-if="screen === 'customerShop' || screen === 'clerkShop'"
-      :label="screen === 'customerShop' ? 'お客さんの商品選択画面' : '店員さんの商品選択画面'"
+      :label="
+        screen === 'customerShop'
+          ? 'お客さんの商品選択画面'
+          : '店員さんの商品選択画面'
+      "
       :background="screen === 'clerkShop' ? shopping : shopBg"
     >
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
       <button
         v-if="screen === 'clerkShop'"
         class="question-sign"
@@ -594,25 +893,53 @@ function retryGame() {
         しつもんを<br />みる
       </button>
       <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
-        <div v-for="fruit in displayedFruits" :key="fruit.id" class="fruit-slot">
-          <FruitCard :fruit="fruit" /><span :class="{ 'fruit-feeling--multiline': fruit.feeling.includes('\n') }">{{
+        <div v-for="(fruit, index) in displayedFruits" :key="fruit.id" class="fruit-slot"
+          :style="fruitSlotStyle(index, screen === 'clerkShop')">
+          <FruitCard :fruit="fruit" :drop-zone="dropZone" :disabled="dragDisabled"
+            :picked="keyboardFruit?.id === fruit.id"
+            @drop="onFruitDrop" @drag-change="onDragChange" @keyboard-pick="keyboardFruit = $event" /><span :class="{ 'fruit-feeling--multiline': fruit.feeling.includes('\n') }">{{
             fruit.feeling
           }}</span>
         </div>
       </div>
-      <div class="drop-zone" role="button" aria-label="くだものをレジへ運ぶ" @dragover.prevent @drop="onDrop">
-        <div v-if="screen === 'clerkShop'" class="timer">のこり　{{ formattedTime }}</div>
-      </div>
+      <button
+        ref="dropZone" class="drop-zone" type="button" data-sfx-kind="drop"
+        :class="{ 'drop-zone--active': dragging || keyboardFruit, 'drop-zone--over': overBasket }"
+        :aria-label="keyboardFruit ? `${keyboardFruit.fruitName}をレジへ運ぶ` : 'くだものをレジへ運ぶ'"
+        :aria-disabled="!keyboardFruit || dragDisabled"
+        @click="!dragDisabled && selectFruit(keyboardFruit)"
+      >
+        <div v-if="screen === 'clerkShop'" class="timer">
+          のこり　{{ formattedTime }}
+        </div>
+      </button>
+      <p class="sr-only" aria-live="polite">{{ keyboardFruit ? `${keyboardFruit.fruitName}をえらびました。レジのボタンで確定できます。` : '' }}</p>
       <div
-        v-if="screen === 'clerkShop' && remainingSeconds > 0 && remainingSeconds <= 60 && !oneMinuteAcknowledged"
+        v-if="
+          screen === 'clerkShop' &&
+          remainingSeconds > 0 &&
+          remainingSeconds <= 60 &&
+          !oneMinuteAcknowledged
+        "
         class="one-minute-warning"
       >
         <p>あと１ぷん！</p>
-        <button type="button" @click="oneMinuteAcknowledged = true">わかった</button>
+        <button type="button" @click="oneMinuteAcknowledged = true">
+          わかった
+        </button>
       </div>
-      <div v-if="screen === 'clerkShop' && remainingSeconds === 0 && !timeUpAcknowledged" class="time-up-warning">
+      <div
+        v-if="
+          screen === 'clerkShop' &&
+          remainingSeconds === 0 &&
+          !timeUpAcknowledged
+        "
+        class="time-up-warning"
+      >
         <p>じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
-        <button type="button" @click="timeUpAcknowledged = true">わかった</button>
+        <button type="button" @click="timeUpAcknowledged = true">
+          わかった
+        </button>
       </div>
       <div
         v-if="screen === 'clerkShop' && questionPreviewOpen"
@@ -632,7 +959,7 @@ function retryGame() {
         </button>
         <div class="question-card question-preview-card">
           <span>しつもん{{ questionNumber }}</span>
-          <p>{{ questionText }}</p>
+          <p><QuestionText :text="questionText" /></p>
         </div>
       </div>
     </ScreenFrame>
@@ -642,35 +969,69 @@ function retryGame() {
       label="商品確認画面"
       :background="shopBg"
     >
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="confirm-card">
-        <div class="big-fruit" role="img" :aria-label="selectedFruit?.fruitName">
+        <div class="big-fruit" role="img" :aria-label="`${selectedFruit?.fruitName}、${selectedFruit?.feeling}`">
           <span class="big-fruit-emoji">{{ selectedFruit?.emoji }}</span>
           <span class="big-fruit-face">•ᴗ•</span>
         </div>
+        <p class="confirmed-feeling">{{ selectedFruit?.feeling }}</p>
         <h1>このくだもので　いい？</h1>
         <div class="confirm-actions">
           <button type="button" @click="back">いいえ</button
-          ><button type="button" @click="screen === 'customerConfirm' ? go('clerkHandoff') : judge()">はい</button>
+          ><button
+            type="button"
+            :data-sfx-skip="screen === 'productConfirm' ? '' : null"
+            @click="screen === 'customerConfirm' ? go('clerkHandoff') : judge()"
+          >
+            はい
+          </button>
         </div>
       </div>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'clerkHandoff'" label="店員さんにスマホを渡す画面" :background="backgroundImage">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'clerkHandoff'"
+      label="店員さんにスマホを渡す画面"
+      :background="backgroundImage"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="lesson center-message">
         つぎは、てんいんさんの　ばんだよ！<br />てんいんさんに　スマホを　わたそう！
         <div class="phone">📱</div>
       </div>
-      <NavArrow direction="back" @click="back" /><NavArrow @click="go('clerkRules')" />
+      <NavArrow direction="back" @click="back" /><NavArrow
+        @click="go('clerkRules')"
+      />
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'clerkRules'" label="店員さんのルール説明" :background="backgroundImage">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'clerkRules'"
+      label="店員さんのルール説明"
+      :background="backgroundImage"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="lesson center-message">
         てんいんさんは、おきゃくさんが　えらんだ<br />くだものの　きもちを　あてよう！<br />つぎの　がめんに　でてくる　しつもんを<br />おきゃくさんに　しよう！
       </div>
-      <NavArrow direction="back" @click="back" /><NavArrow @click="go('question')" />
+      <NavArrow direction="back" @click="back" /><NavArrow
+        @click="go('question')"
+      />
     </ScreenFrame>
 
     <ScreenFrame
@@ -678,10 +1039,15 @@ function retryGame() {
       label="質問画面"
       :background="shopBg"
     >
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="question-card">
         <span>しつもん{{ questionNumber }}</span>
-        <p>{{ questionText }}</p>
+        <p><QuestionText :text="questionText" /></p>
       </div>
 
       <template v-if="screen === 'question'">
@@ -695,80 +1061,118 @@ function retryGame() {
       </div>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="shopping">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'productIntro'"
+      label="商品説明画面"
+      :background="shopping"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="instruction-panel">
-        <p>そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！</p>
+        <p>
+          そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！
+        </p>
         <button @click="go('clerkShop')">はじめる</button>
       </div>
     </ScreenFrame>
 
-    <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="backgroundImage">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
-
-      <!-- ★失敗画面と同じクラスを使うことで枠が完全一致 -->
-      <div class="final-failure-screen">
+    <ScreenFrame
+      v-else-if="screen === 'success'"
+      label="正解画面"
+      :background="backgroundImage"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
+      <div class="final-failure-screen success">
         <h1>せいかい！</h1>
         <br />
         <p>
           きもちのくだものは「{{ correctFruit?.feeling }}」だったよ！！<br />
           よくみつけられたね！
         </p>
-
         <button type="button" @click="resetHome">ホームへもどる</button>
-
-        <button
-          type="button"
-          @click="
-            attempts = 3;
-            go('roles');
-          "
-        >
-          もういちどあそぶ
-        </button>
+        <button type="button" @click="retryGame">もういちどあそぶ</button>
       </div>
     </ScreenFrame>
-
-    <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="backgroundImage">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'failure'"
+      label="失敗画面"
+      :background="backgroundImage"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="failure-screen">
         <h1>しっぱい……。</h1>
-        <br />
-        <p>もういちど　おきゃくさんに　しつもんを　してみよう！<br />チャンスは　あと{{ attempts }}かい！</p>
+        <p>
+          もういちど　おきゃくさんに　しつもんを　してみよう！<br />チャンスは　あと{{
+            attempts
+          }}かい！
+        </p>
         <button type="button" @click="go('question')">もういっかい！</button>
       </div>
     </ScreenFrame>
-    <ScreenFrame v-else-if="screen === 'finalFailure'" label="最終失敗画面" :background="backgroundImage">
-      <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="homeConfirm = true" />
+    <ScreenFrame
+      v-else-if="screen === 'finalFailure'"
+      label="最終失敗画面"
+      :background="backgroundImage"
+    >
+      <HelpMenu
+        :open="helpOpen"
+        @toggle="helpOpen = !helpOpen"
+        @guide="go('how1')"
+        @home="openHomeConfirm"
+      />
       <div class="final-failure-screen">
         <h1>しっぱい……。</h1>
-        <p>せいかいは「{{ correctFruit?.feeling }}」でした…。<br />また　ちょうせんしてね！</p>
+        <p>
+          せいかいは「{{
+            correctFruit?.feeling
+          }}」でした…。<br />また　ちょうせんしてね！
+        </p>
         <button type="button" @click="resetHome">ホームへもどる</button>
         <button
           type="button"
-          @click="
-            attempts = 3;
-            go('roles');
-          "
+          @click="retryGame"
         >
           もういちどあそぶ
         </button>
       </div>
     </ScreenFrame>
 
+    </div>
     <div v-if="homeConfirm" class="modal-backdrop">
-      <div class="home-modal" role="dialog" aria-modal="true" aria-labelledby="home-modal-title">
+      <div
+        ref="homeDialog"
+        class="home-modal"
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="home-modal-title"
+        aria-describedby="home-modal-description"
+      >
         <h2 id="home-modal-title">
           <ruby>ホーム<rt>ほーむ</rt></ruby
           >に　もどりますか？
         </h2>
-        <p>
+        <p id="home-modal-description">
           <ruby>ゲーム<rt>げーむ</rt></ruby
           >を　やめて、<ruby>ホーム<rt>ほーむ</rt></ruby
           >がめんに　もどります。
         </p>
         <div class="home-modal-actions">
-          <button class="home-modal-no" @click="homeConfirm = false">
+          <button class="home-modal-no" @click="cancelHomeConfirm">
             <img :src="yesImage" alt="いいえ" /></button
           ><button class="home-modal-yes" @click="resetHome">
             <img :src="noImage" alt="はい" />
@@ -856,7 +1260,7 @@ export default {
   display: flex;
   justify-content: center;
   gap: 24px;
-  margin-top: 1cqw;
+  margin-top: calc(1 * var(--scene-unit));
 }
 
 /* ⭐ オレンジボタン（文字が確実に見える設定） */
@@ -890,10 +1294,6 @@ export default {
   margin: 0 auto; /* 中央に配置 */
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ふんわり影 */
-
-  overflow-wrap: break-word;
-  word-break: break-word;
-  white-space: normal;
 }
 
 .button-row button:hover {
@@ -916,38 +1316,5 @@ export default {
   margin: 20px 0; /* 上下の余白 */
   font-size: 28px; /* 見やすい大きさ */
   font-weight: bold; /* 太字 */
-}
-
-@media screen and (orientation: landscape) {
-  .result-card p,
-  .failure-screen p,
-  .home-description,
-  .howto-text {
-    font-size: 16px;
-    line-height: 1.6;
-    padding: 0 12px; /* 左右に余白を入れると読みやすい */
-  }
-}
-/* 横向き（ランドスケープ）のときだけ適用 */
-@media screen and (orientation: landscape) {
-  .viewport {
-    position: relative; /* 絶対配置の基準にする */
-  }
-
-  .start-button {
-    position: absolute;
-    bottom: 5%; /* 画面下に固定 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40%; /* 横向き用のサイズ調整 */
-    z-index: 10;
-  }
-
-  .home-description {
-    margin-bottom: 80px; /* ボタンと重ならないよう余白を追加 */
-    font-size: 16px; /* 横向き用に少し小さく */
-    line-height: 1.6;
-    padding: 0 12px; /* 左右に余白を入れて読みやすく */
-  }
 }
 </style>

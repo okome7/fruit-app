@@ -1,5 +1,5 @@
 <script setup>
-import arrow from '../assets/screens/arrow-guide.png'
+import arrow from '../assets/screens/arrow-guide.webp'
 defineProps({ direction: { type: String, default: 'next' } })
 defineEmits(['click'])
 </script>

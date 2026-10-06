@@ -1,0 +1,187 @@
+{
+  "source": {
+    "creator": "Kenney",
+    "pack": "Interface Sounds 1.0",
+    "official_page": "https://kenney.nl/assets/interface-sounds",
+    "licence": "CC0 1.0 Universal",
+    "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "archive_sha256": "f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232",
+    "archive_member": "Audio/bong_001.ogg",
+    "original_sha256": "d21d0f0b782445db579d11e2506b24cd1ac9d664ee33aeaf807761aa7b6fd710",
+    "licence_sha256": "f7966c773bbed0eca6a9c75081c44a178b38eae112724dbb5fdfbd4192d118a9"
+  },
+  "transforms": {
+    "decode": "ffmpeg to 48000 Hz mono float32",
+    "pitch": "SciPy polyphase resampling, rational approximation denominator <=10000",
+    "filters": "2nd-order Butterworth high-pass 65 Hz; 4th-order low-pass 1500 Hz",
+    "edges": "4.5 ms raised-sine attack; 27 ms raised-cosine release; zero endpoints",
+    "mix": "recipe note gains, then overall RMS target and hard -10 dBFS peak ceiling via linear scaling",
+    "export": "round to mono signed PCM16 WAV; no random dither"
+  },
+  "verification": {
+    "actual_listening": false,
+    "note": "Technical signal/format verification only. No verified listening tool was available; perceived cuteness is not asserted as auditioned.",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "ffmpeg": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "assets": [
+    {
+      "role": "button / ぽんっ",
+      "duration": 0.125,
+      "notes": [
+        [
+          0.0,
+          2,
+          1.0
+        ]
+      ],
+      "target_rms_dbfs": -25.5,
+      "file": "button-soft-pon-v2.wav",
+      "sha256": "1c66e156914775c83844ad4543aa590eb445f077d1cdd45267f34d838e81a15d",
+      "bytes": 12044,
+      "sample_rate": 48000,
+      "channels": 1,
+      "encoding": "PCM signed 16-bit LE",
+      "frames": 6000,
+      "duration_seconds": 0.125,
+      "peak_dbfs": -10.193,
+      "rms_dbfs": -25.5,
+      "dc_offset": 0.001356318155924479,
+      "energy_fraction_above_2khz": 1.286095191582204e-07,
+      "first_sample": 0,
+      "last_sample": 0
+    },
+    {
+      "role": "fruit landing / ころん",
+      "duration": 0.275,
+      "notes": [
+        [
+          0.0,
+          2,
+          1.0
+        ],
+        [
+          0.125,
+          -1,
+          0.72
+        ]
+      ],
+      "target_rms_dbfs": -25.5,
+      "file": "fruit-soft-koron-v2.wav",
+      "sha256": "343ae681fe2e233384afbe8578c365598284ae36640898d842f8a014cdac399e",
+      "bytes": 26444,
+      "sample_rate": 48000,
+      "channels": 1,
+      "encoding": "PCM signed 16-bit LE",
+      "frames": 13200,
+      "duration_seconds": 0.275,
+      "peak_dbfs": -10.0,
+      "rms_dbfs": -26.844,
+      "dc_offset": 0.0011387564919211647,
+      "energy_fraction_above_2khz": 5.801453943394016e-08,
+      "first_sample": 0,
+      "last_sample": 0
+    },
+    {
+      "role": "success / short rising major triad",
+      "duration": 0.41,
+      "notes": [
+        [
+          0.0,
+          2,
+          0.84
+        ],
+        [
+          0.125,
+          6,
+          0.91
+        ],
+        [
+          0.27,
+          9,
+          1.0
+        ]
+      ],
+      "target_rms_dbfs": -25.0,
+      "file": "success-soft-v2.wav",
+      "sha256": "424f9d77ea3b6c68d75c2b7c4d02a9e17d2c1b0222b175d6a1468caccc4817cb",
+      "bytes": 39404,
+      "sample_rate": 48000,
+      "channels": 1,
+      "encoding": "PCM signed 16-bit LE",
+      "frames": 19680,
+      "duration_seconds": 0.41,
+      "peak_dbfs": -10.0,
+      "rms_dbfs": -26.598,
+      "dc_offset": 0.0009655696589772294,
+      "energy_fraction_above_2khz": 3.1191382744744766e-08,
+      "first_sample": 0,
+      "last_sample": 0
+    },
+    {
+      "role": "incorrect attempt / single gentle lower rounded reply",
+      "duration": 0.175,
+      "notes": [
+        [
+          0.0,
+          -3,
+          1.0
+        ]
+      ],
+      "target_rms_dbfs": -27.0,
+      "file": "retry-soft-v2.wav",
+      "sha256": "2cf156c261db18991db6f9d2097380bd0c2388995400b57ff40727e559cc384a",
+      "bytes": 16844,
+      "sample_rate": 48000,
+      "channels": 1,
+      "encoding": "PCM signed 16-bit LE",
+      "frames": 8400,
+      "duration_seconds": 0.175,
+      "peak_dbfs": -10.861,
+      "rms_dbfs": -27.0,
+      "dc_offset": 0.0010633777436755952,
+      "energy_fraction_above_2khz": 1.8651872737464465e-07,
+      "first_sample": 0,
+      "last_sample": 0
+    }
+  ],
+  "audition": {
+    "file": "audition-button-drop-success-retry.wav",
+    "sha256": "fdb2ccbab6e89f3056c92faaf8652d472897dd4be8038df9fb4b356f0bda2763",
+    "bytes": 368204,
+    "sample_rate": 48000,
+    "channels": 1,
+    "encoding": "PCM signed 16-bit LE",
+    "frames": 184080,
+    "duration_seconds": 3.835,
+    "peak_dbfs": -10.0,
+    "rms_dbfs": -32.478,
+    "dc_offset": 0.00027761994005026685,
+    "energy_fraction_above_2khz": 2.8867388075481453e-08,
+    "first_sample": 0,
+    "last_sample": 0
+  },
+  "audition_timeline": [
+    {
+      "file": "button-soft-pon-v2.wav",
+      "starts_at_seconds": 0.4,
+      "ends_at_seconds": 0.525
+    },
+    {
+      "file": "fruit-soft-koron-v2.wav",
+      "starts_at_seconds": 1.175,
+      "ends_at_seconds": 1.45
+    },
+    {
+      "file": "success-soft-v2.wav",
+      "starts_at_seconds": 2.1,
+      "ends_at_seconds": 2.51
+    },
+    {
+      "file": "retry-soft-v2.wav",
+      "starts_at_seconds": 3.16,
+      "ends_at_seconds": 3.335
+    }
+  ]
+}
