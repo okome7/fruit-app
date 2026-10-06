@@ -1,0 +1,131 @@
+Fruit game: brighter, lighter round sound family, v3
+Prepared 2026-10-05 in a separate asset-only folder.
+No Site checkout, application source, hosting, or deployed files were changed.
+Application master gain remains 0.18; the exported audition uses native asset
+levels, without applying that application gain or any extra normalization.
+
+READY ASSETS
+button-soft-pon-v3.wav: 0.080 seconds; one higher rounded note.
+fruit-soft-koron-v3.wav: 0.160 seconds; a soft two-note upward major third.
+success-soft-v3.wav: 0.250 seconds; a short rising major triad.
+retry-soft-v3.wav: 0.090 seconds; one brief higher neutral note.
+
+These replace the v2 family in response to the user's actual listening feedback
+that the previous sounds were dark. They are technically higher-pitched and
+shorter. Every filename changes to v3 to avoid reuse of cached v2 resources.
+The intended soft, non-metallic, child-friendly impression has not been verified
+by listening. No actual audio-listening tool was used; technical signal tests
+are not a claim of subjective audition.
+
+WHAT CHANGED
+Button: source pitch +2 semitones -> +14 semitones, one octave higher.
+Landing: source pitches +2/-1 -> +14/+18 semitones; the lower second note is
+replaced by a rising major third, second note at 82% relative gain.
+Success: source pitches +2/+6/+9 -> +14/+18/+21 semitones, one octave higher.
+Its note gains remain 0.84/0.91/1.00, with shorter 0/95/195 ms onset timing.
+Retry: source pitch -3 -> +16 semitones, replacing the low error-like reply.
+
+Individual pitched-note dominant frequencies after filtering:
++14 semitones: 526.978 Hz
++16 semitones: 591.614 Hz
++18 semitones: 663.940 Hz
++21 semitones: 789.001 Hz
+
+The 100 Hz high-pass removes low drift. A 1900 Hz fourth-order low-pass retains
+more light upper tone than the previous 1500 Hz cutoff while suppressing high
+frequencies. No oscillator, buzzer, reverb, extra metallic sample, compression,
+limiting, or random effect was added. Attack/release are smoothly faded, and
+all note endpoints are zero. Sampled transitions into silence differ by no more
+than 2 PCM steps. The source's naturally short decays become even shorter when
+resampled upward.
+
+LIKE-FOR-LIKE MEASUREMENTS
+Both old and new PCM files were measured with the same full-file boxcar
+periodogram, 262144-point FFT, no detrending. Centroid is power-weighted.
+Overall RMS includes the full asset duration. Because the revised sounds are
+shorter, matching RMS does not imply equal total acoustic energy.
+
+Role       Dominant Hz, v2 -> v3  Centroid Hz, v2 -> v3  RMS dBFS, v2 -> v3
+Button       263.306 -> 526.978     250.188 -> 511.521    -25.5003 -> -25.5091
+Landing      261.841 -> 522.949     235.720 -> 558.163    -26.8438 -> -26.8503
+Success      332.520 -> 531.555     319.879 -> 645.397    -26.5981 -> -27.0595
+Retry        197.205 -> 591.614     186.229 -> 573.266    -27.0003 -> -27.0003
+
+The whole success file's dominant peak is its first note; its individual note
+peaks rise from 527 to 664 to 789 Hz. Whole-file dominant-frequency measures do
+not describe every note of a multi-note sound.
+
+Every v3 asset has a peak at or below -10 dBFS and its RMS is within 0.5 dB of
+v2. All are 48000 Hz, mono, signed PCM16 WAV with zero first/last samples and
+no clipped samples. Energy above 4 kHz is below 0.05% in every asset.
+Exact measurements, input hashes, and output hashes are in manifest.json.
+The unmodified original and licence have been hash-verified against v2 inputs.
+
+AUDITION
+The 3.430-second audition contains button, landing, success, retry in that
+order, at 0.400, 1.130, 1.940, and 2.840 seconds. There is a 400 ms lead-in,
+650 ms silence between sounds, and a 500 ms tail. Each segment is bit-identical
+to the final exported PCM asset. No speech, background music, gain adjustment,
+or app master gain is present.
+
+English filename: audition-button-drop-success-retry-v3.wav
+User-facing filename: くだものやさん_明るい効果音4種類_v3.wav
+These two audition files are byte-identical.
+
+SOURCE AND LICENCE
+Creator: Kenney
+Pack: Interface Sounds 1.0
+Official source page: https://kenney.nl/assets/interface-sounds
+Original archive: kenney-interface-sounds.zip (supplied)
+Archive member: Audio/bong_001.ogg
+Licence: Creative Commons Zero (CC0 1.0 Universal)
+Licence URL: https://creativecommons.org/publicdomain/zero/1.0/
+
+The original licence text is supplied unchanged as LICENSE-Kenney.txt.
+It permits personal, educational and commercial projects; credit is welcomed
+but not mandatory. The original OGG is retained at originals/bong_001.ogg.
+Only this original sample is used, without any other third-party audio.
+The source and licence were already verified for v2; this revision uses the
+same hash-matching files and does not introduce a new source or licence.
+
+ORIGINAL SHA-256 HASHES
+Archive:
+f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232
+Audio/bong_001.ogg:
+d21d0f0b782445db579d11e2506b24cd1ac9d664ee33aeaf807761aa7b6fd710
+Original License.txt:
+f7966c773bbed0eca6a9c75081c44a178b38eae112724dbb5fdfbd4192d118a9
+
+REPRODUCE
+Dependencies: Python 3, NumPy, SciPy, ffmpeg on PATH. Exact installed toolchain
+versions are recorded in manifest.json. No network or software install is used.
+
+Run from any directory:
+    python /path/to/this/folder/build_sounds.py
+
+To remeasure the v2 comparison instead of using the preserved reference values:
+    python /path/to/this/folder/build_sounds.py --previous-dir /path/to/v2/folder
+
+To reconstruct from the original supplied archive instead:
+    python /path/to/this/folder/build_sounds.py --source-zip /path/to/kenney-interface-sounds.zip
+
+The source and licence hashes are checked before rendering. Pitch uses SciPy
+polyphase resampling with a rational approximation denominator at most 10000.
+Each note is filtered and faded, mixed at recipe gain, set to the specified
+RMS target, and scaled down if necessary to keep peaks at or below -10 dBFS.
+Quantization is signed PCM16 with rounding and no random dither.
+
+The script runs format, level, brightness, decode, smooth-end, and exact audition
+segment checks. It also confirms sample-by-sample deterministic rendering.
+Two consecutive complete builds additionally produced byte-identical WAVs,
+manifest.json, and QA-RESULTS.json. REBUILD-VERIFICATION.json records that check.
+Exact hashes can depend on the ffmpeg/SciPy versions; reproducibility was
+verified using the same installed toolchain.
+
+FILES FOR REVIEW
+build_sounds.py: reproducible build script and executable technical assertions
+manifest.json: transformations, recipes, measurements, timeline, and SHA-256
+reference-v2.json: old PCM measurements and hashes for like-for-like comparison
+QA-RESULTS.json: executed per-asset QA and measured comparisons
+REBUILD-VERIFICATION.json: complete repeated-build byte-identity check
+SHA256SUMS.txt: hashes of the delivered files (excluding the hash list itself)

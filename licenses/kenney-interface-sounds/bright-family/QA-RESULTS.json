@@ -1,0 +1,163 @@
+{
+  "status": "pass",
+  "deterministic_render_verified": true,
+  "actual_listening": false,
+  "all_audition_segments_bit_identical_to_assets": true,
+  "application_master_gain_unchanged": true,
+  "site_files_changed": false,
+  "checks": [
+    {
+      "file": "button-soft-pon-v3.wav",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "note_end_steps_pcm": [
+        0
+      ],
+      "peak_below_minus_10_dbfs": "pass",
+      "rms_within_0_5_db_of_v2": "pass",
+      "dominant_above_450_hz": "pass",
+      "centroid_at_least_1_75x_v2": "pass",
+      "energy_above_4khz_below_0_05_percent": "pass"
+    },
+    {
+      "file": "fruit-soft-koron-v3.wav",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "note_end_steps_pcm": [
+        0,
+        0
+      ],
+      "peak_below_minus_10_dbfs": "pass",
+      "rms_within_0_5_db_of_v2": "pass",
+      "dominant_above_450_hz": "pass",
+      "centroid_at_least_1_75x_v2": "pass",
+      "energy_above_4khz_below_0_05_percent": "pass"
+    },
+    {
+      "file": "success-soft-v3.wav",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "note_end_steps_pcm": [
+        0,
+        0,
+        0
+      ],
+      "peak_below_minus_10_dbfs": "pass",
+      "rms_within_0_5_db_of_v2": "pass",
+      "dominant_above_450_hz": "pass",
+      "centroid_at_least_1_75x_v2": "pass",
+      "energy_above_4khz_below_0_05_percent": "pass"
+    },
+    {
+      "file": "retry-soft-v3.wav",
+      "decode": "pass",
+      "format": "48000 Hz mono PCM16",
+      "zero_endpoints": "pass",
+      "note_end_steps_pcm": [
+        0
+      ],
+      "peak_below_minus_10_dbfs": "pass",
+      "rms_within_0_5_db_of_v2": "pass",
+      "dominant_above_450_hz": "pass",
+      "centroid_at_least_1_75x_v2": "pass",
+      "energy_above_4khz_below_0_05_percent": "pass"
+    }
+  ],
+  "comparison_to_v2": [
+    {
+      "v2_file": "button-soft-pon-v2.wav",
+      "v3_file": "button-soft-pon-v3.wav",
+      "v2_sha256": "1c66e156914775c83844ad4543aa590eb445f077d1cdd45267f34d838e81a15d",
+      "v3_sha256": "69eae59bb9e02511821655835fe5aed52a8598d73b1cd8d65440c4a02e8ddb25",
+      "dominant_hz": {
+        "v2": 263.306,
+        "v3": 526.978
+      },
+      "centroid_hz": {
+        "v2": 250.188,
+        "v3": 511.521
+      },
+      "peak_dbfs": {
+        "v2": -10.1934,
+        "v3": -10.0001
+      },
+      "rms_dbfs": {
+        "v2": -25.5003,
+        "v3": -25.5091
+      },
+      "rms_difference_db": -0.0088
+    },
+    {
+      "v2_file": "fruit-soft-koron-v2.wav",
+      "v3_file": "fruit-soft-koron-v3.wav",
+      "v2_sha256": "343ae681fe2e233384afbe8578c365598284ae36640898d842f8a014cdac399e",
+      "v3_sha256": "4a1c3098ab3f52a7ea124e3cb425992544d27de2c7ed981a6a7b05f51dd5a60c",
+      "dominant_hz": {
+        "v2": 261.841,
+        "v3": 522.949
+      },
+      "centroid_hz": {
+        "v2": 235.72,
+        "v3": 558.163
+      },
+      "peak_dbfs": {
+        "v2": -10.0001,
+        "v3": -10.2303
+      },
+      "rms_dbfs": {
+        "v2": -26.8438,
+        "v3": -26.8503
+      },
+      "rms_difference_db": -0.0065
+    },
+    {
+      "v2_file": "success-soft-v2.wav",
+      "v3_file": "success-soft-v3.wav",
+      "v2_sha256": "424f9d77ea3b6c68d75c2b7c4d02a9e17d2c1b0222b175d6a1468caccc4817cb",
+      "v3_sha256": "ba9f5e429f7b13c51824d080fdb79ad15a8377518f94f4fad89bd2e6dc992817",
+      "dominant_hz": {
+        "v2": 332.52,
+        "v3": 531.555
+      },
+      "centroid_hz": {
+        "v2": 319.879,
+        "v3": 645.397
+      },
+      "peak_dbfs": {
+        "v2": -10.0001,
+        "v3": -10.0001
+      },
+      "rms_dbfs": {
+        "v2": -26.5981,
+        "v3": -27.0595
+      },
+      "rms_difference_db": -0.4614
+    },
+    {
+      "v2_file": "retry-soft-v2.wav",
+      "v3_file": "retry-soft-v3.wav",
+      "v2_sha256": "2cf156c261db18991db6f9d2097380bd0c2388995400b57ff40727e559cc384a",
+      "v3_sha256": "798e9e1b0a914301e4264df20aeeb91706e3e6466e92a9124527c780de357afa",
+      "dominant_hz": {
+        "v2": 197.205,
+        "v3": 591.614
+      },
+      "centroid_hz": {
+        "v2": 186.229,
+        "v3": 573.266
+      },
+      "peak_dbfs": {
+        "v2": -10.8612,
+        "v3": -10.3963
+      },
+      "rms_dbfs": {
+        "v2": -27.0003,
+        "v3": -27.0003
+      },
+      "rms_difference_db": 0.0
+    }
+  ]
+}

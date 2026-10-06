@@ -1,0 +1,31 @@
+{
+  "selection": "Kenney Interface Sounds 1.0, Audio/drop_002.ogg",
+  "source_url": "https://kenney.nl/assets/interface-sounds",
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_zip": "kenney-interface-sounds.zip",
+  "original_source_sha256": "4ac4d1cef7e936965cbf795852ca2020300b9e2ba7daa59f2bf4f1f7bf416218",
+  "output_filename": "drop_002-bubble-pop.wav",
+  "output_sha256": "93061277d31e1ad371368ce688a3d0bd506ddd3889b151a2ccd6160d5beb9aea",
+  "sample_rate_hz": 48000,
+  "channels": 1,
+  "encoding": "PCM signed 16-bit little endian",
+  "duration_seconds": 0.1881875,
+  "transformations": {
+    "decode": "ffmpeg -i original/drop_002.ogg -ac 1 -ar 48000 -c:a pcm_f32le original/drop_002.wav",
+    "trim": "none",
+    "pitch_change": "none",
+    "filter": "none",
+    "fade_in_seconds": 0.002,
+    "fade_out_seconds": 0.012,
+    "peak_target_dbfs": -6,
+    "linear_gain_applied_after_fades": 0.5443833700735151,
+    "conversion": "float64 DSP; round(x*32767) to int16; scipy.io.wavfile.write"
+  },
+  "measured_output_peak_dbfs": -6.000477743319013,
+  "listening_status": "Not auditioned. Selected using waveform and spectrogram comparison, not subjective listening.",
+  "source_container_duration_seconds": 0.191088,
+  "source_sample_rate_hz": 44100,
+  "source_channels": 2,
+  "decoded_pcm_samples": 9033
+}

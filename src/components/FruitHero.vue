@@ -1,5 +1,5 @@
 <script setup>
-import heroImage from '../assets/hero.png';
+import heroImage from '../assets/hero.webp';
 </script>
 
 <template>
@@ -14,10 +14,10 @@ import heroImage from '../assets/hero.png';
 .fruit-hero {
   position: absolute;
   top: 3.7313%;
-  left: 13.72998%;
-  width: 70.02288%;
-  height: 47.01493%;
-  object-fit: cover;
+  left: 15.67506%;
+  width: 68.64989%;
+  height: 46.26866%;
+  object-fit: contain;
   display: block;
 }
 </style>

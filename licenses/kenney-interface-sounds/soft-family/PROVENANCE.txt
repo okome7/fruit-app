@@ -1,0 +1,78 @@
+Fruit game: quiet round sound family, v2
+Prepared 2026-10-05. No Site source, hosting, or deployed files were changed.
+
+READY ASSETS
+button-soft-pon-v2.wav: 0.125 seconds, one round tap, intended as a gentle ぽんっ.
+fruit-soft-koron-v2.wav: 0.275 seconds, two taps with a lower, quieter second tap, intended as ころん.
+success-soft-v2.wav: 0.410 seconds, three short taps rising through a major triad.
+retry-soft-v2.wav: 0.175 seconds, one quieter, lower tap, distinct from the two-tap landing sound.
+
+All four files are 48000 Hz, mono, signed PCM16 WAV. Every file starts and ends
+at zero. Peak amplitude is capped by linear scaling at -10 dBFS, stricter than
+the requested -6 dBFS. There is no clipping or limiting distortion. Exact
+measured levels and hashes are in manifest.json. Application playback gain
+should not boost the files; a lower user-set volume can be applied normally.
+
+AUDITION
+audition-button-drop-success-retry.wav is one 3.835-second file containing the
+final exported samples at their native levels, in button/drop/success/retry
+order. There is a 0.400-second lead-in, 0.650 seconds of silence between sounds,
+and a 0.500-second tail. The exact onset times are 0.400, 1.175, 2.100, and 3.160
+seconds. This file is for a human listening comparison; no spoken labels are
+added. Signal/format analysis and deterministic rebuild checks were performed.
+No verified audio-listening method was available, so actual listening or
+perceived cuteness is NOT claimed.
+
+SOURCE AND LICENCE
+Creator: Kenney
+Pack: Interface Sounds 1.0
+Official source page: https://kenney.nl/assets/interface-sounds
+Original archive: kenney-interface-sounds.zip (supplied, 834536 bytes)
+Archive member used: Audio/bong_001.ogg
+Licence: Creative Commons Zero (CC0 1.0 Universal)
+Licence URL: https://creativecommons.org/publicdomain/zero/1.0/
+The archive's unmodified licence text is supplied as LICENSE-Kenney.txt.
+It states use in personal, educational and commercial projects is free;
+credit is welcomed but not mandatory. The original OGG is retained under
+originals/bong_001.ogg. No pluck sample or drop_002 is used, and no other
+third-party audio is mixed in.
+
+ORIGINAL SHA-256 HASHES
+kenney-interface-sounds.zip:
+f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232
+Audio/bong_001.ogg:
+d21d0f0b782445db579d11e2506b24cd1ac9d664ee33aeaf807761aa7b6fd710
+Original License.txt:
+f7966c773bbed0eca6a9c75081c44a178b38eae112724dbb5fdfbd4192d118a9
+
+TRANSFORMATIONS
+1. Decode the original to 48 kHz mono float32 with ffmpeg.
+2. Apply polyphase resampling for short pitch/duration variants.
+   Button: +2 semitones.
+   Drop: +2, then -1 semitones; second tap 72% of the first before final scaling.
+   Success: +2, +6, +9 semitones; relative note gains 0.84, 0.91, 1.00.
+   Retry: -3 semitones, one lower tap.
+3. Filter each note with a 65 Hz second-order Butterworth high-pass and a
+   1500 Hz fourth-order Butterworth low-pass. This removes low drift and
+   suppresses high-frequency edges without adding metallic partials.
+4. Apply a 4.5 ms raised-sine attack and 27 ms raised-cosine release, then
+   force zero endpoints. No artificial reverb, instrument, error buzzer,
+   oscillator, or random effect is added.
+5. Place the notes at the precise offsets in build_sounds.py. Set conservative
+   RMS targets (-25.0 to -27.0 dBFS); then linearly reduce any mix that exceeds
+   the -10 dBFS peak ceiling. No dynamics compressor is used.
+6. Quantize to signed PCM16. No random dither, to keep builds deterministic.
+   Make the audition directly from the final PCM assets without gain changes.
+
+REPRODUCE
+Dependencies already present during preparation: Python 3.12, NumPy 2.3.5,
+SciPy 1.17.0, ffmpeg 7.1.5. See manifest.json for the exact ffmpeg build string.
+Run from any directory:
+    python /path/to/this/folder/build_sounds.py
+This uses the included original OGG and checks its SHA-256 and licence hash.
+To reproduce from the supplied original ZIP instead:
+    python /path/to/this/folder/build_sounds.py --source-zip /path/to/kenney-interface-sounds.zip
+This additionally verifies the whole archive hash before extracting only the
+single original sample and licence. No network access or software installation
+is needed by the script. The exact output hashes can depend on ffmpeg/SciPy
+versions; the same installed toolchain was verified to produce identical files.

@@ -1,0 +1,339 @@
+{
+  "family_version": 3,
+  "intended_application_master_gain": 0.18,
+  "source": {
+    "creator": "Kenney",
+    "pack": "Interface Sounds 1.0",
+    "official_page": "https://kenney.nl/assets/interface-sounds",
+    "licence": "CC0 1.0 Universal",
+    "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "archive_sha256": "f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232",
+    "archive_member": "Audio/bong_001.ogg",
+    "original_sha256": "d21d0f0b782445db579d11e2506b24cd1ac9d664ee33aeaf807761aa7b6fd710",
+    "licence_sha256": "f7966c773bbed0eca6a9c75081c44a178b38eae112724dbb5fdfbd4192d118a9"
+  },
+  "transforms": {
+    "decode": "ffmpeg to 48000 Hz mono float32",
+    "pitch": "SciPy polyphase resampling; denominator <= 10000; +14 to +21 semitones",
+    "filters": "2nd-order high-pass 100 Hz; 4th-order low-pass 1900 Hz",
+    "edges": "4 ms raised-sine attack; 18 ms raised-cosine release; zero endpoints",
+    "mix": "Recipe note gains; overall v2-comparable RMS target; linear -10 dBFS peak cap",
+    "export": "round to mono signed PCM16 WAV; no random dither",
+    "audition": "Bit-identical final PCM concatenation; no gain adjustment or app gain"
+  },
+  "measurement_method": "Full-file periodogram; boxcar; 262144-point FFT; no detrend. Power-weighted centroid. Both v2 and v3 measured identically. RMS includes the fixed asset duration.",
+  "verification": {
+    "actual_listening": false,
+    "note": "Technical signal and format verification only. No actual audio-listening tool was used. Subjective brightness, cuteness, and non-metallic quality remain unverified by listening.",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "ffmpeg": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "assets": [
+    {
+      "role": "button / short bright rounded pon",
+      "duration": 0.08,
+      "notes": [
+        [
+          0.0,
+          14,
+          1.0
+        ]
+      ],
+      "target_rms_dbfs": -25.5,
+      "previous_file": "button-soft-pon-v2.wav",
+      "file": "button-soft-pon-v3.wav",
+      "sha256": "69eae59bb9e02511821655835fe5aed52a8598d73b1cd8d65440c4a02e8ddb25",
+      "bytes": 7724,
+      "sample_rate": 48000,
+      "channels": 1,
+      "encoding": "PCM signed 16-bit LE",
+      "frames": 3840,
+      "duration_seconds": 0.08,
+      "peak_dbfs": -10.0001,
+      "rms_dbfs": -25.5091,
+      "dominant_hz": 526.978,
+      "spectral_centroid_hz": 511.521,
+      "energy_fraction_above_2khz": 6.777861798706759e-08,
+      "energy_fraction_above_4khz": 1.5093193943314336e-08,
+      "dc_offset": 0.0007342815399169922,
+      "first_sample": 0,
+      "last_sample": 0,
+      "max_absolute_sample": 10362
+    },
+    {
+      "role": "fruit landing / two lightly rising rounded notes",
+      "duration": 0.16,
+      "notes": [
+        [
+          0.0,
+          14,
+          1.0
+        ],
+        [
+          0.085,
+          18,
+          0.82
+        ]
+      ],
+      "target_rms_dbfs": -26.85,
+      "previous_file": "fruit-soft-koron-v2.wav",
+      "file": "fruit-soft-koron-v3.wav",
+      "sha256": "4a1c3098ab3f52a7ea124e3cb425992544d27de2c7ed981a6a7b05f51dd5a60c",
+      "bytes": 15404,
+      "sample_rate": 48000,
+      "channels": 1,
+      "encoding": "PCM signed 16-bit LE",
+      "frames": 7680,
+      "duration_seconds": 0.16,
+      "peak_dbfs": -10.2303,
+      "rms_dbfs": -26.8503,
+      "dominant_hz": 522.949,
+      "spectral_centroid_hz": 558.163,
+      "energy_fraction_above_2khz": 9.769127975832421e-08,
+      "energy_fraction_above_4khz": 1.8200804692523198e-08,
+      "dc_offset": 0.0005837400754292806,
+      "first_sample": 0,
+      "last_sample": 0,
+      "max_absolute_sample": 10091
+    },
+    {
+      "role": "success / short rising major triad",
+      "duration": 0.25,
+      "notes": [
+        [
+          0.0,
+          14,
+          0.84
+        ],
+        [
+          0.095,
+          18,
+          0.91
+        ],
+        [
+          0.195,
+          21,
+          1.0
+        ]
+      ],
+      "target_rms_dbfs": -26.6,
+      "previous_file": "success-soft-v2.wav",
+      "file": "success-soft-v3.wav",
+      "sha256": "ba9f5e429f7b13c51824d080fdb79ad15a8377518f94f4fad89bd2e6dc992817",
+      "bytes": 24044,
+      "sample_rate": 48000,
+      "channels": 1,
+      "encoding": "PCM signed 16-bit LE",
+      "frames": 12000,
+      "duration_seconds": 0.25,
+      "peak_dbfs": -10.0001,
+      "rms_dbfs": -27.0595,
+      "dominant_hz": 531.555,
+      "spectral_centroid_hz": 645.397,
+      "energy_fraction_above_2khz": 2.2787192442247677e-07,
+      "energy_fraction_above_4khz": 1.694154323000016e-08,
+      "dc_offset": 0.0005329335530598958,
+      "first_sample": 0,
+      "last_sample": 0,
+      "max_absolute_sample": 10362
+    },
+    {
+      "role": "retry / brief gentle higher neutral note",
+      "duration": 0.09,
+      "notes": [
+        [
+          0.0,
+          16,
+          1.0
+        ]
+      ],
+      "target_rms_dbfs": -27.0,
+      "previous_file": "retry-soft-v2.wav",
+      "file": "retry-soft-v3.wav",
+      "sha256": "798e9e1b0a914301e4264df20aeeb91706e3e6466e92a9124527c780de357afa",
+      "bytes": 8684,
+      "sample_rate": 48000,
+      "channels": 1,
+      "encoding": "PCM signed 16-bit LE",
+      "frames": 4320,
+      "duration_seconds": 0.09,
+      "peak_dbfs": -10.3963,
+      "rms_dbfs": -27.0003,
+      "dominant_hz": 591.614,
+      "spectral_centroid_hz": 573.266,
+      "energy_fraction_above_2khz": 8.009357461114228e-08,
+      "energy_fraction_above_4khz": 1.680807913423867e-08,
+      "dc_offset": 0.0005509199919524016,
+      "first_sample": 0,
+      "last_sample": 0,
+      "max_absolute_sample": 9900
+    }
+  ],
+  "audition": {
+    "file": "audition-button-drop-success-retry-v3.wav",
+    "sha256": "2403527b7c9cf30aae0f071e4f1b642bacb2c6de156314c5b31beb4101c5e2f5",
+    "bytes": 329324,
+    "sample_rate": 48000,
+    "channels": 1,
+    "encoding": "PCM signed 16-bit LE",
+    "frames": 164640,
+    "duration_seconds": 3.43,
+    "peak_dbfs": -10.0001,
+    "rms_dbfs": -34.4644,
+    "dominant_hz": 537.048,
+    "spectral_centroid_hz": 586.8,
+    "energy_fraction_above_2khz": 1.4173515593145714e-07,
+    "energy_fraction_above_4khz": 1.692212213333928e-08,
+    "dc_offset": 9.76551378433628e-05,
+    "first_sample": 0,
+    "last_sample": 0,
+    "max_absolute_sample": 10362
+  },
+  "audition_timeline": [
+    {
+      "file": "button-soft-pon-v3.wav",
+      "start_frame": 19200,
+      "end_frame": 23040,
+      "starts_at_seconds": 0.4,
+      "ends_at_seconds": 0.48
+    },
+    {
+      "file": "fruit-soft-koron-v3.wav",
+      "start_frame": 54240,
+      "end_frame": 61920,
+      "starts_at_seconds": 1.13,
+      "ends_at_seconds": 1.29
+    },
+    {
+      "file": "success-soft-v3.wav",
+      "start_frame": 93120,
+      "end_frame": 105120,
+      "starts_at_seconds": 1.94,
+      "ends_at_seconds": 2.19
+    },
+    {
+      "file": "retry-soft-v3.wav",
+      "start_frame": 136320,
+      "end_frame": 140640,
+      "starts_at_seconds": 2.84,
+      "ends_at_seconds": 2.93
+    }
+  ],
+  "friendly_audition": {
+    "file": "くだものやさん_明るい効果音4種類_v3.wav",
+    "sha256": "2403527b7c9cf30aae0f071e4f1b642bacb2c6de156314c5b31beb4101c5e2f5"
+  },
+  "comparison_to_v2": [
+    {
+      "v2_file": "button-soft-pon-v2.wav",
+      "v3_file": "button-soft-pon-v3.wav",
+      "v2_sha256": "1c66e156914775c83844ad4543aa590eb445f077d1cdd45267f34d838e81a15d",
+      "v3_sha256": "69eae59bb9e02511821655835fe5aed52a8598d73b1cd8d65440c4a02e8ddb25",
+      "dominant_hz": {
+        "v2": 263.306,
+        "v3": 526.978
+      },
+      "centroid_hz": {
+        "v2": 250.188,
+        "v3": 511.521
+      },
+      "peak_dbfs": {
+        "v2": -10.1934,
+        "v3": -10.0001
+      },
+      "rms_dbfs": {
+        "v2": -25.5003,
+        "v3": -25.5091
+      },
+      "rms_difference_db": -0.0088
+    },
+    {
+      "v2_file": "fruit-soft-koron-v2.wav",
+      "v3_file": "fruit-soft-koron-v3.wav",
+      "v2_sha256": "343ae681fe2e233384afbe8578c365598284ae36640898d842f8a014cdac399e",
+      "v3_sha256": "4a1c3098ab3f52a7ea124e3cb425992544d27de2c7ed981a6a7b05f51dd5a60c",
+      "dominant_hz": {
+        "v2": 261.841,
+        "v3": 522.949
+      },
+      "centroid_hz": {
+        "v2": 235.72,
+        "v3": 558.163
+      },
+      "peak_dbfs": {
+        "v2": -10.0001,
+        "v3": -10.2303
+      },
+      "rms_dbfs": {
+        "v2": -26.8438,
+        "v3": -26.8503
+      },
+      "rms_difference_db": -0.0065
+    },
+    {
+      "v2_file": "success-soft-v2.wav",
+      "v3_file": "success-soft-v3.wav",
+      "v2_sha256": "424f9d77ea3b6c68d75c2b7c4d02a9e17d2c1b0222b175d6a1468caccc4817cb",
+      "v3_sha256": "ba9f5e429f7b13c51824d080fdb79ad15a8377518f94f4fad89bd2e6dc992817",
+      "dominant_hz": {
+        "v2": 332.52,
+        "v3": 531.555
+      },
+      "centroid_hz": {
+        "v2": 319.879,
+        "v3": 645.397
+      },
+      "peak_dbfs": {
+        "v2": -10.0001,
+        "v3": -10.0001
+      },
+      "rms_dbfs": {
+        "v2": -26.5981,
+        "v3": -27.0595
+      },
+      "rms_difference_db": -0.4614
+    },
+    {
+      "v2_file": "retry-soft-v2.wav",
+      "v3_file": "retry-soft-v3.wav",
+      "v2_sha256": "2cf156c261db18991db6f9d2097380bd0c2388995400b57ff40727e559cc384a",
+      "v3_sha256": "798e9e1b0a914301e4264df20aeeb91706e3e6466e92a9124527c780de357afa",
+      "dominant_hz": {
+        "v2": 197.205,
+        "v3": 591.614
+      },
+      "centroid_hz": {
+        "v2": 186.229,
+        "v3": 573.266
+      },
+      "peak_dbfs": {
+        "v2": -10.8612,
+        "v3": -10.3963
+      },
+      "rms_dbfs": {
+        "v2": -27.0003,
+        "v3": -27.0003
+      },
+      "rms_difference_db": 0.0
+    }
+  ],
+  "individual_note_dominant_hz": {
+    "14": {
+      "dominant_hz": 526.978,
+      "duration_seconds": 0.0534375
+    },
+    "16": {
+      "dominant_hz": 591.614,
+      "duration_seconds": 0.04760416666666667
+    },
+    "18": {
+      "dominant_hz": 663.94,
+      "duration_seconds": 0.042416666666666665
+    },
+    "21": {
+      "dominant_hz": 789.001,
+      "duration_seconds": 0.035666666666666666
+    }
+  }
+}
