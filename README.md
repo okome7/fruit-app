@@ -30,7 +30,3 @@ npm run preview
 ```sh
 npm run test
 ```
-
-## 使用素材
-
-効果音の出典とライセンスは [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) と [licenses](./licenses/) を参照してください。
