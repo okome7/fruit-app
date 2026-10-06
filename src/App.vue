@@ -947,7 +947,7 @@ export default {
     margin-bottom: 80px; /* ボタンと重ならないよう余白を追加 */
     font-size: 16px; /* 横向き用に少し小さく */
     line-height: 1.6;
-    padding: 0 12px; /* 左右に余白を入れて読みやすく */
+    padding: 0; /* 左右に余白を入れて読みやすく */
   }
 }
 </style>
