@@ -890,6 +890,10 @@ export default {
   margin: 0 auto; /* 中央に配置 */
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ふんわり影 */
+
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .button-row button:hover {
@@ -912,5 +916,38 @@ export default {
   margin: 20px 0; /* 上下の余白 */
   font-size: 28px; /* 見やすい大きさ */
   font-weight: bold; /* 太字 */
+}
+
+@media screen and (orientation: landscape) {
+  .result-card p,
+  .failure-screen p,
+  .home-description,
+  .howto-text {
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 0 12px; /* 左右に余白を入れると読みやすい */
+  }
+}
+/* 横向き（ランドスケープ）のときだけ適用 */
+@media screen and (orientation: landscape) {
+  .viewport {
+    position: relative; /* 絶対配置の基準にする */
+  }
+
+  .start-button {
+    position: absolute;
+    bottom: 5%; /* 画面下に固定 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%; /* 横向き用のサイズ調整 */
+    z-index: 10;
+  }
+
+  .home-description {
+    margin-bottom: 80px; /* ボタンと重ならないよう余白を追加 */
+    font-size: 16px; /* 横向き用に少し小さく */
+    line-height: 1.6;
+    padding: 0 12px; /* 左右に余白を入れて読みやすく */
+  }
 }
 </style>
