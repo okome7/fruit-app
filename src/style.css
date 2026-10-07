@@ -217,10 +217,10 @@ button:focus-visible {
   position: absolute;
   left: 2.63%;
   top: 4%;
-  width: calc(20.4% * var(--badge-size-factor));
+  width: calc(19.4% * var(--badge-size-factor));
   padding:
-    calc(.935% * var(--badge-size-factor))
-    calc(1.445% * var(--badge-size-factor));
+    calc(.75% * var(--badge-size-factor))
+    calc(1.15% * var(--badge-size-factor));
   border: calc(.1105 * var(--scene-unit) * var(--badge-size-factor)) solid #663d17;
   border-radius: calc(4.25 * var(--scene-unit) * var(--badge-size-factor));
   background: #fffdf4;
