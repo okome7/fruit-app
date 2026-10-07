@@ -1075,3 +1075,7 @@ button:focus-visible {
 .how-three-screen .how3-customer::after {
   margin-left: calc(-.22 * var(--scene-unit)); border-left-color: #fffdf5;
 }
+
+.help-three-screen .how3-conversation {
+  transform: translateY(calc(3 * var(--scene-unit)));
+}

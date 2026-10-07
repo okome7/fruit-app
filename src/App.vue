@@ -718,7 +718,7 @@ function retryGame() {
           <p><QuestionText :text="howThreeExampleQuestion" /></p>
         </div>
         <div class="how3-dialogue how3-customer" role="group" aria-label="おきゃくさんのこたえのれい">
-          <p>わあ！っていうおと！</p>
+          <p>わぁ！っていうおと！</p>
         </div>
       </div>
       <div v-if="screen === 'how4'" class="lesson lesson-four">
@@ -735,6 +735,7 @@ function retryGame() {
 
     <ScreenFrame
       v-else-if="helpScreens.includes(screen)"
+      :class="{ 'how-three-screen': screen === 'help3', 'help-three-screen': screen === 'help3' }"
       :label="`ヘルプ あそびかた ${helpScreens.indexOf(screen) + 1}`"
       :background="helpBackgrounds[screen]"
     >
@@ -753,9 +754,13 @@ function retryGame() {
       >
         つぎに　てんいんさんが　おきゃくさんに　きめられた　しつもんを　するよ。<br />おきゃくさんは　えらんだ　くだものの　きもちに　なりきって、<br />しつもんに　こたえよう！
       </div>
-      <div v-if="screen === 'help3'" class="challenge-bubble">
-        <img :src="challengeSpeechBubble" alt="" />
-        <p>チャレンジできるのは、<br /><strong>３かい</strong>までだよ！</p>
+      <div v-if="screen === 'help3'" class="how3-conversation">
+        <div class="how3-dialogue how3-clerk" role="group" aria-label="てんいんさんのしつもん">
+          <p><QuestionText :text="howThreeExampleQuestion" /></p>
+        </div>
+        <div class="how3-dialogue how3-customer" role="group" aria-label="おきゃくさんのこたえのれい">
+          <p>わぁ！っていうおと！</p>
+        </div>
       </div>
       <div
         v-if="screen === 'help4'"
