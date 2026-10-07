@@ -74,7 +74,7 @@ body { overflow: hidden; }
 }
 .viewport-controls {
   position: fixed;
-  right: 16px;
+  right: 24px;
   top: max(8px, env(safe-area-inset-top, 0px));
   z-index: 60;
   display: flex;
@@ -337,7 +337,7 @@ button:focus-visible {
 }
 .help-wrap {
   position: absolute;
-  left: 16px;
+  left: 24px;
   top: max(8px, var(--safe-top));
   z-index: 20;
 }
