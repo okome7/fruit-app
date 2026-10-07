@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
+import { finishHelp } from './finishHelp.js';
 
 const sound = vi.hoisted(() => ({ play: vi.fn(), toggle: vi.fn() }));
 vi.mock('../src/composables/useSfx.js', async () => {
@@ -79,7 +80,7 @@ describe('help menu outside dismissal (mounted DOM, not browser hit testing)', (
     await start();
     await wrapper.find('.help-menu button').trigger('click');
     expect(state().screen).toBe('help1'); expect(state().helpOpen).toBe(false);
-    await wrapper.find('.help-close').trigger('click');
+    await finishHelp(wrapper);
     await wrapper.find('.help-button').trigger('click');
     const home = wrapper.findAll('.help-menu button')[1];
     await home.trigger('click'); await nextTick(); await nextTick();

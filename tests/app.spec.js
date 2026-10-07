@@ -2,6 +2,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
+import { finishHelp } from './finishHelp.js';
 import FruitCard from '../src/components/FruitCard.vue';
 const sound = vi.hoisted(() => ({ play: vi.fn() }));
 vi.mock('../src/composables/useSfx.js', async () => {
@@ -123,12 +124,12 @@ describe('isolated prototype mounted-DOM integration (not browser rendering)', (
     await vi.advanceTimersByTimeAsync(5000); expect(state().formattedTime).toBe('02:50');
     await wrapper.find('.help-menu button').trigger('click');
     expect(label()).toContain('ヘルプ');
-    await vi.advanceTimersByTimeAsync(5000); await wrapper.find('.help-close').trigger('click');
+    await vi.advanceTimersByTimeAsync(5000); await finishHelp(wrapper);
     expect(state().formattedTime).toBe('02:50');
     await vi.advanceTimersByTimeAsync(111000); expect(state().formattedTime).toBe('00:59');
     await wrapper.find('.one-minute-warning button').trigger('click');
     await wrapper.find('.help-button').trigger('click'); await wrapper.find('.help-menu button').trigger('click');
-    await wrapper.find('.nav-arrow.next').trigger('click'); await wrapper.find('.help-close').trigger('click');
+    await wrapper.find('.nav-arrow.next').trigger('click'); await finishHelp(wrapper);
     expect(state().formattedTime).toBe('00:59'); expect(state().oneMinuteAcknowledged).toBe(true);
     await vi.advanceTimersByTimeAsync(1000); expect(state().formattedTime).toBe('00:58');
   });

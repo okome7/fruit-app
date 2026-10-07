@@ -2,6 +2,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
+import { finishHelp } from './finishHelp.js';
 import { gestureQuestions, associationQuestions, finalQuestion } from '../src/lib/questions.js';
 vi.mock('../src/composables/useSfx.js', async () => {
   const { ref } = await import('vue');
@@ -46,7 +47,7 @@ describe('independent question selection mounted-DOM QA', () => {
       state().attempts = attempts; state().screen = 'question'; state().history = ['home', 'clerkRules']; await tick();
       const expected = plain(); const calls = random.mock.calls.length; random.mockReturnValue(0.95);
       await wrapper.find('.help-button').trigger('click'); await wrapper.find('.help-button').trigger('click'); expect(plain()).toBe(expected);
-      await wrapper.find('.help-button').trigger('click'); await wrapper.find('.help-menu button').trigger('click'); await next(); await wrapper.find('.help-close').trigger('click'); expect(plain()).toBe(expected);
+      await wrapper.find('.help-button').trigger('click'); await wrapper.find('.help-menu button').trigger('click'); await next(); await finishHelp(wrapper); expect(plain()).toBe(expected);
       await wrapper.find('.nav-arrow.back').trigger('click'); await next(); expect(plain()).toBe(expected);
       await next(); await wrapper.find('.instruction-panel button').trigger('click');
       await wrapper.find('.question-sign').trigger('click'); expect(plain()).toBe(expected); await wrapper.find('.question-preview-close').trigger('click');
