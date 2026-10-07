@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
+import { finishHelp } from './finishHelp.js';
 import { gestureQuestions, associationQuestions } from '../src/lib/questions.js';
 
 const sound = vi.hoisted(() => ({ play: vi.fn() }));
@@ -67,7 +68,7 @@ describe('PR24 success screen integrated with private Site behavior (mounted DOM
     await wrapper.find('.help-button').trigger('click');
     await wrapper.find('.help-menu button').trigger('click');
     expect(state().screen).toBe('help1');
-    await wrapper.find('.help-close').trigger('click');
+    await finishHelp(wrapper);
     expect(state().screen).toBe('success'); expect(state().correctFruit).toEqual(fruit);
     await wrapper.find('.help-button').trigger('click');
     const home = wrapper.findAll('.help-menu button')[1];

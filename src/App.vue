@@ -16,11 +16,9 @@ import { createImagePreloader } from "./lib/imagePreloader.js";
 import { fruitSlotStyle } from "./lib/fruitLayout.js";
 import backgroundImage from "./assets/background.webp";
 import challengeSpeechBubble from "./assets/challenge-speech-bubble.webp";
-import guideSpeechBubble from "./assets/guide-speech-bubble.webp";
 import helpCloseButton from "./assets/help-close-button.webp";
 import helpCompleteButton from "./assets/help-complete-button.webp";
 import startButton from "./assets/start-button.webp";
-import guideBg from "./assets/screens/guide.webp";
 import how1 from "./assets/screens/how1.webp";
 import how2 from "./assets/screens/how2.webp";
 import how3 from "./assets/screens/how3.webp";
@@ -310,6 +308,7 @@ const courseLabels = {
   hard: "むずかしい",
   mix: "ごちゃまぜ",
 };
+const howThreeExampleQuestion = associationQuestions[0];
 const howScreens = ["how1", "how2", "how3", "how4"];
 const howBackgrounds = { how1, how2, how3, how4 };
 const helpScreens = ["help1", "help2", "help3", "help4"];
@@ -323,9 +322,9 @@ function screenImages(name) {
   const images = {
     home: [backgroundImage, heroImage, startButton],
     terms: [backgroundImage],
-    guide: [guideBg, guideSpeechBubble, arrowImage],
+    guide: [how1, arrowImage],
     how1: [how1, arrowImage], how2: [how2, arrowImage],
-    how3: [how3, challengeSpeechBubble, arrowImage], how4: [how4, arrowImage],
+    how3: [how3, arrowImage], how4: [how4, arrowImage],
     help1: [rolesBg, helpCloseButton, arrowImage],
     help2: [how2, helpCloseButton, arrowImage],
     help3: [how3, challengeSpeechBubble, helpCloseButton, arrowImage],
@@ -641,7 +640,7 @@ function retryGame() {
       <h1 class="terms-title">利用規約</h1>
       <div class="terms-body" tabindex="0" aria-label="利用規約本文">
         <p>
-          この規約（以下、「本規約」といいます。）は、本サービスを利用する全ての方（以下、「利用者」といいます。）が、武庫川女子大学和泉ゼミ・榎並ゼミの提供する「おしゃべりココロのくだものやさん」（以下、「本サービス」といいます。）をご利用頂く際の取扱いにつき定めるものです。本規約に同意した上で本サービスをご利用ください。
+          この規約（以下、「本規約」といいます。）は、本サービスを利用する全ての方（以下、「利用者」といいます。）が、武庫川女子大学和泉ゼミ・榎並ゼミの提供する「おしゃべりきもちのくだものやさん」（以下、「本サービス」といいます。）をご利用頂く際の取扱いにつき定めるものです。本規約に同意した上で本サービスをご利用ください。
         </p>
         <p>
           <strong>第1条（適用）</strong
@@ -684,10 +683,10 @@ function retryGame() {
     <ScreenFrame
       v-else-if="screen === 'guide'"
       label="ゲーム説明案内"
-      :background="guideBg"
+      :background="how1"
     >
       <div class="speech intro-speech">
-        <img class="speech-bubble-image" :src="guideSpeechBubble" alt="" /><span
+        <span
           >いまから　あそびかたを　せつめいするね！</span
         >
       </div>
@@ -698,6 +697,7 @@ function retryGame() {
 
     <ScreenFrame
       v-else-if="howScreens.includes(screen)"
+      :class="{ 'how-three-screen': screen === 'how3' }"
       :label="`あそびかた ${howScreens.indexOf(screen) + 1}`"
       :background="howBackgrounds[screen]"
     >
@@ -711,11 +711,15 @@ function retryGame() {
         おきゃくさんは、くだものを　ひとつ　えらびます。<br />えらんだくだものが　もっている「きもち」を<br />よくおぼえておきます。
       </div>
       <div v-if="screen === 'how3'" class="lesson lesson-three">
-        てんいんさんは、きめられた　しつもんを　しながら、<br />おきゃくさんが　えらんだ　くだものの「きもち」を　あてます。
+        つぎに　てんいんさんは、きめられた　しつもんを　しながら、<br />おきゃくさんが　えらんだ　くだものの『きもち』を　あてます。
       </div>
-      <div v-if="screen === 'how3'" class="challenge-bubble">
-        <img :src="challengeSpeechBubble" alt="" />
-        <p>チャレンジできるのは、<br /><strong>３かい</strong>までだよ！</p>
+      <div v-if="screen === 'how3'" class="how3-conversation">
+        <div class="how3-dialogue how3-clerk" role="group" aria-label="てんいんさんのしつもん">
+          <p><QuestionText :text="howThreeExampleQuestion" /></p>
+        </div>
+        <div class="how3-dialogue how3-customer" role="group" aria-label="おきゃくさんのこたえのれい">
+          <p>わぁ！っていうおと！</p>
+        </div>
       </div>
       <div v-if="screen === 'how4'" class="lesson lesson-four">
         「どんなときに　そのきもちに　なるかな？」と<br />かんがえたり、おはなししたり　することが<br />たいせつな　ゲームです。
@@ -731,20 +735,13 @@ function retryGame() {
 
     <ScreenFrame
       v-else-if="helpScreens.includes(screen)"
+      :class="{ 'how-three-screen': screen === 'help3', 'help-three-screen': screen === 'help3' }"
       :label="`ヘルプ あそびかた ${helpScreens.indexOf(screen) + 1}`"
       :background="helpBackgrounds[screen]"
     >
       <div class="step-badge">
         あそびかた　{{ helpScreens.indexOf(screen) + 1 }} / ４
       </div>
-      <button
-        class="help-close"
-        type="button"
-        aria-label="あそびかたを閉じる"
-        @click="closeHelp"
-      >
-        <img :src="helpCloseButton" alt="" />
-      </button>
       <div v-if="screen === 'help1'" class="lesson help-lesson help-lesson-one">
         ふたりで　おきゃくさんと　てんいんさんに　わかれよう。
       </div>
@@ -755,11 +752,15 @@ function retryGame() {
         v-if="screen === 'help3'"
         class="lesson help-lesson help-lesson-three"
       >
-        てんいんさんが　おきゃくさんに　きめられた　しつもんを　するよ。<br />おきゃくさんは　えらんだ　くだものの　きもちに　なりきって、<br />しつもんに　こたえよう！
+        つぎに　てんいんさんが　おきゃくさんに　きめられた　しつもんを　するよ。<br />おきゃくさんは　えらんだ　くだものの　きもちに　なりきって、<br />しつもんに　こたえよう！
       </div>
-      <div v-if="screen === 'help3'" class="challenge-bubble">
-        <img :src="challengeSpeechBubble" alt="" />
-        <p>チャレンジできるのは、<br /><strong>３かい</strong>までだよ！</p>
+      <div v-if="screen === 'help3'" class="how3-conversation">
+        <div class="how3-dialogue how3-clerk" role="group" aria-label="てんいんさんのしつもん">
+          <p><QuestionText :text="howThreeExampleQuestion" /></p>
+        </div>
+        <div class="how3-dialogue how3-customer" role="group" aria-label="おきゃくさんのこたえのれい">
+          <p>わぁ！っていうおと！</p>
+        </div>
       </div>
       <div
         v-if="screen === 'help4'"
@@ -825,7 +826,9 @@ function retryGame() {
           type="button"
           @click="selectCourse(id)"
         >
-          <img :src="courseImages[id]" :alt="courseLabels[id]" />
+          <span class="course-art" :class="'course-art--' + id">
+            <img :src="courseImages[id]" :alt="courseLabels[id]" />
+          </span>
         </button>
       </div>
       <NavArrow direction="back" @click="back" />
@@ -1172,11 +1175,8 @@ function retryGame() {
           >がめんに　もどります。
         </p>
         <div class="home-modal-actions">
-          <button class="home-modal-no" @click="cancelHomeConfirm">
-            <img :src="yesImage" alt="いいえ" /></button
-          ><button class="home-modal-yes" @click="resetHome">
-            <img :src="noImage" alt="はい" />
-          </button>
+          <button class="home-modal-no" @click="cancelHomeConfirm">いいえ</button>
+          <button class="home-modal-yes" @click="resetHome">はい</button>
         </div>
       </div>
     </div>
