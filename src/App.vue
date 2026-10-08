@@ -15,7 +15,7 @@ import helpCompleteButton from './assets/help-complete-button.webp';
 import startButton from './assets/start-button.webp';
 import how1 from './assets/screens/how1.webp';
 import how2 from './assets/screens/how2.webp';
-import how3 from './assets/screens/how3.webp';
+import how3 from './assets/screens/how3-background.png';
 import how4 from './assets/screens/how4-background.png';
 import gameStartBg from './assets/screens/game-start-background.png';
 import courseBg from './assets/screens/course-bg.webp';
