@@ -18,6 +18,7 @@ import how2 from './assets/screens/how2.webp';
 import how3 from './assets/screens/how3.webp';
 import how4 from './assets/screens/how4-background.png';
 import rolesBg from './assets/screens/roles.webp';
+import gameStartBg from './assets/screens/game-start-background.png';
 import courseBg from './assets/screens/course-bg.webp';
 import courseEasy from './assets/screens/course-easy.webp';
 import courseHard from './assets/screens/course-hard.webp';
@@ -374,7 +375,7 @@ function screenImages(name) {
     help2: [how2, helpCloseButton, arrowImage, leftArrowImage],
     help3: [how3, challengeSpeechBubble, helpCloseButton, arrowImage, leftArrowImage],
     help4: [how4, helpCloseButton, helpCompleteButton, arrowImage, leftArrowImage],
-    roles: [rolesBg, arrowImage, leftArrowImage],
+    roles: [gameStartBg, arrowImage, leftArrowImage],
     courses: [courseBg, courseEasy, courseHard, courseMix, arrowImage, leftArrowImage],
     courseConfirm: [confirmBg, courseImages[selectedCourse.value], yesImage, noImage],
     customerHandoff: [customerHandoff, arrowImage, leftArrowImage],
@@ -893,7 +894,7 @@ function retryGame() {
         </button>
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'roles'" label="役割を決める画面" :background="rolesBg">
+      <ScreenFrame v-else-if="screen === 'roles'" label="役割を決める画面" :background="gameStartBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="lesson roles-copy">
           さっそくゲームをはじめよう！<br />ふたりで　おきゃくさんと　てんいんさんの<br />どちらにするか　きめてね。
