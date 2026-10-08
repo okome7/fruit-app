@@ -303,10 +303,36 @@ const fruits = [
     feeling: 'きもちいい'
   }
 ];
+// Course membership uses stable IDs; labels and artwork stay on the original fruits.
+const easyFruitIds = new Set([
+  "danger-apple",
+  "anxious-pear",
+  "dislike-grape",
+  "embarrassed-peach",
+  "anger-apple",
+  "noisy-persimmon",
+  "fear-chestnut",
+  "shock-chestnut",
+  "boring-chestnut",
+  "tearful-blueberry",
+  "sympathy-blueberry",
+  "sad-blueberry",
+  "lonely-blueberry",
+  "joy-banana",
+  "like-peach",
+  "motivated-strawberry",
+  "happy-banana",
+  "funny-orange",
+  "enjoyable-orange",
+  "kind-kiwi",
+]);
 const displayedFruits = ref([]);
 
 function pickRandomFruits() {
-  const shuffled = [...fruits];
+  const shuffled = fruits.filter((fruit) =>
+    selectedCourse.value === "mix" ||
+    (selectedCourse.value === "easy" ? easyFruitIds.has(fruit.id) : !easyFruitIds.has(fruit.id)),
+  );
   for (let index = shuffled.length - 1; index > 0; index--) {
     const randomIndex = Math.floor(Math.random() * (index + 1));
     [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
@@ -620,7 +646,8 @@ function closeHelp() {
 }
 function selectCourse(id) {
   selectedCourse.value = id;
-  go('courseConfirm');
+  pickRandomFruits();
+  go("courseConfirm");
 }
 function selectFruit(fruit) {
   if (!fruit || !displayedFruits.value.some((item) => item.id === fruit.id)) return;
