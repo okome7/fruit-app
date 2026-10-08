@@ -1357,7 +1357,7 @@ function retryGame() {
           <p>
             そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！
           </p>
-          <button @click="go('clerkShop')">はじめる</button>
+          <button @click="go('clerkShop')">くだものをえらぶ</button>
         </div>
       </ScreenFrame>
 
