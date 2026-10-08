@@ -1,5 +1,5 @@
 <script setup>
-import helpIcon from '../assets/screens/help.webp';
+import helpIcon from '../assets/question.png';
 defineProps({ open: Boolean })
 defineEmits(['toggle', 'guide', 'home'])
 </script>

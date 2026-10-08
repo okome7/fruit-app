@@ -185,7 +185,7 @@ button:focus-visible {
 .nav-arrow img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 .nav-arrow.back {
@@ -193,7 +193,6 @@ button:focus-visible {
 }
 .nav-arrow.next {
   right: max(4.58%, calc(var(--safe-right) + 6px));
-  transform: rotate(180deg);
 }
 .speech {
   position: absolute;
