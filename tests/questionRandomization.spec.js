@@ -16,7 +16,7 @@ function plain(selector = '.question-card p') { const copy = wrapper.find(select
 async function next() { await wrapper.find('.nav-arrow.next').trigger('click'); }
 async function choose(index) { await wrapper.findAll('.fruit-card')[index].trigger('click', { detail: 0 }); await wrapper.find('.drop-zone').trigger('click'); await wrapper.findAll('.confirm-actions button')[1].trigger('click'); }
 async function rolesToQuestion() {
-  await next(); await wrapper.find('.course-list button').trigger('click'); await wrapper.find('.choice.yes').trigger('click'); await next(); await choose(0); await next(); await next();
+  await next(); await wrapper.find('.course-list button').trigger('click'); await wrapper.find('.choice.yes').trigger('click'); await next(); await wrapper.find('.customer-instruction button').trigger('click'); await choose(0); await next(); await next();
   expect(state().screen).toBe('question');
 }
 async function homeToQuestion() {

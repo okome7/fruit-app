@@ -826,6 +826,10 @@ button:focus-visible {
   display: block;
   margin: calc(1.5 * var(--scene-unit)) auto 0;
 }
+.customer-instruction .instruction-panel button {
+  position: relative;
+  top: calc(1.5 * var(--scene-unit));
+}
 .result {
   position: absolute;
   inset: 10% 14%;
