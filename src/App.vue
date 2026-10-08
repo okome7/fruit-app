@@ -17,7 +17,6 @@ import how1 from './assets/screens/how1.webp';
 import how2 from './assets/screens/how2.webp';
 import how3 from './assets/screens/how3.webp';
 import how4 from './assets/screens/how4-background.png';
-import rolesBg from './assets/screens/roles.webp';
 import gameStartBg from './assets/screens/game-start-background.png';
 import courseBg from './assets/screens/course-bg.webp';
 import courseEasy from './assets/screens/course-easy.webp';
@@ -357,7 +356,7 @@ const howScreens = ['how1', 'how2', 'how3', 'how4'];
 const howBackgrounds = { how1, how2, how3, how4 };
 const helpScreens = ['help1', 'help2', 'help3', 'help4'];
 const helpBackgrounds = {
-  help1: rolesBg,
+  help1: gameStartBg,
   help2: how2,
   help3: how3,
   help4: how4
@@ -371,7 +370,7 @@ function screenImages(name) {
     how2: [how2, arrowImage, leftArrowImage],
     how3: [how3, arrowImage, leftArrowImage],
     how4: [how4, arrowImage, leftArrowImage],
-    help1: [rolesBg, helpCloseButton, arrowImage, leftArrowImage],
+    help1: [gameStartBg, helpCloseButton, arrowImage, leftArrowImage],
     help2: [how2, helpCloseButton, arrowImage, leftArrowImage],
     help3: [how3, challengeSpeechBubble, helpCloseButton, arrowImage, leftArrowImage],
     help4: [how4, helpCloseButton, helpCompleteButton, arrowImage, leftArrowImage],
