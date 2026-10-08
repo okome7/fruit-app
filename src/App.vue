@@ -60,6 +60,7 @@ const oneMinuteAcknowledged = ref(false);
 const timeUpAcknowledged = ref(false);
 const timerStarted = ref(false);
 const questionPreviewOpen = ref(false);
+const customerInstructionOpen = ref(false);
 let timerInterval;
 const countdown = createCountdown(180);
 let webMcpLifecycle;
@@ -90,6 +91,7 @@ const dragDisabled = computed(
     helpOpen.value ||
     homeConfirm.value ||
     questionPreviewOpen.value ||
+    customerInstructionOpen.value ||
     (screen.value === 'clerkShop' &&
       ((remainingSeconds.value <= 60 && remainingSeconds.value > 0 && !oneMinuteAcknowledged.value) ||
         (remainingSeconds.value === 0 && !timeUpAcknowledged.value)))
@@ -632,7 +634,11 @@ function go(next) {
     helpOpen.value = false;
     return;
   }
-  if (next === 'customerShop' && screen.value === 'customerHandoff') pickRandomFruits();
+  if (next === 'customerShop' && screen.value === 'customerHandoff') {
+    pickRandomFruits();
+    customerInstructionOpen.value = true;
+    nextTick(() => gameSurface.value?.querySelector('.customer-instruction button')?.focus());
+  }
   history.value.push(screen.value);
   screen.value = next;
   helpOpen.value = false;
@@ -651,7 +657,7 @@ function selectCourse(id) {
   go('courseConfirm');
 }
 function selectFruit(fruit) {
-  if (!fruit || !displayedFruits.value.some((item) => item.id === fruit.id)) return;
+  if (dragDisabled.value || !fruit || !displayedFruits.value.some((item) => item.id === fruit.id)) return;
   if (screen.value !== 'customerShop' && screen.value !== 'clerkShop') return;
   selectedFruit.value = fruit;
   selectedEmotion.value = fruit.feeling.replace(/\n/g, '').trim().normalize();
@@ -707,6 +713,7 @@ function retryGame() {
   homeConfirm.value = false;
   helpReturnScreen.value = 'roles';
   questionPreviewOpen.value = false;
+  customerInstructionOpen.value = false;
   keyboardFruit.value = null;
   dragging.value = false;
   overBasket.value = false;
@@ -947,7 +954,7 @@ function retryGame() {
         >
           しつもんを<br />みる
         </button>
-        <div class="fruit-grid" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
+        <div class="fruit-grid" :inert="customerInstructionOpen" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
           <div
             v-for="(fruit, index) in displayedFruits"
             :key="fruit.id"
@@ -988,6 +995,12 @@ function retryGame() {
         <p class="sr-only" aria-live="polite">
           {{ keyboardFruit ? `${keyboardFruit.fruitName}をえらびました。レジのボタンで確定できます。` : '' }}
         </p>
+        <div v-if="screen === 'customerShop' && customerInstructionOpen" class="question-preview-backdrop customer-instruction" role="dialog" aria-modal="true" aria-label="くだもののはこびかた" @keydown.esc="customerInstructionOpen = false" @keydown.tab.prevent="$event.currentTarget.querySelector('button').focus()">
+          <div class="instruction-panel">
+            <p>くだものを　ゆびで　<ruby>カゴ<rt>かご</rt></ruby>まで　はこんでね！</p>
+            <button type="button" @click="customerInstructionOpen = false">くだものをえらぶ</button>
+          </div>
+        </div>
         <div
           v-if="screen === 'clerkShop' && remainingSeconds > 0 && remainingSeconds <= 60 && !oneMinuteAcknowledged"
           class="one-minute-warning"
