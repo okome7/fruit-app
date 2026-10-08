@@ -16,7 +16,7 @@ import startButton from './assets/start-button.webp';
 import how1 from './assets/screens/how1.webp';
 import how2 from './assets/screens/how2.webp';
 import how3 from './assets/screens/how3.webp';
-import how4 from './assets/screens/how4.webp';
+import how4 from './assets/screens/how4-background.png';
 import rolesBg from './assets/screens/roles.webp';
 import courseBg from './assets/screens/course-bg.webp';
 import courseEasy from './assets/screens/course-easy.webp';
