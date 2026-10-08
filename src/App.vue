@@ -3,8 +3,9 @@ import { emotionExamples } from './data/emotionExamples.js';
 import { ref, reactive, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 
 import heroImage from './assets/hero.webp';
-import arrowImage from './assets/screens/arrow-guide.webp';
-import helpIcon from './assets/screens/help.webp';
+import arrowImage from './assets/right.png';
+import leftArrowImage from './assets/left.png';
+import helpIcon from './assets/question.png';
 import { createImagePreloader } from './lib/imagePreloader.js';
 import { fruitSlotStyle } from './lib/fruitLayout.js';
 import backgroundImage from './assets/background.webp';
@@ -364,24 +365,24 @@ function screenImages(name) {
   const images = {
     home: [backgroundImage, heroImage, startButton],
     terms: [backgroundImage],
-    guide: [how1, arrowImage],
-    how1: [how1, arrowImage],
-    how2: [how2, arrowImage],
-    how3: [how3, arrowImage],
-    how4: [how4, arrowImage],
-    help1: [rolesBg, helpCloseButton, arrowImage],
-    help2: [how2, helpCloseButton, arrowImage],
-    help3: [how3, challengeSpeechBubble, helpCloseButton, arrowImage],
-    help4: [how4, helpCloseButton, helpCompleteButton, arrowImage],
-    roles: [rolesBg, arrowImage],
-    courses: [courseBg, courseEasy, courseHard, courseMix, arrowImage],
+    guide: [how1, arrowImage, leftArrowImage],
+    how1: [how1, arrowImage, leftArrowImage],
+    how2: [how2, arrowImage, leftArrowImage],
+    how3: [how3, arrowImage, leftArrowImage],
+    how4: [how4, arrowImage, leftArrowImage],
+    help1: [rolesBg, helpCloseButton, arrowImage, leftArrowImage],
+    help2: [how2, helpCloseButton, arrowImage, leftArrowImage],
+    help3: [how3, challengeSpeechBubble, helpCloseButton, arrowImage, leftArrowImage],
+    help4: [how4, helpCloseButton, helpCompleteButton, arrowImage, leftArrowImage],
+    roles: [rolesBg, arrowImage, leftArrowImage],
+    courses: [courseBg, courseEasy, courseHard, courseMix, arrowImage, leftArrowImage],
     courseConfirm: [confirmBg, courseImages[selectedCourse.value], yesImage, noImage],
-    customerHandoff: [customerHandoff, arrowImage],
+    customerHandoff: [customerHandoff, arrowImage, leftArrowImage],
     customerShop: [shopBg],
     customerConfirm: [shopBg],
-    clerkHandoff: [backgroundImage, arrowImage],
-    clerkRules: [backgroundImage, arrowImage],
-    question: [shopBg, arrowImage],
+    clerkHandoff: [backgroundImage, arrowImage, leftArrowImage],
+    clerkRules: [backgroundImage, arrowImage, leftArrowImage],
+    question: [shopBg, arrowImage, leftArrowImage],
     questionConfirm: [shopBg],
     productIntro: [shopping],
     clerkShop: [shopping],
