@@ -305,33 +305,34 @@ const fruits = [
 ];
 // Course membership uses stable IDs; labels and artwork stay on the original fruits.
 const easyFruitIds = new Set([
-  "danger-apple",
-  "anxious-pear",
-  "dislike-grape",
-  "embarrassed-peach",
-  "anger-apple",
-  "noisy-persimmon",
-  "fear-chestnut",
-  "shock-chestnut",
-  "boring-chestnut",
-  "tearful-blueberry",
-  "sympathy-blueberry",
-  "sad-blueberry",
-  "lonely-blueberry",
-  "joy-banana",
-  "like-peach",
-  "motivated-strawberry",
-  "happy-banana",
-  "funny-orange",
-  "enjoyable-orange",
-  "kind-kiwi",
+  'danger-apple',
+  'anxious-pear',
+  'dislike-grape',
+  'embarrassed-peach',
+  'anger-apple',
+  'noisy-persimmon',
+  'fear-chestnut',
+  'shock-chestnut',
+  'boring-chestnut',
+  'tearful-blueberry',
+  'sympathy-blueberry',
+  'sad-blueberry',
+  'lonely-blueberry',
+  'joy-banana',
+  'like-peach',
+  'motivated-strawberry',
+  'happy-banana',
+  'funny-orange',
+  'enjoyable-orange',
+  'kind-kiwi'
 ]);
 const displayedFruits = ref([]);
 
 function pickRandomFruits() {
-  const shuffled = fruits.filter((fruit) =>
-    selectedCourse.value === "mix" ||
-    (selectedCourse.value === "easy" ? easyFruitIds.has(fruit.id) : !easyFruitIds.has(fruit.id)),
+  const shuffled = fruits.filter(
+    (fruit) =>
+      selectedCourse.value === 'mix' ||
+      (selectedCourse.value === 'easy' ? easyFruitIds.has(fruit.id) : !easyFruitIds.has(fruit.id))
   );
   for (let index = shuffled.length - 1; index > 0; index--) {
     const randomIndex = Math.floor(Math.random() * (index + 1));
@@ -647,7 +648,7 @@ function closeHelp() {
 function selectCourse(id) {
   selectedCourse.value = id;
   pickRandomFruits();
-  go("courseConfirm");
+  go('courseConfirm');
 }
 function selectFruit(fruit) {
   if (!fruit || !displayedFruits.value.some((item) => item.id === fruit.id)) return;
@@ -1107,8 +1108,8 @@ function retryGame() {
           <br />
           <p>
             「{{ correctFruit?.feeling }}」ってどんなきもち？<br />
-            <span v-if="selectedEmotion && emotionExamples[selectedEmotion]">
-              {{ emotionExamples[selectedEmotion] }}
+            <span v-if="selectedEmotion">
+              {{ emotionExamples[selectedEmotion.replace(/\n/g, '').trim()] }}
             </span>
           </p>
 
