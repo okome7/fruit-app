@@ -497,6 +497,7 @@ button:focus-visible {
   inset: 0;
   pointer-events: none;
 }
+
 .fruit-slot > span {
   position: absolute;
   top: var(--label-y);
@@ -511,7 +512,7 @@ button:focus-visible {
   font-weight: 700;
   line-height: 1.08;
   text-align: center;
-  white-space: pre-line;
+  white-space: normal;
 }
 .fruit-slot > .fruit-feeling--multiline {
   font-size: calc(1.2 * var(--scene-unit));

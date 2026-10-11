@@ -8,6 +8,7 @@ import helpIcon from './assets/screens/help.webp';
 import { createImagePreloader } from './lib/imagePreloader.js';
 import { fruitSlotStyle } from './lib/fruitLayout.js';
 import backgroundImage from './assets/background.webp';
+import homeHero from './assets/hero.png';
 import challengeSpeechBubble from './assets/challenge-speech-bubble.webp';
 import helpCloseButton from './assets/help-close-button.webp';
 import helpCompleteButton from './assets/help-complete-button.webp';
@@ -758,7 +759,11 @@ function retryGame() {
         {{ fullscreenNotice }}
       </p>
       <ScreenFrame v-if="screen === 'home'" label="ホーム画面" :background="backgroundImage">
-        <FruitHero />
+        <img
+        class="home-hero"
+        :src="homeHero"
+        alt="ホーム画面のイラスト"
+        />
         <p class="home-description">
           <span>てんいんさんがしつもんして、おきゃくさんのえらんだ</span
           ><span>「きもちのくだもの」をあてるゲームです！</span>
@@ -887,6 +892,7 @@ function retryGame() {
 
       <ScreenFrame v-else-if="screen === 'roles'" label="役割を決める画面" :background="rolesBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
+          <FruitHero v-if="selectedFruit" :fruit="selectedFruit" />
         <div class="lesson roles-copy">
           さっそくゲームをはじめよう！<br />ふたりで　おきゃくさんと　てんいんさんの<br />どちらにするか　きめてね。
         </div>
@@ -962,12 +968,15 @@ function retryGame() {
               @drop="onFruitDrop"
               @drag-change="onDragChange"
               @keyboard-pick="keyboardFruit = $event"
-            /><span
+            />
+            <span
+              class="fruit-feeling"
               :class="{
                 'fruit-feeling--multiline': fruit.feeling.includes('\n')
               }"
-              >{{ fruit.feeling }}</span
-            >
+              >
+              {{ fruit.feeling }}
+              </span>
           </div>
         </div>
         <button
@@ -1104,10 +1113,10 @@ function retryGame() {
       <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="backgroundImage">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="final-failure-screen success">
-          <h1>せいかい！</h1>
+          <h1>せいかい！おめでとう！</h1>
           <br />
           <p>
-            「{{ correctFruit?.feeling }}」ってどんなきもち？<br />
+            <h3>「{{ correctFruit?.feeling }}」ってどんなきもち？</h3>
             <span v-if="selectedEmotion">
               {{ emotionExamples[selectedEmotion.replace(/\n/g, '').trim()] }}
             </span>
@@ -1297,4 +1306,30 @@ export default {
   font-size: 28px; /* 見やすい大きさ */
   font-weight: bold; /* 太字 */
 }
+
+
+.fruit-feeling {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1.3;
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+
+}
+
+.fruit-feeling--multiline {
+  white-space: normal;
+}
+
+.home-hero {
+  position: absolute;
+  top: 3.7313%;
+  left: 15.67506%;
+  width: 68.64989%;
+  height: 46.26866%;
+}
+
+
+
 </style>
