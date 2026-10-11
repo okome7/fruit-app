@@ -1095,7 +1095,7 @@ function retryGame() {
       <ScreenFrame
         v-else-if="screen === 'question' || screen === 'questionConfirm'"
         label="質問画面"
-        :background="shopBg"
+        :background="shopping"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="question-card">
