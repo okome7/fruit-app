@@ -58,7 +58,7 @@ onMounted(() => {
 }
 
 .fruit-feeling {
-  font-size: 1.2rem !important;
+  font-size: 0.9rem !important;
   font-weight: bold;
   line-height: 1.3;
   display: block;
