@@ -1131,7 +1131,7 @@ function retryGame() {
           <br />
           <p>
             <h3>「{{ correctFruit?.feeling }}」ってどんなきもち？</h3>
-            <span v-if="selectedEmotion">
+            <span v-if="selectedEmotion" class="example-text">
               {{ emotionExamples[selectedEmotion.replace(/\n/g, '').trim()] }}
             </span>
           </p>
@@ -1344,6 +1344,9 @@ export default {
   height: 46.26866%;
 }
 
+.example-text {
+  white-space: pre-wrap;   /* ← \n を改行として表示 */
+}
 
 
 </style>
