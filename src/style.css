@@ -608,13 +608,14 @@ button:focus-visible {
 .timer {
   position: absolute;
   left: calc(50% + calc(0.3 * var(--scene-unit)));
-  top: -58%;
+  top: -56%;
   transform: translate(-50%, -50%) rotate(4deg);
-  padding: calc(0.3 * var(--scene-unit)) calc(0.8 * var(--scene-unit));
+  padding: calc(1 * var(--scene-unit)) calc(0.4 * var(--scene-unit));
   background: #000;
   color: #fff;
   font-size: calc(1.6 * var(--scene-unit));
   white-space: nowrap;
+  border-radius: calc(0.4 * var(--scene-unit));
 }
 .question-sign {
   position: absolute;
