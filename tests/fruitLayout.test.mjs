@@ -16,3 +16,10 @@ test('fruit and label anchors scale in the artwork coordinate system in portrait
     }
   }
 });
+
+test('customer plate anchors match screenshot-verified circles independently of their labels', () => {
+  assert.deepEqual(fruitScenes.customer.fruitX, [247,555,863,1168]);
+  assert.deepEqual(fruitScenes.customer.fruitY, [264,613]);
+  // The fourth plate is left of its pink label; they must keep distinct centers.
+  assert.equal(fruitScenes.customer.labelX[1][3], 1177);
+});

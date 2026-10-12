@@ -4,6 +4,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '../src/App.vue';
 import FruitCard from '../src/components/FruitCard.vue';
 import { fruitArtwork } from '../src/lib/fruitArtwork.js';
+import yesImage from '../src/assets/screens/はい_2.png';
+import noImage from '../src/assets/screens/いいえ_2.png';
 
 vi.mock('../src/composables/useSfx.js', async () => {
   const { ref } = await import('vue');
@@ -13,6 +15,10 @@ let app, card;
 afterEach(() => { card?.unmount(); app?.unmount(); document.body.innerHTML = ''; });
 
 const expected = {
+  'moved-orange': 'かんどう',
+  'anger-apple': 'おこる',
+  'startled-blueberry': '（びびり）びっくり',
+  'noisy-persimmon': 'うるさい',
   'boring-chestnut': 'おもしろくない',
   'happiness-peach': 'しあわせ',
   'anxious-pear': 'ふあん・しんぱい',
@@ -54,6 +60,9 @@ describe('emotion artwork across selection, dragging and confirmation', () => {
         await nextTick();
         expect(app.find('.big-fruit-art').attributes('src')).toBe(fruit.image);
         expect(app.find('.big-fruit-face').exists()).toBe(false);
+        expect(app.findAll('.confirm-actions img').map(image => image.attributes('src'))).toEqual([noImage, yesImage]);
+        expect(app.findAll('.confirm-actions img').map(image => image.attributes('alt'))).toEqual(['いいえ', 'はい']);
+        expect(app.find('.confirm-actions').text()).toBe('');
         expect(app.find('.confirmed-feeling').text().replace(/\n/g, '')).toBe(feeling);
       }
     }

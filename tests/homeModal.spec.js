@@ -34,6 +34,8 @@ function key(value, options = {}, target = document.activeElement) {
 describe('home confirmation keyboard and background isolation (mounted DOM)', () => {
   it('focuses Cancel, marks the whole background inert and loops Tab in both directions', async () => {
     await start(); await open();
+    expect(wrapper.find('.home-modal-no img').attributes('alt')).toBe('いいえ');
+    expect(wrapper.find('.home-modal-yes img').attributes('alt')).toBe('はい');
     const cancel = wrapper.find('.home-modal-no').element;
     const confirm = wrapper.find('.home-modal-yes').element;
     expect(wrapper.find('.game-surface').attributes()).toHaveProperty('inert');

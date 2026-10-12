@@ -33,7 +33,7 @@ import failureBg from './assets/screens/failure-background.png';
 import finalFailureBg from './assets/screens/final-failure-background.png';
 import shopBg from './assets/screens/shop.webp';
 import customerShopBg from './assets/screens/customer-shop-background.png';
-import shopping from './assets/screens/froutback.webp';
+import questionCloseButton from './assets/question-close-button.png';
 import clerkShopBg from './assets/screens/clerk-shop-background.png';
 import FruitHero from './components/FruitHero.vue';
 import ImageButton from './components/ImageButton.vue';
@@ -399,15 +399,15 @@ function screenImages(name) {
     courses: [menuBackground, courseEasy, courseHard, courseMix, arrowImage, leftArrowImage],
     courseConfirm: [menuBackground, courseImages[selectedCourse.value], yesImage, noImage],
     customerHandoff: [customerHandoff, arrowImage, leftArrowImage],
-    customerShop: [customerShopBg, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
-    customerConfirm: [shopBg, selectedFruit.value?.image].filter(Boolean),
+    customerShop: [customerShopBg, selectImage, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
+    customerConfirm: [shopBg, yesImage, noImage, selectedFruit.value?.image].filter(Boolean),
     clerkHandoff: [clerkHandoffBg, arrowImage, leftArrowImage],
     clerkRules: [clerkRulesBg, arrowImage, leftArrowImage],
-    question: [shopBg, arrowImage, leftArrowImage],
-    questionConfirm: [shopBg],
-    productIntro: [shopping],
-    clerkShop: [clerkShopBg, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
-    productConfirm: [shopBg, selectedFruit.value?.image].filter(Boolean),
+    question: [clerkShopBg, arrowImage, leftArrowImage],
+    questionConfirm: [clerkShopBg],
+    productIntro: [clerkShopBg, selectImage],
+    clerkShop: [clerkShopBg, questionCloseButton, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
+    productConfirm: [shopBg, yesImage, noImage, selectedFruit.value?.image].filter(Boolean),
     success: [successBg],
     failure: [failureBg],
     finalFailure: [finalFailureBg]
@@ -1036,9 +1036,9 @@ function retryGame() {
           {{ keyboardFruit ? `${keyboardFruit.fruitName}をえらびました。レジのボタンで確定できます。` : '' }}
         </p>
         <div v-if="screen === 'customerShop' && customerInstructionOpen" class="question-preview-backdrop customer-instruction" role="dialog" aria-modal="true" aria-label="くだもののはこびかた" @keydown.esc="customerInstructionOpen = false" @keydown.tab.prevent="$event.currentTarget.querySelector('button').focus()">
-          <div class="instruction-panel">
+          <div class="instruction-panel png-instruction-panel">
             <p>くだものを　ゆびで　<ruby>カゴ<rt>かご</rt></ruby>まで　はこんでね！</p>
-            <button type="button" @click="customerInstructionOpen = false">くだものをえらぶ</button>
+            <button class="png-action select-fruit-action" type="button" @click="customerInstructionOpen = false"><img :src="selectImage" alt="くだものをえらぶ" /></button>
           </div>
         </div>
         <div
@@ -1066,7 +1066,7 @@ function retryGame() {
             aria-label="しつもんを閉じる"
             @click.stop="questionPreviewOpen = false"
           >
-            <img :src="helpCloseButton" alt="" />
+            <img :src="questionCloseButton" alt="" />
           </button>
           <div class="question-card question-preview-card">
             <span>しつもん{{ questionNumber }}</span>
@@ -1092,13 +1092,13 @@ function retryGame() {
           <p class="confirmed-feeling">{{ selectedFruit?.feeling }}</p>
           <h1>このくだもので　いい？</h1>
           <div class="confirm-actions">
-            <button type="button" @click="back">いいえ</button
+            <button type="button" @click="back"><img :src="noImage" alt="いいえ" /></button
             ><button
               type="button"
               :data-sfx-skip="screen === 'productConfirm' ? '' : null"
               @click="screen === 'customerConfirm' ? go('clerkHandoff') : judge()"
             >
-              はい
+              <img :src="yesImage" alt="はい" />
             </button>
           </div>
         </div>
@@ -1127,7 +1127,7 @@ function retryGame() {
       <ScreenFrame
         v-else-if="screen === 'question' || screen === 'questionConfirm'"
         label="質問画面"
-        :background="shopping"
+        :background="clerkShopBg"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="question-card">
@@ -1146,13 +1146,13 @@ function retryGame() {
         </div>
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="shopping">
+      <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="clerkShopBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
-        <div class="instruction-panel">
+        <div class="instruction-panel png-instruction-panel">
           <p>
             そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！
           </p>
-          <button @click="go('clerkShop')">くだものをえらぶ</button>
+          <button class="png-action select-fruit-action" @click="go('clerkShop')"><img :src="selectImage" alt="くだものをえらぶ" /></button>
         </div>
       </ScreenFrame>
 
@@ -1214,8 +1214,8 @@ function retryGame() {
           >がめんに　もどります。
         </p>
         <div class="home-modal-actions">
-          <button class="home-modal-no" @click="cancelHomeConfirm">いいえ</button>
-          <button class="home-modal-yes" @click="resetHome">はい</button>
+          <button class="home-modal-no png-action" @click="cancelHomeConfirm"><img :src="noImage" alt="いいえ" /></button>
+          <button class="home-modal-yes png-action" @click="resetHome"><img :src="yesImage" alt="はい" /></button>
         </div>
       </div>
     </div>

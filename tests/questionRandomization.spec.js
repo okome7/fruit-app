@@ -2,6 +2,8 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
+import clerkShopBg from '../src/assets/screens/clerk-shop-background.png';
+import questionCloseButton from '../src/assets/question-close-button.png';
 import { finishHelp } from './finishHelp.js';
 import { gestureQuestions, associationQuestions, finalQuestion } from '../src/lib/questions.js';
 vi.mock('../src/composables/useSfx.js', async () => {
@@ -27,6 +29,20 @@ async function homeToQuestion() {
 async function answer(index) { await next(); await wrapper.find('.instruction-panel button').trigger('click'); await choose(index); }
 
 describe('independent question selection mounted-DOM QA', () => {
+  it('shares the clerk background through question, instruction and preview with the dedicated close image', async () => {
+    wrapper = mount(App, { attachTo: document.body });
+    for (const screen of ['question', 'questionConfirm', 'productIntro', 'clerkShop']) {
+      state().screen = screen; await tick();
+      expect(wrapper.find('.screen-frame').element.style.backgroundImage).toContain(clerkShopBg);
+    }
+    await wrapper.find('.question-sign').trigger('click');
+    expect(wrapper.find('.question-preview-close img').attributes('src')).toBe(questionCloseButton);
+    expect(wrapper.find('.question-preview-close').attributes('aria-label')).toBe('しつもんを閉じる');
+    await wrapper.find('.question-preview-close').trigger('click');
+    expect(wrapper.find('.question-preview-backdrop').exists()).toBe(false);
+    expect(state().screen).toBe('clerkShop');
+  });
+
   it('reaches every gesture and association candidate using controlled random values', async () => {
     const gestureSeen = new Set(); const associationSeen = new Set(); const fixedSeen = new Set();
     for (let i = 0; i < 6; i++) {

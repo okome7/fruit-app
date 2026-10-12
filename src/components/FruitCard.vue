@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
+import { fruitArtworkOffsets } from '../lib/fruitArtworkOffsets.js';
 import { createDragSession, pointInRect } from '../lib/pointerDrag.js';
 
 const props = defineProps({
@@ -8,6 +9,7 @@ const props = defineProps({
   disabled: Boolean,
   picked: Boolean,
 });
+const artworkStyle = computed(() => fruitArtworkOffsets[props.fruit.id] || {});
 const emit = defineEmits(['drop', 'drag-change', 'keyboard-pick']);
 const drag = createDragSession();
 const preview = ref(null);
@@ -88,22 +90,22 @@ onUnmounted(() => {
 <template>
   <button
     class="fruit-card" type="button" data-sfx-skip :disabled="disabled"
-    :class="{ 'is-dragging': preview, 'is-picked': picked }"
+    :class="{ 'is-dragging': preview, 'is-picked': picked, 'fruit-card--pear': fruit.emoji === '🍐' }"
     :aria-label="`${fruit.fruitName}、${fruit.feeling.replace(/\n/g, '')}。レジへ運ぶ`"
     :aria-pressed="picked"
     @pointerdown="start" @pointermove="move" @pointerup="finish"
     @pointercancel="cancel" @lostpointercapture="cancel"
     @contextmenu.prevent @dragstart.prevent @click="keyboardPick"
   >
-    <img v-if="fruit.image" class="fruit-art" :src="fruit.image" alt="" draggable="false" />
+    <img v-if="fruit.image" class="fruit-art" :style="artworkStyle" :src="fruit.image" alt="" draggable="false" />
     <template v-else>
       <span class="fruit-emoji">{{ fruit.emoji }}</span>
       <span class="fruit-face">•ᴗ•</span>
     </template>
   </button>
   <Teleport to="body">
-    <div v-if="preview" class="fruit-drag-preview" :style="previewStyle" aria-hidden="true">
-      <img v-if="fruit.image" class="fruit-art" :src="fruit.image" alt="" draggable="false" />
+    <div v-if="preview" class="fruit-drag-preview" :class="{ 'fruit-card--pear': fruit.emoji === '🍐' }" :style="previewStyle" aria-hidden="true">
+      <img v-if="fruit.image" class="fruit-art" :style="artworkStyle" :src="fruit.image" alt="" draggable="false" />
       <template v-else>
         <span class="fruit-emoji">{{ fruit.emoji }}</span>
         <span class="fruit-face">•ᴗ•</span>

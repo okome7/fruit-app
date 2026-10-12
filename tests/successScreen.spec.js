@@ -40,7 +40,7 @@ describe('PR24 success screen integrated with private Site behavior (mounted DOM
     expect(panel.find('h3').text()).toBe(`「${fruit.feeling}」ってどんなきもち？`);
     expect(panel.find('.example-text').text()).toBe(emotionExamples[fruit.feeling.replace(/\n/g, '').trim()]);
     expect(wrapper.find('section').attributes('style')).toContain('success-background.png');
-    expect(panel.findAll('button').map((button) => baseText(button.element))).toEqual(['ホームへもどる', 'もういちどあそぶ']);
+    expect(panel.findAll('button').map((button) => button.find('img').attributes('alt'))).toEqual(['ホームへもどる', 'もういちどあそぶ']);
     expect(wrapper.find('.help-button').exists()).toBe(true);
     expect(sound.play.mock.calls).toEqual([['success']]);
     // Every feeling, including embedded line breaks, is represented accurately.
