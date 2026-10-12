@@ -10,7 +10,7 @@ export const fruitScenes = {
   },
   clerk: {
     width: 1836, height: 856,
-    fruitX: [248, 552, 860, 1168], fruitY: [244, 584],
+    fruitX: [248, 550, 853, 1150], fruitY: [249, 589],
     labelX: [[239, 550, 860, 1167], [239, 550, 860, 1167]], labelY: [379, 721],
     labelWidth: 274, labelHeight: 60,
     basket: { x: 1442, y: 650, width: 318, height: 143 },

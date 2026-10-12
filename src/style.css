@@ -1141,7 +1141,7 @@ button:focus-visible {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(calc(-50% + var(--fruit-art-offset-x, 0%)), calc(-50% + var(--fruit-art-offset-y, 0%)));
   display: block;
   width: var(--fruit-art-width, 100px);
   height: var(--fruit-art-height, 100px);
@@ -1284,3 +1284,20 @@ button:focus-visible {
 .png-instruction-panel > * { flex-shrink: 0; max-width: 100%; }
 .png-instruction-panel .png-action { margin-block: 0; }
 @media (orientation: portrait) { .png-instruction-panel { left: 12%; width: 76%; top: 4%; bottom: 4%; padding: var(--scene-unit); } }
+
+/* Keep the pre-PNG result control boxes; only the supplied images paint them. */
+.final-failure-screen button {
+  height: calc(5.52 * var(--scene-unit));
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.final-failure-screen button:first-of-type,
+.final-failure-screen button:last-of-type { background: transparent; }
+.final-failure-screen button img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
