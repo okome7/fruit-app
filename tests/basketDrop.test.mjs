@@ -10,7 +10,8 @@ for (const pointerType of ['mouse','touch']) {
     const style=shopDropZoneStyle();
     for(const [vw,vh] of sizes) {
       const scale=Math.min(vw/scene.width,vh/scene.height);
-      const width=scene.width*scale, height=scene.height*scale;
+      const width=vw>=vh ? vw : scene.width*scale, height=vw>=vh ? vh : scene.height*scale;
+      const scaleX=width/scene.width, scaleY=height/scene.height;
       const offsetX=(vw-width)/2, offsetY=(vh-height)/2;
       const left=offsetX+parseFloat(style.left)*width/100;
       const top=offsetY+parseFloat(style.top)*height/100;
@@ -21,9 +22,9 @@ for (const pointerType of ['mouse','touch']) {
       const accepted=[[left,top],[right,top],[left,bottom],[right,bottom],
         [left,centerY],[right,centerY],[centerX,top],[centerX,bottom],[centerX,centerY],
         // Outer rim measured from the actual background, outside the previous inner-only target.
-        [offsetX+1423*scale,offsetY+536*scale],[offsetX+1828*scale,offsetY+840*scale]];
+        [offsetX+1423*scaleX,offsetY+536*scaleY],[offsetX+1828*scaleX,offsetY+840*scaleY]];
       const rejected=[[left-.1,centerY],[right+.1,centerY],[centerX,top-.1],[centerX,bottom+.1],
-        [offsetX+1179*scale,offsetY+614*scale],[offsetX+1600*scale,offsetY+300*scale]];
+        [offsetX+1179*scaleX,offsetY+614*scaleY],[offsetX+1600*scaleX,offsetY+300*scaleY]];
       for(const [x,y] of accepted) {
         const drag=createDragSession();
         assert.equal(drag.begin({pointerId:1,isPrimary:true,button:0,pointerType,clientX:10,clientY:20}),true);

@@ -10,6 +10,9 @@ vi.mock('../src/composables/useSfx.js', async () => {
 });
 const viewports = [[320,568],[360,640],[390,844],[430,932],[568,320],[667,375],[740,300],[844,390],[932,430],[1536,706]];
 const fit = (width,height,scene) => {
+  if (width >= height) {
+    return { width, height, unit: Math.min(width/100, height*scene.width/scene.height/100) };
+  }
   const scale = Math.min(width/scene.width,height/scene.height);
   return {width:scene.width*scale,height:scene.height*scale,unit:scene.width*scale/100};
 };
@@ -70,8 +73,7 @@ it('keeps each shop drop target in its own artwork coordinates and preserves oth
       const clerk=screen==='clerkShop';
       state.screen=screen; await nextTick();
       expect(wrapper.find('section').classes()).toContain('fruit-shop-screen');
-      expect(wrapper.find('main').classes()).toContain('fruit-shop-viewport');
-      expect(wrapper.find('main').attributes('style')).toContain(clerk ? 'clerk-shop-background.png' : 'customer-shop-background.png');
+      expect(wrapper.find('main').classes()).not.toContain('fruit-shop-viewport');
       expect(wrapper.find('.drop-zone').element.style.left).toBe(shopDropZoneStyle(clerk).left);
       expect(wrapper.find('.drop-zone').element.style.top).toBe(shopDropZoneStyle(clerk).top);
     }

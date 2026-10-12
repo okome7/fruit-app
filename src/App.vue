@@ -739,8 +739,7 @@ function retryGame() {
 <template>
   <main
     class="viewport"
-    :class="{ 'help-menu-open': helpOpen, 'fruit-shop-viewport': ['customerShop', 'clerkShop'].includes(screen) }"
-    :style="['customerShop', 'clerkShop'].includes(screen) ? { '--shop-backdrop': 'url(' + (screen === 'clerkShop' ? clerkShopBg : customerShopBg) + ')' } : {}"
+    :class="{ 'help-menu-open': helpOpen }"
     @click.capture="onButtonClick"
     @pointerdown.capture="guardHelpMenuBackground"
     @pointerup.capture="guardHelpMenuBackground"
