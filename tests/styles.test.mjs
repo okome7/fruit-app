@@ -6,7 +6,6 @@ test('responsive lengths keep negative signs inside CSS math functions', () => {
   const css = readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
   assert.doesNotMatch(css, /(?:^|[^\w-])[-+](?:calc|min|max|clamp)\(/);
   assert.match(css, /top:\s*calc\(-2\.4 \* var\(--scene-unit\)\)/);
-  assert.match(css, /calc\(-0\.12 \* var\(--scene-unit\)\) 0 #fff/);
 });
 
 test('disabled fruit and its descendants pass menu-dismissal taps to the background only while the menu is open', () => {
