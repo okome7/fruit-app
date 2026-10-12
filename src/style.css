@@ -702,6 +702,8 @@ button:focus-visible {
 .confirm-card {
   position: absolute;
   inset: 10% 20%;
+  padding: calc(2 * var(--scene-unit));
+  gap: calc(1 * var(--scene-unit));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -711,9 +713,13 @@ button:focus-visible {
   background: #fffdf4ed;
   box-shadow: 0 calc(0.6 * var(--scene-unit)) calc(1.5 * var(--scene-unit)) #4d27082b;
 }
+.confirm-card > * {
+  flex-shrink: 0;
+  max-width: 100%;
+}
 .big-fruit {
   position: relative;
-  font-size: calc(12 * var(--scene-unit));
+  font-size: min(100px, calc(10 * var(--scene-unit)));
   line-height: 1;
 }
 .big-fruit-emoji {
@@ -732,16 +738,20 @@ button:focus-visible {
   text-shadow: 0 calc(0.12 * var(--scene-unit)) #fff;
 }
 .confirmed-feeling {
-  margin: calc(0.5 * var(--scene-unit)) 0 0;
+  margin: 0;
   color: #000;
   font-size: calc(2 * var(--scene-unit));
   font-weight: 600;
   line-height: 1.15;
+  overflow-wrap: anywhere;
   white-space: pre-line;
   text-align: center;
 }
 .confirm-card h1 {
-  margin: calc(1 * var(--scene-unit)) 0 calc(1.6 * var(--scene-unit));
+  margin: 0;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
   font-size: calc(3 * var(--scene-unit));
   font-weight: 500;
 }
@@ -1140,8 +1150,8 @@ button:focus-visible {
 }
 .big-fruit-art {
   display: block;
-  width: 100px;
-  height: 100px;
+  width: min(100px, calc(10 * var(--scene-unit)));
+  height: min(100px, calc(10 * var(--scene-unit)));
   object-fit: contain;
 }
 
