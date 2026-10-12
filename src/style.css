@@ -1029,30 +1029,26 @@ button:focus-visible {
 }
 .terms-action {
   position: absolute;
-  bottom: 4.3%;
-  height: 15.2%;
-  padding: 0 calc(4.7 * var(--scene-unit));
-  border: calc(0.3 * var(--scene-unit)) solid #fff;
-  border-radius: calc(4 * var(--scene-unit));
-  background: linear-gradient(#ffdd52, #ffad00);
-  box-shadow:
-    inset 0 0 0 calc(0.3 * var(--scene-unit)) #ffed92,
-    0 calc(0.35 * var(--scene-unit)) 0 #ff8b00;
-  color: #54260f;
-  font-size: calc(3.5 * var(--scene-unit));
-  font-weight: 800;
-  text-shadow:
-    0 calc(0.15 * var(--scene-unit)) #fff,
-    calc(-0.12 * var(--scene-unit)) 0 #fff,
-    calc(0.12 * var(--scene-unit)) 0 #fff;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
+
+.terms-action img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .terms-back {
-  left: 8.3%;
-  min-width: 21.8%;
+  left: 40px; /* ← 横位置 */
+  bottom: 60px; /* ← 縦位置 */
 }
+
 .terms-agree {
-  right: 8.3%;
-  min-width: 22.7%;
+  right: 40px; /* ← 横位置 */
+  bottom: 60px; /* ← 縦位置 */
 }
 @media (prefers-reduced-motion: reduce) {
   * {

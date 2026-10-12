@@ -25,8 +25,6 @@ import gameStartBg from './assets/screens/game-start-background.png';
 import courseEasy from './assets/screens/course-easy.webp';
 import courseHard from './assets/screens/course-hard.webp';
 import courseMix from './assets/screens/course-mix.webp';
-import yesImage from './assets/screens/yes.webp';
-import noImage from './assets/screens/no.webp';
 import customerHandoff from './assets/screens/customer-handoff-background.png';
 import clerkHandoffBg from './assets/screens/clerk-handoff-background.png';
 import clerkRulesBg from './assets/screens/clerk-rules-background.png';
@@ -49,6 +47,20 @@ import { gestureQuestions, associationQuestions, finalQuestion, pickRandomQuesti
 import { createCountdown } from './lib/countdown.js';
 import { useSfx } from './composables/useSfx.js';
 import { useModalFocus } from './composables/useModalFocus.js';
+
+//ここから追加
+import noImage from './assets/screens/いいえ_2.png';
+import yesImage from './assets/screens/はい_2.png';
+import startImage from './assets/screens/スタート.png';
+import nextImage from './assets/screens/つぎへ.png';
+import closeImage from './assets/screens/とじる.png';
+import agreeImage from './assets/screens/同意する.png';
+import firstbackImage from './assets/screens/はじめにもどる.png';
+import homeImage from './assets/screens/ホームへもどる.png';
+import onemoreImage from './assets/screens/もういちどあそぶ.png';
+import backImage from './assets/screens/もどる.png';
+import selectImage from './assets/screens/くだものをえらぶ.png';
+import tapImage from './assets/screens/けってい.png';
 
 const imagePreloader = createImagePreloader();
 const clerkFruit = ref(null);
@@ -784,7 +796,7 @@ function retryGame() {
           <span>てんいんさんがしつもんして、おきゃくさんのえらんだ</span
           ><span>「きもちのくだもの」をあてるゲームです！</span>
         </p>
-        <ImageButton class="start-button" :src="startButton" alt="スタート" @click="startGame" />
+        <ImageButton class="start-button" :src="startImage" alt="スタート" @click="startGame" />
       </ScreenFrame>
 
       <ScreenFrame v-else-if="screen === 'terms'" label="利用規約画面" :background="menuBackground">
@@ -819,8 +831,13 @@ function retryGame() {
           </p>
           <p>以上</p>
         </div>
-        <button class="terms-action terms-back" type="button" @click="back">もどる</button>
-        <button class="terms-action terms-agree" type="button" @click="go('guide')">同意する</button>
+        <button class="terms-action terms-back" type="button" @click="back">
+          <img :src="backImage" alt="もどる" />
+        </button>
+        <button class="terms-action terms-agree" type="button" @click="go('guide')">
+          <img :src="agreeImage" alt="同意する" />
+        </button>
+
       </ScreenFrame>
 
       <ScreenFrame v-else-if="screen === 'guide'" label="ゲーム説明案内" :background="guideBg">
@@ -937,9 +954,9 @@ function retryGame() {
           type="button"
           @click="back"
         >
-          <img :src="yesImage" alt="いいえ" /></button
+          <img :src="noImage" alt="いいえ" /></button
         ><button class="choice yes" type="button" @click="go('customerHandoff')">
-          <img :src="noImage" alt="はい" />
+          <img :src="yesImage" alt="はい" />
         </button>
       </ScreenFrame>
 
@@ -1151,8 +1168,8 @@ function retryGame() {
             </span>
           </p>
 
-          <button type="button" @click="resetHome">ホームへもどる</button>
-          <button type="button" @click="retryGame">もういちどあそぶ</button>
+          <button type="button" @click="resetHome"><img :src="homeImage" alt="ホームへもどる" /></button>
+          <button type="button" @click="retryGame"><img :src="onemoreImage" alt="もういちどあそぶ" /></button>
         </div>
       </ScreenFrame>
       <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="failureBg">
@@ -1168,8 +1185,12 @@ function retryGame() {
         <div class="final-failure-screen">
           <h1>しっぱい……。</h1>
           <p>せいかいは「{{ correctFruit?.feeling }}」でした…。<br />また　ちょうせんしてね！</p>
-          <button type="button" @click="resetHome">ホームへもどる</button>
-          <button type="button" @click="retryGame">もういちどあそぶ</button>
+          <button type="button" class="home-button" @click="resetHome">
+            <img :src="homeImage" alt="ホームへもどる" />
+          </button>
+          <button type="button" class="retry-button" @click="retryGame">
+            <img :src="onemoreImage" alt="もういちどあそぶ" />
+          </button>
         </div>
       </ScreenFrame>
     </div>
@@ -1363,6 +1384,11 @@ export default {
 .example-text {
   white-space: pre-wrap;   /* ← \n を改行として表示 */
 }
+
+.screen-frame {
+  position: relative;
+}
+
 
 
 </style>
