@@ -64,11 +64,14 @@ it('keeps each shop drop target in its own artwork coordinates and preserves oth
     for(const [screen,image] of [['how1','how1-background.png'],['help1','game-start-background.png'],['guide','guide-background.png']]) {
       state.screen=screen; await nextTick();
       expect(wrapper.find('section').attributes('style')).toContain(image);
+      expect(wrapper.find('main').classes()).not.toContain('fruit-shop-viewport');
     }
     for(const screen of ['customerShop','clerkShop']) {
       const clerk=screen==='clerkShop';
       state.screen=screen; await nextTick();
       expect(wrapper.find('section').classes()).toContain('fruit-shop-screen');
+      expect(wrapper.find('main').classes()).toContain('fruit-shop-viewport');
+      expect(wrapper.find('main').attributes('style')).toContain(clerk ? 'clerk-shop-background.png' : 'customer-shop-background.png');
       expect(wrapper.find('.drop-zone').element.style.left).toBe(shopDropZoneStyle(clerk).left);
       expect(wrapper.find('.drop-zone').element.style.top).toBe(shopDropZoneStyle(clerk).top);
     }

@@ -47,7 +47,7 @@ body {
   place-items: center;
   overflow: hidden;
   isolation: isolate;
-  /* Only ScreenFrame paints the artwork. Never repeat it around the scene. */
+  /* ScreenFrame paints the playable scene; shop backdrops fill landscape margins. */
   background: #fffaf0;
 }
 @supports (height: 100dvh) {
@@ -1207,4 +1207,14 @@ button:focus-visible {
 .help-three-screen .how3-customer {
   top: 70%;
   right: 30.5%;
+}
+
+/* Fill landscape margins without cropping or stretching the playable shop scene. */
+@media (orientation: landscape) {
+  .fruit-shop-viewport {
+    background-image: var(--shop-backdrop);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
 }
