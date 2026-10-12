@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import heroImage from '../assets/hero.webp';
+import heroImage from '../assets/home-logo.png';
 
 const props = defineProps({
   fruit: {

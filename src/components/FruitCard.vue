@@ -16,6 +16,7 @@ const previewStyle = computed(() => preview.value ? {
   left: `${preview.value.left}px`, top: `${preview.value.top}px`,
   width: `${preview.value.width}px`, height: `${preview.value.height}px`,
   '--fruit-size': preview.value.fruitSize, '--face-size': preview.value.faceSize,
+  '--fruit-art-width': preview.value.artWidth, '--fruit-art-height': preview.value.artHeight,
 } : {});
 
 function targetRect() { return props.dropZone?.getBoundingClientRect(); }
@@ -37,10 +38,14 @@ function start(event) {
   const rect = sourceElement.getBoundingClientRect();
   const emoji = sourceElement.querySelector('.fruit-emoji');
   const face = sourceElement.querySelector('.fruit-face');
+  const artwork = sourceElement.querySelector('.fruit-art')?.getBoundingClientRect();
   preview.value = {
     left: rect.left, top: rect.top, width: rect.width, height: rect.height,
     offsetX: event.clientX - rect.left, offsetY: event.clientY - rect.top,
-    fruitSize: getComputedStyle(emoji).fontSize, faceSize: getComputedStyle(face).fontSize,
+    fruitSize: emoji ? getComputedStyle(emoji).fontSize : '',
+    faceSize: face ? getComputedStyle(face).fontSize : '',
+    artWidth: artwork ? `${artwork.width}px` : '100px',
+    artHeight: artwork ? `${artwork.height}px` : '100px',
   };
   emit('drag-change', { active: true, over: false });
 }
@@ -90,13 +95,19 @@ onUnmounted(() => {
     @pointercancel="cancel" @lostpointercapture="cancel"
     @contextmenu.prevent @dragstart.prevent @click="keyboardPick"
   >
-    <span class="fruit-emoji">{{ fruit.emoji }}</span>
-    <span class="fruit-face">•ᴗ•</span>
+    <img v-if="fruit.image" class="fruit-art" :src="fruit.image" alt="" draggable="false" />
+    <template v-else>
+      <span class="fruit-emoji">{{ fruit.emoji }}</span>
+      <span class="fruit-face">•ᴗ•</span>
+    </template>
   </button>
   <Teleport to="body">
     <div v-if="preview" class="fruit-drag-preview" :style="previewStyle" aria-hidden="true">
-      <span class="fruit-emoji">{{ fruit.emoji }}</span>
-      <span class="fruit-face">•ᴗ•</span>
+      <img v-if="fruit.image" class="fruit-art" :src="fruit.image" alt="" draggable="false" />
+      <template v-else>
+        <span class="fruit-emoji">{{ fruit.emoji }}</span>
+        <span class="fruit-face">•ᴗ•</span>
+      </template>
     </div>
   </Teleport>
 </template>

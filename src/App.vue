@@ -2,33 +2,41 @@
 import { emotionExamples } from './data/emotionExamples.js';
 import { ref, reactive, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 
-import heroImage from './assets/hero.webp';
+import heroImage from './assets/home-logo.png';
+import { fruitArtwork } from './lib/fruitArtwork.js';
 import arrowImage from './assets/right.png';
 import leftArrowImage from './assets/left.png';
 import helpIcon from './assets/question.png';
 import { createImagePreloader } from './lib/imagePreloader.js';
-import { fruitSlotStyle } from './lib/fruitLayout.js';
+import { fruitSlotStyle, shopDropZoneStyle, shopSceneStyle } from './lib/fruitLayout.js';
+import { fruitLabel } from './lib/fruitLabel.js';
 import backgroundImage from './assets/background.webp';
-import homeHero from './assets/hero.png';
+import menuBackground from './assets/screens/menu-background.png';
 import challengeSpeechBubble from './assets/challenge-speech-bubble.webp';
 import helpCloseButton from './assets/help-close-button.webp';
 import helpCompleteButton from './assets/help-complete-button.webp';
 import startButton from './assets/start-button.webp';
-import how1 from './assets/screens/how1.webp';
-import how2 from './assets/screens/how2.webp';
+import guideBg from './assets/screens/guide-background.png';
+import how1 from './assets/screens/how1-background.png';
+import how2 from './assets/screens/how2-background.png';
 import how3 from './assets/screens/how3-background.png';
 import how4 from './assets/screens/how4-background.png';
 import gameStartBg from './assets/screens/game-start-background.png';
-import courseBg from './assets/screens/course-bg.webp';
 import courseEasy from './assets/screens/course-easy.webp';
 import courseHard from './assets/screens/course-hard.webp';
 import courseMix from './assets/screens/course-mix.webp';
-import confirmBg from './assets/screens/confirm-bg.webp';
 import yesImage from './assets/screens/yes.webp';
 import noImage from './assets/screens/no.webp';
-import customerHandoff from './assets/screens/customer-handoff.webp';
+import customerHandoff from './assets/screens/customer-handoff-background.png';
+import clerkHandoffBg from './assets/screens/clerk-handoff-background.png';
+import clerkRulesBg from './assets/screens/clerk-rules-background.png';
+import successBg from './assets/screens/success-background.png';
+import failureBg from './assets/screens/failure-background.png';
+import finalFailureBg from './assets/screens/final-failure-background.png';
 import shopBg from './assets/screens/shop.webp';
+import customerShopBg from './assets/screens/customer-shop-background.png';
 import shopping from './assets/screens/froutback.webp';
+import clerkShopBg from './assets/screens/clerk-shop-background.png';
 import FruitHero from './components/FruitHero.vue';
 import ImageButton from './components/ImageButton.vue';
 import ScreenFrame from './components/ScreenFrame.vue';
@@ -306,7 +314,7 @@ const fruits = [
     fruitName: 'スイカ',
     feeling: 'きもちいい'
   }
-];
+].map((fruit) => ({ ...fruit, image: fruitArtwork[fruit.id] }));
 // Course membership uses stable IDs; labels and artwork stay on the original fruits.
 const easyFruitIds = new Set([
   'danger-apple',
@@ -364,9 +372,9 @@ const helpBackgrounds = {
 };
 function screenImages(name) {
   const images = {
-    home: [backgroundImage, heroImage, startButton],
-    terms: [backgroundImage],
-    guide: [how1, arrowImage, leftArrowImage],
+    home: [menuBackground, heroImage, startButton],
+    terms: [menuBackground],
+    guide: [guideBg, arrowImage, leftArrowImage],
     how1: [how1, arrowImage, leftArrowImage],
     how2: [how2, arrowImage, leftArrowImage],
     how3: [how3, arrowImage, leftArrowImage],
@@ -376,21 +384,21 @@ function screenImages(name) {
     help3: [how3, challengeSpeechBubble, helpCloseButton, arrowImage, leftArrowImage],
     help4: [how4, helpCloseButton, helpCompleteButton, arrowImage, leftArrowImage],
     roles: [gameStartBg, arrowImage, leftArrowImage],
-    courses: [courseBg, courseEasy, courseHard, courseMix, arrowImage, leftArrowImage],
-    courseConfirm: [confirmBg, courseImages[selectedCourse.value], yesImage, noImage],
+    courses: [menuBackground, courseEasy, courseHard, courseMix, arrowImage, leftArrowImage],
+    courseConfirm: [menuBackground, courseImages[selectedCourse.value], yesImage, noImage],
     customerHandoff: [customerHandoff, arrowImage, leftArrowImage],
-    customerShop: [shopBg],
-    customerConfirm: [shopBg],
-    clerkHandoff: [backgroundImage, arrowImage, leftArrowImage],
-    clerkRules: [backgroundImage, arrowImage, leftArrowImage],
+    customerShop: [customerShopBg, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
+    customerConfirm: [shopBg, selectedFruit.value?.image].filter(Boolean),
+    clerkHandoff: [clerkHandoffBg, arrowImage, leftArrowImage],
+    clerkRules: [clerkRulesBg, arrowImage, leftArrowImage],
     question: [shopBg, arrowImage, leftArrowImage],
     questionConfirm: [shopBg],
     productIntro: [shopping],
-    clerkShop: [shopping],
-    productConfirm: [shopBg],
-    success: [backgroundImage],
-    failure: [backgroundImage],
-    finalFailure: [backgroundImage]
+    clerkShop: [clerkShopBg, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
+    productConfirm: [shopBg, selectedFruit.value?.image].filter(Boolean),
+    success: [successBg],
+    failure: [failureBg],
+    finalFailure: [finalFailureBg]
   };
   const withMenu = [
     'roles',
@@ -766,10 +774,10 @@ function retryGame() {
       <p v-if="fullscreenNotice" class="fullscreen-notice" role="status">
         {{ fullscreenNotice }}
       </p>
-      <ScreenFrame v-if="screen === 'home'" label="ホーム画面" :background="backgroundImage">
+      <ScreenFrame v-if="screen === 'home'" label="ホーム画面" :background="menuBackground">
         <img
         class="home-hero"
-        :src="homeHero"
+        :src="heroImage"
         alt="ホーム画面のイラスト"
         />
         <p class="home-description">
@@ -779,7 +787,7 @@ function retryGame() {
         <ImageButton class="start-button" :src="startButton" alt="スタート" @click="startGame" />
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'terms'" label="利用規約画面" :background="backgroundImage">
+      <ScreenFrame v-else-if="screen === 'terms'" label="利用規約画面" :background="menuBackground">
         <h1 class="terms-title">利用規約</h1>
         <div class="terms-body" tabindex="0" aria-label="利用規約本文">
           <p>
@@ -815,7 +823,7 @@ function retryGame() {
         <button class="terms-action terms-agree" type="button" @click="go('guide')">同意する</button>
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'guide'" label="ゲーム説明案内" :background="how1">
+      <ScreenFrame v-else-if="screen === 'guide'" label="ゲーム説明案内" :background="guideBg">
         <div class="speech intro-speech">
           <span>いまから　あそびかたを　せつめいするね！</span>
         </div>
@@ -824,7 +832,7 @@ function retryGame() {
 
       <ScreenFrame
         v-else-if="howScreens.includes(screen)"
-        :class="{ 'how-three-screen': screen === 'how3' }"
+        :class="{ 'how-two-screen': screen === 'how2', 'how-three-screen': screen === 'how3' }"
         :label="`あそびかた ${howScreens.indexOf(screen) + 1}`"
         :background="howBackgrounds[screen]"
       >
@@ -857,6 +865,7 @@ function retryGame() {
       <ScreenFrame
         v-else-if="helpScreens.includes(screen)"
         :class="{
+          'how-two-screen': screen === 'help2',
           'how-three-screen': screen === 'help3',
           'help-three-screen': screen === 'help3'
         }"
@@ -907,7 +916,7 @@ function retryGame() {
         <NavArrow direction="back" @click="back" /><NavArrow @click="go('courses')" />
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'courses'" label="コース選択画面" :background="courseBg">
+      <ScreenFrame v-else-if="screen === 'courses'" label="コース選択画面" :background="menuBackground">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <h1 class="course-title">つぎに　やりたいコースを　えらんでね！</h1>
         <div class="course-list">
@@ -920,7 +929,7 @@ function retryGame() {
         <NavArrow direction="back" @click="back" />
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'courseConfirm'" label="コース確認画面" :background="confirmBg">
+      <ScreenFrame v-else-if="screen === 'courseConfirm'" label="コース確認画面" :background="menuBackground">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <h1 class="confirm-title">このコースに　チャレンジする？</h1>
         <img class="chosen-course" :src="courseImages[selectedCourse]" :alt="courseLabels[selectedCourse]" /><button
@@ -948,8 +957,11 @@ function retryGame() {
 
       <ScreenFrame
         v-else-if="screen === 'customerShop' || screen === 'clerkShop'"
+        class="fruit-shop-screen"
+        :class="{ 'customer-shop-screen': screen === 'customerShop', 'clerk-shop-screen': screen === 'clerkShop' }"
+        :style="shopSceneStyle(screen === 'clerkShop')"
         :label="screen === 'customerShop' ? 'お客さんの商品選択画面' : '店員さんの商品選択画面'"
-        :background="screen === 'clerkShop' ? shopping : shopBg"
+        :background="screen === 'clerkShop' ? clerkShopBg : customerShopBg"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <button
@@ -980,16 +992,17 @@ function retryGame() {
             <span
               class="fruit-feeling"
               :class="{
-                'fruit-feeling--multiline': fruit.feeling.includes('\n')
+                'fruit-feeling--multiline': fruitLabel(fruit).includes('\n')
               }"
               >
-              {{ fruit.feeling }}
+              {{ fruitLabel(fruit) }}
               </span>
           </div>
         </div>
         <button
           ref="dropZone"
           class="drop-zone"
+          :style="shopDropZoneStyle(screen === 'clerkShop')"
           type="button"
           data-sfx-kind="drop"
           :class="{
@@ -1053,8 +1066,11 @@ function retryGame() {
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="confirm-card">
           <div class="big-fruit" role="img" :aria-label="`${selectedFruit?.fruitName}、${selectedFruit?.feeling}`">
-            <span class="big-fruit-emoji">{{ selectedFruit?.emoji }}</span>
-            <span class="big-fruit-face">•ᴗ•</span>
+            <img v-if="selectedFruit?.image" class="big-fruit-art" :src="selectedFruit.image" alt="" draggable="false" />
+            <template v-else>
+              <span class="big-fruit-emoji">{{ selectedFruit?.emoji }}</span>
+              <span class="big-fruit-face">•ᴗ•</span>
+            </template>
           </div>
           <p class="confirmed-feeling">{{ selectedFruit?.feeling }}</p>
           <h1>このくだもので　いい？</h1>
@@ -1074,17 +1090,16 @@ function retryGame() {
       <ScreenFrame
         v-else-if="screen === 'clerkHandoff'"
         label="店員さんにスマホを渡す画面"
-        :background="backgroundImage"
+        :background="clerkHandoffBg"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="lesson center-message">
           つぎは、てんいんさんの　ばんだよ！<br />てんいんさんに　スマホを　わたそう！
-          <div class="phone">📱</div>
         </div>
         <NavArrow direction="back" @click="back" /><NavArrow @click="go('clerkRules')" />
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'clerkRules'" label="店員さんのルール説明" :background="backgroundImage">
+      <ScreenFrame v-else-if="screen === 'clerkRules'" label="店員さんのルール説明" :background="clerkRulesBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="lesson center-message">
           てんいんさんは、おきゃくさんが　えらんだ<br />くだものの　きもちを　あてよう！<br />つぎの　がめんに　でてくる　しつもんを<br />おきゃくさんに　しよう！
@@ -1124,7 +1139,7 @@ function retryGame() {
         </div>
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="backgroundImage">
+      <ScreenFrame v-else-if="screen === 'success'" label="正解画面" :background="successBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="final-failure-screen success">
           <h1>せいかい！おめでとう！</h1>
@@ -1140,7 +1155,7 @@ function retryGame() {
           <button type="button" @click="retryGame">もういちどあそぶ</button>
         </div>
       </ScreenFrame>
-      <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="backgroundImage">
+      <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="failureBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="failure-screen">
           <h1>しっぱい……。</h1>
@@ -1148,7 +1163,7 @@ function retryGame() {
           <button type="button" @click="go('question')">もういっかい！</button>
         </div>
       </ScreenFrame>
-      <ScreenFrame v-else-if="screen === 'finalFailure'" label="最終失敗画面" :background="backgroundImage">
+      <ScreenFrame v-else-if="screen === 'finalFailure'" label="最終失敗画面" :background="finalFailureBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="final-failure-screen">
           <h1>しっぱい……。</h1>
@@ -1337,6 +1352,7 @@ export default {
 }
 
 .home-hero {
+  object-fit: contain;
   position: absolute;
   top: 3.7313%;
   left: 15.67506%;

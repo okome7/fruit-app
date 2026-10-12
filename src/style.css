@@ -254,7 +254,7 @@ button:focus-visible {
   font-size: calc(2.5 * var(--scene-unit));
 }
 .lesson-two {
-  top: 25%;
+  top: 16.5%;
 }
 .lesson-three {
   top: 18%;
@@ -1077,13 +1077,13 @@ button:focus-visible {
   text-align: center;
 }
 .how-three-screen .how3-clerk {
-  top: 45%;
-  left: 31.5%;
+  top: 51.5%;
+  left: 28%;
   width: 32%;
 }
 .how-three-screen .how3-customer {
-  top: 70%;
-  right: 33.5%;
+  top: 76.5%;
+  right: 29.5%;
   width: max-content;
   max-width: 32%;
   padding-inline: calc(1 * var(--scene-unit));
@@ -1127,10 +1127,84 @@ button:focus-visible {
   border-left-color: #fffdf5;
 }
 
+.final-failure-screen p {
+  white-space: nowrap;
+}
+
+.fruit-art {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: var(--fruit-art-width, 100px);
+  height: var(--fruit-art-height, 100px);
+  object-fit: contain;
+  pointer-events: none;
+}
+.big-fruit-art {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+/* Shop labels override the shared main typography. */
+.fruit-shop-screen .fruit-slot > .fruit-feeling {
+  font-size: min(26px, calc(2.4 * var(--scene-unit))) !important;
+  line-height: 1.08;
+  white-space: pre;
+}
+.fruit-shop-screen .fruit-slot > .fruit-feeling--multiline {
+  font-size: min(22px, calc(1.45 * var(--scene-unit))) !important;
+  white-space: pre;
+}
+
+/* Fit each shop scene; artwork and labels use its same scale. */
+.screen-frame.fruit-shop-screen {
+  --scene-unit: min(
+    calc((100vw - var(--safe-left) - var(--safe-right)) / 100),
+    calc((var(--view-height) - var(--safe-top) - var(--safe-bottom)) * var(--scene-aspect) / 100)
+  );
+  --fruit-art-width: min(100px, calc(11 * var(--scene-unit)));
+  --fruit-art-height: var(--fruit-art-width);
+  width: min(
+    calc(100vw - var(--safe-left) - var(--safe-right)),
+    calc((var(--view-height) - var(--safe-top) - var(--safe-bottom)) * var(--scene-aspect))
+  );
+  height: auto;
+  aspect-ratio: var(--scene-aspect);
+}
+.fruit-shop-screen .fruit-card {
+  width: max(44px, calc(10.8 * var(--scene-unit)));
+}
+
+/* The clerk image already paints the question sign; keep its clickable area aligned. */
+.clerk-shop-screen .question-sign {
+  left: var(--question-left);
+  top: var(--question-top);
+  width: var(--question-width);
+  height: var(--question-height);
+  color: transparent;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  transform: none;
+}
+.clerk-shop-screen .timer {
+  left: var(--timer-x);
+  top: var(--timer-y);
+}
+
+/* Keep the already-approved in-game help placement. */
 .help-three-screen .how3-conversation {
   transform: translateY(calc(3 * var(--scene-unit)));
 }
-
-.final-failure-screen p {
-  white-space: nowrap;
+.help-three-screen .how3-clerk {
+  top: 45%;
+  left: 28.5%;
+}
+.help-three-screen .how3-customer {
+  top: 70%;
+  right: 30.5%;
 }

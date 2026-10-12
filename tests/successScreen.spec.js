@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
 import { finishHelp } from './finishHelp.js';
+import { emotionExamples } from '../src/data/emotionExamples.js';
 import { gestureQuestions, associationQuestions } from '../src/lib/questions.js';
 
 const sound = vi.hoisted(() => ({ play: vi.fn() }));
@@ -22,7 +23,7 @@ afterEach(() => { wrapper?.unmount(); document.body.innerHTML = ''; vi.restoreAl
 async function success() {
   wrapper = mount(App, { attachTo: document.body });
   const fruit = state().fruits.find((item) => item.id === 'relief-watermelon');
-  state().correctFruit = fruit; state().clerkFruit = fruit; state().selectedFruit = fruit;
+  state().correctFruit = fruit; state().clerkFruit = fruit; state().selectedFruit = fruit; state().selectedEmotion = fruit.feeling;
   state().screen = 'productConfirm'; await nextTick();
   await wrapper.findAll('.confirm-actions button')[1].trigger('click');
   expect(state().screen).toBe('success');
@@ -35,16 +36,18 @@ describe('PR24 success screen integrated with private Site behavior (mounted DOM
     const panel = wrapper.find('.success');
     expect(panel.classes()).toContain('final-failure-screen');
     expect(panel.classes()).not.toContain('result');
-    expect(panel.find('h1').text()).toBe('せいかい！');
-    expect(panel.find('p').text()).toContain(`きもちのくだものは「${fruit.feeling}」だったよ！！`);
-    expect(panel.find('p').text()).toContain('よくみつけられたね！');
+    expect(panel.find('h1').text()).toBe('せいかい！おめでとう！');
+    expect(panel.find('h3').text()).toBe(`「${fruit.feeling}」ってどんなきもち？`);
+    expect(panel.find('.example-text').text()).toBe(emotionExamples[fruit.feeling.replace(/\n/g, '').trim()]);
+    expect(wrapper.find('section').attributes('style')).toContain('success-background.png');
     expect(panel.findAll('button').map((button) => baseText(button.element))).toEqual(['ホームへもどる', 'もういちどあそぶ']);
     expect(wrapper.find('.help-button').exists()).toBe(true);
     expect(sound.play.mock.calls).toEqual([['success']]);
     // Every feeling, including embedded line breaks, is represented accurately.
     for (const candidate of state().fruits) {
-      state().correctFruit = candidate; await nextTick();
-      expect(panel.find('p').text()).toContain(`「${candidate.feeling}」`);
+      state().correctFruit = candidate; state().selectedEmotion = candidate.feeling; await nextTick();
+      expect(panel.find('h3').text()).toBe(`「${candidate.feeling}」ってどんなきもち？`);
+      expect(panel.find('.example-text').text()).toBe(emotionExamples[candidate.feeling.replace(/\n/g, '').trim()]);
     }
   });
   it('replay opens roles with clean history, fresh questions and the established timer/state reset', async () => {
