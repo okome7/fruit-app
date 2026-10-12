@@ -35,7 +35,7 @@ import failureBg from './assets/screens/failure-background.png';
 import finalFailureBg from './assets/screens/final-failure-background.png';
 import shopBg from './assets/screens/shop.webp';
 import customerShopBg from './assets/screens/customer-shop-background.png';
-import shopping from './assets/screens/froutback.webp';
+import questionCloseButton from './assets/question-close-button.png';
 import clerkShopBg from './assets/screens/clerk-shop-background.png';
 import FruitHero from './components/FruitHero.vue';
 import ImageButton from './components/ImageButton.vue';
@@ -391,10 +391,10 @@ function screenImages(name) {
     customerConfirm: [shopBg, selectedFruit.value?.image].filter(Boolean),
     clerkHandoff: [clerkHandoffBg, arrowImage, leftArrowImage],
     clerkRules: [clerkRulesBg, arrowImage, leftArrowImage],
-    question: [shopBg, arrowImage, leftArrowImage],
-    questionConfirm: [shopBg],
-    productIntro: [shopping],
-    clerkShop: [clerkShopBg, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
+    question: [clerkShopBg, arrowImage, leftArrowImage],
+    questionConfirm: [clerkShopBg],
+    productIntro: [clerkShopBg],
+    clerkShop: [clerkShopBg, questionCloseButton, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
     productConfirm: [shopBg, selectedFruit.value?.image].filter(Boolean),
     success: [successBg],
     failure: [failureBg],
@@ -1049,7 +1049,7 @@ function retryGame() {
             aria-label="しつもんを閉じる"
             @click.stop="questionPreviewOpen = false"
           >
-            <img :src="helpCloseButton" alt="" />
+            <img :src="questionCloseButton" alt="" />
           </button>
           <div class="question-card question-preview-card">
             <span>しつもん{{ questionNumber }}</span>
@@ -1110,7 +1110,7 @@ function retryGame() {
       <ScreenFrame
         v-else-if="screen === 'question' || screen === 'questionConfirm'"
         label="質問画面"
-        :background="shopping"
+        :background="clerkShopBg"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="question-card">
@@ -1129,7 +1129,7 @@ function retryGame() {
         </div>
       </ScreenFrame>
 
-      <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="shopping">
+      <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="clerkShopBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="instruction-panel">
           <p>
