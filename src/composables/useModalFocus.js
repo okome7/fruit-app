@@ -2,11 +2,12 @@ import { nextTick, onUnmounted, watch } from 'vue';
 
 // Native inert keeps the background out of pointer, keyboard and accessibility
 // navigation. These guards also cover older browsers that do not support inert.
-export function useModalFocus(isOpen, dialog, background) {
+export function useModalFocus(isOpen, dialog, background, options = {}) {
   let opener = null;
   let restoreTarget = null;
   let generation = 0;
   let disposed = false;
+  let isolated = [];
   const outsideEvents = ['click', 'pointerdown', 'pointerup', 'keyup'];
 
   function buttons() {
@@ -15,6 +16,34 @@ export function useModalFocus(isOpen, dialog, background) {
   }
   function focusInside() {
     (buttons()[0] || dialog.value)?.focus({ preventScroll: true });
+  }
+  function releaseBackground() {
+    for (const element of isolated) element.removeAttribute('inert');
+    isolated = [];
+  }
+  function isolateBackground() {
+    releaseBackground();
+    const root = background.value;
+    const modal = dialog.value;
+    if (!root || !modal) return;
+    const targets = [];
+    if (root.contains(modal)) {
+      // An in-scene dialog must stay interactive while its siblings, including
+      // the viewport controls, leave the focus and accessibility trees.
+      for (let child = modal; child && child !== root; child = child.parentElement) {
+        targets.push(...Array.from(child.parentElement?.children || []).filter((element) => element !== child));
+      }
+    } else targets.push(root);
+    for (const element of targets) {
+      if (!element.hasAttribute('inert')) {
+        element.setAttribute('inert', '');
+        isolated.push(element);
+      }
+    }
+  }
+  function canFocus(element) {
+    return element?.isConnected && background.value?.contains(element)
+      && !element.disabled && !element.closest('[inert]') && typeof element.focus === 'function';
   }
   function stop(event) {
     event.preventDefault();
@@ -70,6 +99,7 @@ export function useModalFocus(isOpen, dialog, background) {
       listen(true);
     } else {
       listen(false);
+      releaseBackground();
       restoreTarget = opener;
       opener = null;
     }
@@ -77,25 +107,30 @@ export function useModalFocus(isOpen, dialog, background) {
 
   // Wait until Vue has patched the dialog and the background's inert attribute.
   // A nextTick scheduled inside a synchronous watcher can precede that patch.
-  watch(isOpen, (opened) => {
+  watch([isOpen, dialog], ([opened]) => {
     const token = generation;
     if (opened) {
-      nextTick(() => { if (!disposed && isOpen.value && token === generation) focusInside(); });
+      nextTick(() => {
+        if (!disposed && isOpen.value && token === generation) {
+          isolateBackground();
+          focusInside();
+        }
+      });
     } else {
       const previous = restoreTarget;
       restoreTarget = null;
+      if (!previous) return;
       nextTick(() => {
         if (disposed || isOpen.value || token !== generation) return;
-        const target = previous?.isConnected && background.value?.contains(previous)
-          && !previous.closest('[inert]') ? previous
-          : background.value?.querySelector('.start-button')
-            || background.value?.querySelector('.help-button')
-            || background.value?.querySelector('button');
+        const target = [previous, options.fallbackFocus?.(),
+          background.value?.querySelector('.start-button'),
+          background.value?.querySelector('.help-button'),
+          ...Array.from(background.value?.querySelectorAll('button') || [])].find(canFocus);
         target?.focus({ preventScroll: true });
       });
     }
   }, { flush: 'post' });
 
-  onUnmounted(() => { disposed = true; generation += 1; listen(false); opener = null; restoreTarget = null; });
+  onUnmounted(() => { disposed = true; generation += 1; listen(false); releaseBackground(); opener = null; restoreTarget = null; });
   return { open, cancel };
 }

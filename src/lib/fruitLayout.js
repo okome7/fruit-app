@@ -1,5 +1,7 @@
 // Pixel anchors measured from the actual scene artwork. Background and foreground
 // share the same full-frame percentage coordinates at every viewport size.
+// Keep the measured plate centers while leaving a real gap above the labels.
+export const fruitArtSceneUnits = 10;
 export const fruitScenes = {
   customer: {
     width: 1847, height: 851,
@@ -50,7 +52,7 @@ export function shopDropZoneStyle(clerk = false) {
 
 export function shopSceneStyle(clerk = false) {
   const scene = fruitScenes[clerk ? 'clerk' : 'customer'];
-  const style = { '--scene-aspect': scene.width / scene.height };
+  const style = { '--scene-aspect': scene.width / scene.height, '--fruit-art-scale': fruitArtSceneUnits };
   if (clerk) {
     style['--timer-x'] = `${(scene.timer.x - scene.basket.x) / scene.basket.width * 100}%`;
     style['--timer-y'] = `${(scene.timer.y - scene.basket.y) / scene.basket.height * 100}%`;

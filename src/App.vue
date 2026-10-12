@@ -83,6 +83,39 @@ const timeUpAcknowledged = ref(false);
 const timerStarted = ref(false);
 const questionPreviewOpen = ref(false);
 const customerInstructionOpen = ref(false);
+const customerInstructionDialog = ref(null);
+const questionPreviewDialog = ref(null);
+const oneMinuteDialog = ref(null);
+const timeUpDialog = ref(null);
+const activeGameDialogKind = computed(() => {
+  if (homeConfirm.value) return null;
+  if (screen.value === 'customerShop' && customerInstructionOpen.value) return 'customer';
+  if (screen.value !== 'clerkShop') return null;
+  if (questionPreviewOpen.value) return 'question';
+  if (helpOpen.value) return null;
+  if (remainingSeconds.value === 0 && !timeUpAcknowledged.value) return 'timeUp';
+  if (remainingSeconds.value > 0 && remainingSeconds.value <= 60 && !oneMinuteAcknowledged.value) return 'oneMinute';
+  return null;
+});
+const gameDialogOpen = computed({
+  get: () => Boolean(activeGameDialogKind.value),
+  set: (open) => {
+    if (open) { questionPreviewOpen.value = true; return; }
+    if (activeGameDialogKind.value === 'customer') customerInstructionOpen.value = false;
+    else if (activeGameDialogKind.value === 'question') questionPreviewOpen.value = false;
+    else if (activeGameDialogKind.value === 'oneMinute') oneMinuteAcknowledged.value = true;
+    else if (activeGameDialogKind.value === 'timeUp') timeUpAcknowledged.value = true;
+  }
+});
+const gameDialog = computed(() => ({
+  customer: customerInstructionDialog.value,
+  question: questionPreviewDialog.value,
+  oneMinute: oneMinuteDialog.value,
+  timeUp: timeUpDialog.value
+})[activeGameDialogKind.value] || null);
+const { open: openQuestionPreview, cancel: closeGameDialog } = useModalFocus(gameDialogOpen, gameDialog, gameSurface, {
+  fallbackFocus: () => gameSurface.value?.querySelector('.fruit-card:not(:disabled)')
+});
 let timerInterval;
 const countdown = createCountdown(180);
 let webMcpLifecycle;
@@ -659,7 +692,6 @@ function go(next) {
   if (next === 'customerShop' && screen.value === 'customerHandoff') {
     pickRandomFruits();
     customerInstructionOpen.value = true;
-    nextTick(() => gameSurface.value?.querySelector('.customer-instruction button')?.focus());
   }
   history.value.push(screen.value);
   screen.value = next;
@@ -986,7 +1018,7 @@ function retryGame() {
           class="question-sign"
           type="button"
           aria-label="しつもんをみる"
-          @click="questionPreviewOpen = true"
+          @click="openQuestionPreview"
         >
           しつもんを<br />みる
         </button>
@@ -1035,36 +1067,41 @@ function retryGame() {
         <p class="sr-only" aria-live="polite">
           {{ keyboardFruit ? `${keyboardFruit.fruitName}をえらびました。レジのボタンで確定できます。` : '' }}
         </p>
-        <div v-if="screen === 'customerShop' && customerInstructionOpen" class="question-preview-backdrop customer-instruction" role="dialog" aria-modal="true" aria-label="くだもののはこびかた" @keydown.esc="customerInstructionOpen = false" @keydown.tab.prevent="$event.currentTarget.querySelector('button').focus()">
+        <div v-if="activeGameDialogKind === 'customer'" ref="customerInstructionDialog" class="question-preview-backdrop customer-instruction" role="dialog" aria-modal="true" aria-label="くだもののはこびかた">
           <div class="instruction-panel png-instruction-panel">
             <p>くだものを　ゆびで　<ruby>カゴ<rt>かご</rt></ruby>まで　はこんでね！</p>
-            <button class="png-action select-fruit-action" type="button" @click="customerInstructionOpen = false"><img :src="selectImage" alt="くだものをえらぶ" /></button>
+            <button class="png-action select-fruit-action" type="button" @click="closeGameDialog"><img :src="selectImage" alt="くだものをえらぶ" /></button>
           </div>
         </div>
         <div
-          v-if="screen === 'clerkShop' && remainingSeconds > 0 && remainingSeconds <= 60 && !oneMinuteAcknowledged"
+          v-if="activeGameDialogKind === 'oneMinute'"
+          ref="oneMinuteDialog"
           class="one-minute-warning"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="one-minute-warning-title"
         >
-          <p>あと１ぷん！</p>
-          <button type="button" @click="oneMinuteAcknowledged = true">わかった</button>
+          <p id="one-minute-warning-title">あと１ぷん！</p>
+          <button type="button" @click="closeGameDialog">わかった</button>
         </div>
-        <div v-if="screen === 'clerkShop' && remainingSeconds === 0 && !timeUpAcknowledged" class="time-up-warning">
-          <p>じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
-          <button type="button" @click="timeUpAcknowledged = true">わかった</button>
+        <div v-if="activeGameDialogKind === 'timeUp'" ref="timeUpDialog" class="time-up-warning" role="alertdialog" aria-modal="true" aria-labelledby="time-up-warning-title">
+          <p id="time-up-warning-title">じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
+          <button type="button" @click="closeGameDialog">わかった</button>
         </div>
         <div
-          v-if="screen === 'clerkShop' && questionPreviewOpen"
+          v-if="activeGameDialogKind === 'question'"
+          ref="questionPreviewDialog"
           class="question-preview-backdrop"
           role="dialog"
           aria-modal="true"
           aria-label="しつもんのかくにん"
-          @click="questionPreviewOpen = false"
+          @click="closeGameDialog"
         >
           <button
             class="question-preview-close"
             type="button"
             aria-label="しつもんを閉じる"
-            @click.stop="questionPreviewOpen = false"
+            @click.stop="closeGameDialog"
           >
             <img :src="questionCloseButton" alt="" />
           </button>
@@ -1160,13 +1197,12 @@ function retryGame() {
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="final-failure-screen success">
           <h1>せいかい！おめでとう！</h1>
-          <br />
-          <p>
+          <div class="success-copy">
             <h3>「{{ correctFruit?.feeling }}」ってどんなきもち？</h3>
-            <span v-if="selectedEmotion" class="example-text">
+            <p v-if="selectedEmotion" class="example-text">
               {{ emotionExamples[selectedEmotion.replace(/\n/g, '').trim()] }}
-            </span>
-          </p>
+            </p>
+          </div>
 
           <button type="button" @click="resetHome"><img :src="homeImage" alt="ホームへもどる" /></button>
           <button type="button" @click="retryGame"><img :src="onemoreImage" alt="もういちどあそぶ" /></button>

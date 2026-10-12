@@ -1172,7 +1172,7 @@ button:focus-visible {
     calc((100vw - var(--safe-left) - var(--safe-right)) / 100),
     calc((var(--view-height) - var(--safe-top) - var(--safe-bottom)) * var(--scene-aspect) / 100)
   );
-  --fruit-art-width: min(100px, calc(11 * var(--scene-unit)));
+  --fruit-art-width: min(100px, calc(var(--fruit-art-scale) * var(--scene-unit)));
   --fruit-art-height: var(--fruit-art-width);
   width: min(
     calc(100vw - var(--safe-left) - var(--safe-right)),
@@ -1300,4 +1300,57 @@ button:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+/* Terms stay scrollable above two separate PNG controls at every aspect ratio. */
+.terms-body {
+  height: 46%;
+  font-size: max(12px, calc(1.47 * var(--scene-unit)));
+  line-height: 1.55;
+  overflow-wrap: break-word;
+}
+.terms-action {
+  bottom: 4%;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+}
+.terms-back { left: 8.35%; width: min(26%, 181px); }
+.terms-agree { right: 8.35%; width: min(26%, 208px); }
+.terms-action img { max-height: calc(10 * var(--scene-unit)); object-fit: contain; }
+
+/* Result copy wraps in its own area, above the illustrated children/actions. */
+.success-copy {
+  position: absolute;
+  top: 32%;
+  left: 11%;
+  width: 78%;
+  display: flex;
+  flex-direction: column;
+  gap: calc(1 * var(--scene-unit));
+  text-align: center;
+}
+.success-copy h3 {
+  margin: 0;
+  font-size: calc(2.5 * var(--scene-unit));
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-break: strict;
+}
+.final-failure-screen .success-copy .example-text {
+  position: static;
+  width: 100%;
+  margin: 0;
+  font-size: calc(2.2 * var(--scene-unit));
+  line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  line-break: strict;
+}
+.final-failure-screen:not(.success) > p {
+  left: 10%;
+  width: 80%;
+  white-space: pre-line;
+  overflow-wrap: break-word;
 }
