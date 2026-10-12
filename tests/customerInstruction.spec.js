@@ -17,6 +17,8 @@ it('shows the customer instructions for every course, preserves ruby, blocks sel
       body.querySelectorAll('rt').forEach(reading => reading.remove());
       expect(body.textContent).toBe('くだものを　ゆびで　カゴまで　はこんでね！');
       expect([...body.textContent].filter(character => character === '\u3000')).toHaveLength(3);
+      expect(wrapper.find('.customer-instruction button img').attributes('alt')).toBe('くだものをえらぶ');
+      expect(wrapper.find('.customer-instruction button').text()).toBe('');
       expect(state.dragDisabled).toBe(true);
       state.selectFruit(state.displayedFruits[0]); expect(state.screen).toBe('customerShop');
       await wrapper.find('.customer-instruction button').trigger('click');

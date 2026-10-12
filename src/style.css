@@ -1223,3 +1223,64 @@ button:focus-visible {
     aspect-ratio: auto;
   }
 }
+
+/* Align the visible pear glyph, including its leaf, with the plate center. */
+.fruit-card--pear .fruit-emoji { transform: translateY(-0.08em); }
+.fruit-card--pear .fruit-face { transform: translate(-50%, calc(-50% - 0.34em)); }
+
+/* Only the fruit confirmation uses these supplied PNG actions. */
+.confirm-card .confirm-actions {
+  width: min(100%, calc(36 * var(--scene-unit)));
+  gap: calc(4 * var(--scene-unit));
+  align-items: center;
+  justify-content: center;
+}
+.confirm-card .confirm-actions button {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+}
+.confirm-card .confirm-actions img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Existing PNG controls retain native button focus and tap areas. */
+.instruction-panel .png-action,
+.home-modal .png-action,
+.help-menu .png-action {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  min-height: 44px;
+}
+.png-action img { display: block; width: 100%; height: auto; object-fit: contain; }
+.instruction-panel .select-fruit-action {
+  display: grid;
+  place-items: center;
+  width: min(100%, calc(32 * var(--scene-unit)));
+  margin-inline: auto;
+}
+.home-modal-actions .png-action {
+  display: grid;
+  place-items: center;
+  width: min(40%, calc(16 * var(--scene-unit)));
+  min-width: 44px;
+}
+.help-menu .png-action { display: grid; place-items: center; }
+.help-menu .png-action img { width: calc(100% - 12px); }
+.confirm-card .confirm-actions button { min-height: 44px; display: grid; place-items: center; }
+@media (orientation: portrait) {
+  .confirm-card { inset: 4% 12%; padding: var(--scene-unit); }
+}
+
+.png-instruction-panel { top: 14%; bottom: 14%; height: auto; padding: calc(2 * var(--scene-unit)); gap: var(--scene-unit); }
+.png-instruction-panel > * { flex-shrink: 0; max-width: 100%; }
+.png-instruction-panel .png-action { margin-block: 0; }
+@media (orientation: portrait) { .png-instruction-panel { left: 12%; width: 76%; top: 4%; bottom: 4%; padding: var(--scene-unit); } }

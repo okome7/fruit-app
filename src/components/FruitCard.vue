@@ -88,7 +88,7 @@ onUnmounted(() => {
 <template>
   <button
     class="fruit-card" type="button" data-sfx-skip :disabled="disabled"
-    :class="{ 'is-dragging': preview, 'is-picked': picked }"
+    :class="{ 'is-dragging': preview, 'is-picked': picked, 'fruit-card--pear': fruit.emoji === '🍐' }"
     :aria-label="`${fruit.fruitName}、${fruit.feeling.replace(/\n/g, '')}。レジへ運ぶ`"
     :aria-pressed="picked"
     @pointerdown="start" @pointermove="move" @pointerup="finish"
@@ -102,7 +102,7 @@ onUnmounted(() => {
     </template>
   </button>
   <Teleport to="body">
-    <div v-if="preview" class="fruit-drag-preview" :style="previewStyle" aria-hidden="true">
+    <div v-if="preview" class="fruit-drag-preview" :class="{ 'fruit-card--pear': fruit.emoji === '🍐' }" :style="previewStyle" aria-hidden="true">
       <img v-if="fruit.image" class="fruit-art" :src="fruit.image" alt="" draggable="false" />
       <template v-else>
         <span class="fruit-emoji">{{ fruit.emoji }}</span>

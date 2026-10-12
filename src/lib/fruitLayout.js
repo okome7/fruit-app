@@ -3,7 +3,7 @@
 export const fruitScenes = {
   customer: {
     width: 1847, height: 851,
-    fruitX: [248, 559, 868, 1179], fruitY: [260, 614],
+    fruitX: [247, 555, 863, 1168], fruitY: [264, 613],
     labelX: [[239, 550, 863, 1177], [239, 550, 863, 1177]], labelY: [400, 753],
     labelWidth: 280, labelHeight: 64,
     basket: { x: 1420, y: 534, width: 410, height: 307 },
