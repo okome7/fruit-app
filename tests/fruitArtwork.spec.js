@@ -13,6 +13,10 @@ let app, card;
 afterEach(() => { card?.unmount(); app?.unmount(); document.body.innerHTML = ''; });
 
 const expected = {
+  'moved-orange': 'かんどう',
+  'anger-apple': 'おこる',
+  'startled-blueberry': '（びびり）びっくり',
+  'noisy-persimmon': 'うるさい',
   'boring-chestnut': 'おもしろくない',
   'happiness-peach': 'しあわせ',
   'anxious-pear': 'ふあん・しんぱい',

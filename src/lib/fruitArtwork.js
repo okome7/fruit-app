@@ -7,7 +7,16 @@ import relief_watermelon from '../assets/fruits/relief-watermelon.png';
 import happy_surprise_banana from '../assets/fruits/happy-surprise-banana.png';
 import dislike_grape from '../assets/fruits/dislike-grape.png';
 
+import moved_orange from '../assets/fruits/moved-orange.png';
+import anger_apple from '../assets/fruits/anger-apple.png';
+import startled_blueberry from '../assets/fruits/startled-blueberry.png';
+import noisy_persimmon from '../assets/fruits/noisy-persimmon.png';
+
 export const fruitArtwork = {
+  'moved-orange': moved_orange,
+  'anger-apple': anger_apple,
+  'startled-blueberry': startled_blueberry,
+  'noisy-persimmon': noisy_persimmon,
   'boring-chestnut': boring_chestnut,
   'happiness-peach': happiness_peach,
   'anxious-pear': anxious_pear,
