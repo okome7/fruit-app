@@ -1,6 +1,6 @@
 <script setup>
 import { emotionExamples } from './data/emotionExamples.js';
-import { ref, reactive, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, reactive, computed, watch, watchEffect, onMounted, onUnmounted, nextTick } from 'vue';
 
 import heroImage from './assets/home-logo.png';
 import { fruitArtwork } from './lib/fruitArtwork.js';
@@ -42,7 +42,13 @@ import HelpMenu from './components/HelpMenu.vue';
 import FruitCard from './components/FruitCard.vue';
 import SoundIcon from './components/SoundIcon.vue';
 import QuestionText from './components/QuestionText.vue';
-import { gestureQuestions, associationQuestions, finalQuestion, pickRandomQuestion, selectionPrompt } from './lib/questions.js';
+import {
+  gestureQuestions,
+  associationQuestions,
+  finalQuestion,
+  pickRandomQuestion,
+  selectionPrompt
+} from './lib/questions.js';
 import { createCountdown } from './lib/countdown.js';
 import { useSfx } from './composables/useSfx.js';
 import { useModalFocus } from './composables/useModalFocus.js';
@@ -61,6 +67,8 @@ import onemoreImage from './assets/screens/もういちどあそぶ.png';
 import backImage from './assets/screens/もどる.png';
 import selectImage from './assets/screens/くだものをえらぶ.png';
 import tapImage from './assets/screens/けってい.png';
+import againImage from './assets/screens/もういっかい！.png';
+import understandImage from './assets/screens/わかった.png';
 
 const imagePreloader = createImagePreloader();
 const inputModality = useInputModality();
@@ -100,19 +108,25 @@ const activeGameDialogKind = computed(() => {
 const gameDialogOpen = computed({
   get: () => Boolean(activeGameDialogKind.value),
   set: (open) => {
-    if (open) { questionPreviewOpen.value = true; return; }
+    if (open) {
+      questionPreviewOpen.value = true;
+      return;
+    }
     if (activeGameDialogKind.value === 'customer') customerInstructionOpen.value = false;
     else if (activeGameDialogKind.value === 'question') questionPreviewOpen.value = false;
     else if (activeGameDialogKind.value === 'oneMinute') oneMinuteAcknowledged.value = true;
     else if (activeGameDialogKind.value === 'timeUp') timeUpAcknowledged.value = true;
   }
 });
-const gameDialog = computed(() => ({
-  customer: customerInstructionDialog.value,
-  question: questionPreviewDialog.value,
-  oneMinute: oneMinuteDialog.value,
-  timeUp: timeUpDialog.value
-})[activeGameDialogKind.value] || null);
+const gameDialog = computed(
+  () =>
+    ({
+      customer: customerInstructionDialog.value,
+      question: questionPreviewDialog.value,
+      oneMinute: oneMinuteDialog.value,
+      timeUp: timeUpDialog.value
+    })[activeGameDialogKind.value] || null
+);
 const { open: openQuestionPreview, cancel: closeGameDialog } = useModalFocus(gameDialogOpen, gameDialog, gameSurface, {
   fallbackFocus: () => gameSurface.value?.querySelector('.fruit-card:not(:disabled)'),
   allowedOutside: () => gameSurface.value?.querySelector('.help-wrap')
@@ -142,16 +156,22 @@ async function toggleFullscreen() {
   }
   syncFullscreen();
 }
-const dragDisabled = computed(
-  () =>
+const dragDisabled = ref(false);
+
+// 自動計算ロジック
+watchEffect(() => {
+  // 手動で false にされた場合は自動計算を止める
+  if (dragDisabled.value === false) return;
+
+  dragDisabled.value =
     helpOpen.value ||
     homeConfirm.value ||
     questionPreviewOpen.value ||
     customerInstructionOpen.value ||
     (screen.value === 'clerkShop' &&
       ((remainingSeconds.value <= 60 && remainingSeconds.value > 0 && !oneMinuteAcknowledged.value) ||
-        (remainingSeconds.value === 0 && !timeUpAcknowledged.value)))
-);
+        (remainingSeconds.value === 0 && !timeUpAcknowledged.value)));
+});
 
 function guardHelpMenuBackground(event) {
   if (!helpOpen.value || homeConfirm.value || event.target.closest?.('.help-wrap')) return false;
@@ -684,6 +704,8 @@ onUnmounted(() => {
 });
 
 function go(next) {
+  dragDisabled.value = false;
+  customerInstructionOpen.value = false;
   if (next === 'how1' && helpOpen.value) {
     helpReturnScreen.value = screen.value;
     screen.value = 'help1';
@@ -821,11 +843,7 @@ function retryGame() {
         {{ fullscreenNotice }}
       </p>
       <ScreenFrame v-if="screen === 'home'" label="ホーム画面" :background="menuBackground">
-        <img
-        class="home-hero"
-        :src="heroImage"
-        alt="ホーム画面のイラスト"
-        />
+        <img class="home-hero" :src="heroImage" alt="ホーム画面のイラスト" />
         <p class="home-description">
           <span>てんいんさんがしつもんして、おきゃくさんのえらんだ</span
           ><span>「きもちのくだもの」をあてるゲームです！</span>
@@ -871,7 +889,6 @@ function retryGame() {
         <button class="terms-action terms-agree" type="button" @click="go('guide')">
           <img :src="agreeImage" alt="同意する" />
         </button>
-
       </ScreenFrame>
 
       <ScreenFrame v-else-if="screen === 'guide'" label="ゲーム説明案内" :background="guideBg">
@@ -960,7 +977,7 @@ function retryGame() {
 
       <ScreenFrame v-else-if="screen === 'roles'" label="役割を決める画面" :background="gameStartBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
-          <FruitHero v-if="selectedFruit" :fruit="selectedFruit" />
+        <FruitHero v-if="selectedFruit" :fruit="selectedFruit" />
         <div class="lesson roles-copy">
           さっそくゲームをはじめよう！<br />ふたりで　おきゃくさんと　てんいんさんの<br />どちらにするか　きめてね。
         </div>
@@ -1024,7 +1041,11 @@ function retryGame() {
         >
           しつもんを<br />みる
         </button>
-        <div class="fruit-grid" :inert="customerInstructionOpen" :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }">
+        <div
+          class="fruit-grid"
+          :inert="customerInstructionOpen"
+          :class="{ 'fruit-grid--clerk': screen === 'clerkShop' }"
+        >
           <div
             v-for="(fruit, index) in displayedFruits"
             :key="fruit.id"
@@ -1045,9 +1066,9 @@ function retryGame() {
               :class="{
                 'fruit-feeling--multiline': fruitLabel(fruit).includes('\n')
               }"
-              >
+            >
               {{ fruitLabel(fruit) }}
-              </span>
+            </span>
           </div>
         </div>
         <button
@@ -1064,15 +1085,31 @@ function retryGame() {
           :aria-disabled="!keyboardFruit || dragDisabled"
           @click="!dragDisabled && selectFruit(keyboardFruit)"
         >
-          <div v-if="screen === 'clerkShop'" class="timer"><span class="timer-sizing" aria-hidden="true">のこり　{{ formattedTime }}</span><span class="timer-text"><span>のこり</span><span>{{ formattedTime }}</span></span></div>
+          <div v-if="screen === 'clerkShop'" class="timer">
+            <span class="timer-sizing" aria-hidden="true">のこり　{{ formattedTime }}</span
+            ><span class="timer-text"
+              ><span>のこり</span><span>{{ formattedTime }}</span></span
+            >
+          </div>
         </button>
         <p class="sr-only" aria-live="polite">
           {{ keyboardFruit ? `${keyboardFruit.fruitName}をえらびました。レジのボタンで確定できます。` : '' }}
         </p>
-        <div v-if="activeGameDialogKind === 'customer'" ref="customerInstructionDialog" class="question-preview-backdrop customer-instruction" role="dialog" aria-label="くだもののはこびかた">
+        <div
+          v-if="activeGameDialogKind === 'customer'"
+          ref="customerInstructionDialog"
+          class="question-preview-backdrop customer-instruction"
+          role="dialog"
+          aria-label="くだもののはこびかた"
+        >
           <div class="instruction-panel png-instruction-panel">
-            <p>くだものを　ゆびで　<br /><ruby>カゴ<rt>かご</rt></ruby>まで　はこんでね！</p>
-            <button class="png-action select-fruit-action" type="button" @click="closeGameDialog"><img :src="selectImage" alt="くだものをえらぶ" /></button>
+            <p>
+              くだものを　ゆびで　<br /><ruby>カゴ<rt>かご</rt></ruby
+              >まで　はこんでね！
+            </p>
+            <button class="png-action select-fruit-action" type="button" @click="closeGameDialog">
+              <img :src="selectImage" alt="くだものをえらぶ" />
+            </button>
           </div>
         </div>
         <div
@@ -1083,11 +1120,21 @@ function retryGame() {
           aria-labelledby="one-minute-warning-title"
         >
           <p id="one-minute-warning-title">あと１ぷん！</p>
-          <button type="button" @click="closeGameDialog">わかった</button>
+          <button class="png-action select-fruit-action" @click="go('clerkShop')">
+            <img :src="understandImage" alt="わかった" class="select-fruit-img" />
+          </button>
         </div>
-        <div v-if="activeGameDialogKind === 'timeUp'" ref="timeUpDialog" class="time-up-warning" role="alertdialog" aria-labelledby="time-up-warning-title">
+        <div
+          v-if="activeGameDialogKind === 'timeUp'"
+          ref="timeUpDialog"
+          class="time-up-warning"
+          role="alertdialog"
+          aria-labelledby="time-up-warning-title"
+        >
           <p id="time-up-warning-title">じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
-          <button type="button" @click="closeGameDialog">わかった</button>
+          <button class="png-action select-fruit-action" @click="go('clerkShop')">
+            <img :src="understandImage" alt="わかった" class="select-fruit-img" />
+          </button>
         </div>
         <div
           v-if="activeGameDialogKind === 'question'"
@@ -1098,14 +1145,14 @@ function retryGame() {
           @click="closeGameDialog"
         >
           <div class="question-card question-preview-card">
-          <button
-            class="question-preview-close"
-            type="button"
-            aria-label="しつもんを閉じる"
-            @click.stop="closeGameDialog"
-          >
-            <img :src="questionCloseButton" alt="" />
-          </button>
+            <button
+              class="question-preview-close"
+              type="button"
+              aria-label="しつもんを閉じる"
+              @click.stop="closeGameDialog"
+            >
+              <img :src="questionCloseButton" alt="" />
+            </button>
             <span>しつもん{{ questionNumber }}</span>
             <p><QuestionText :text="questionText" /></p>
           </div>
@@ -1120,10 +1167,21 @@ function retryGame() {
         :background="screen === 'productConfirm' ? clerkShopBg : customerShopBg"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
-        <div v-if="screen === 'productConfirm'" class="timer confirmation-timer"><span class="timer-sizing" aria-hidden="true">のこり　{{ formattedTime }}</span><span class="timer-text"><span>のこり</span><span>{{ formattedTime }}</span></span></div>
+        <div v-if="screen === 'productConfirm'" class="timer confirmation-timer">
+          <span class="timer-sizing" aria-hidden="true">のこり　{{ formattedTime }}</span
+          ><span class="timer-text"
+            ><span>のこり</span><span>{{ formattedTime }}</span></span
+          >
+        </div>
         <div class="confirm-card">
           <div class="big-fruit" role="img" :aria-label="`${selectedFruit?.fruitName}、${selectedFruit?.feeling}`">
-            <img v-if="selectedFruit?.image" class="big-fruit-art" :src="selectedFruit.image" alt="" draggable="false" />
+            <img
+              v-if="selectedFruit?.image"
+              class="big-fruit-art"
+              :src="selectedFruit.image"
+              alt=""
+              draggable="false"
+            />
             <template v-else>
               <span class="big-fruit-emoji">{{ selectedFruit?.emoji }}</span>
               <span class="big-fruit-face">•ᴗ•</span>
@@ -1189,10 +1247,10 @@ function retryGame() {
       <ScreenFrame v-else-if="screen === 'productIntro'" label="商品説明画面" :background="clerkShopBg">
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="instruction-panel png-instruction-panel">
-          <p>
-            {{ selectionPrompt(questionText) }}<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！
-          </p>
-          <button class="png-action select-fruit-action" @click="go('clerkShop')"><img :src="selectImage" alt="くだものをえらぶ" /></button>
+          <p>{{ selectionPrompt(questionText) }}<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！</p>
+          <button class="png-action select-fruit-action" @click="go('clerkShop')">
+            <img :src="selectImage" alt="くだものをえらぶ" />
+          </button>
         </div>
       </ScreenFrame>
 
@@ -1201,7 +1259,9 @@ function retryGame() {
         <div class="final-failure-screen success">
           <h1>せいかい！おめでとう！</h1>
           <fieldset class="success-copy">
-            <legend><h3>「{{ correctFruit?.feeling }}」ってどんなきもち？</h3></legend>
+            <legend>
+              <h3>「{{ correctFruit?.feeling }}」ってどんなきもち？</h3>
+            </legend>
             <p v-if="selectedEmotion" class="example-text">
               {{ emotionExamples[selectedEmotion.replace(/\n/g, '').trim()] }}
             </p>
@@ -1218,7 +1278,9 @@ function retryGame() {
         <div class="failure-screen">
           <h1>しっぱい……。</h1>
           <p>もういちど　おきゃくさんに　しつもんを　してみよう！<br />チャンスは　あと{{ attempts }}かい！</p>
-          <button type="button" @click="go('question')">もういっかい！</button>
+          <button class="png-action select-fruit-action" @click="go('clerkShop')">
+            <img :src="againImage" a lt="もういっかい！" />
+          </button>
         </div>
       </ScreenFrame>
       <ScreenFrame v-else-if="screen === 'finalFailure'" label="最終失敗画面" :background="finalFailureBg">
@@ -1227,12 +1289,12 @@ function retryGame() {
           <h1>しっぱい……。</h1>
           <p>せいかいは「{{ correctFruit?.feeling }}」でした…。<br />また　ちょうせんしてね！</p>
           <div class="result-actions">
-          <button type="button" class="home-button" @click="resetHome">
-            <img :src="homeImage" alt="ホームへもどる" />
-          </button>
-          <button type="button" class="retry-button" @click="retryGame">
-            <img :src="onemoreImage" alt="もういちどあそぶ" />
-          </button>
+            <button type="button" class="home-button" @click="resetHome">
+              <img :src="homeImage" alt="ホームへもどる" />
+            </button>
+            <button type="button" class="retry-button" @click="retryGame">
+              <img :src="onemoreImage" alt="もういちどあそぶ" />
+            </button>
           </div>
         </div>
       </ScreenFrame>
@@ -1257,7 +1319,9 @@ function retryGame() {
           >がめんに　もどります。
         </p>
         <div class="home-modal-actions">
-          <button class="home-modal-no png-action" @click="cancelHomeConfirm"><img :src="noImage" alt="いいえ" /></button>
+          <button class="home-modal-no png-action" @click="cancelHomeConfirm">
+            <img :src="noImage" alt="いいえ" />
+          </button>
           <button class="home-modal-yes png-action" @click="resetHome"><img :src="yesImage" alt="はい" /></button>
         </div>
       </div>
@@ -1400,7 +1464,6 @@ export default {
   font-weight: bold; /* 太字 */
 }
 
-
 .fruit-feeling {
   font-size: 2rem;
   font-weight: bold;
@@ -1408,7 +1471,6 @@ export default {
   display: block;
   text-align: center;
   white-space: nowrap;
-
 }
 
 .fruit-feeling--multiline {
@@ -1425,13 +1487,49 @@ export default {
 }
 
 .example-text {
-  white-space: pre-wrap;   /* ← \n を改行として表示 */
+  white-space: pre-wrap; /* ← \n を改行として表示 */
 }
 
 .screen-frame {
   position: relative;
 }
 
+.again-button img {
+  width: 30vw; /* 画面幅の30%にする（比率は維持される） */
+  height: auto; /* これが比率維持のポイント */
+  object-fit: contain;
+}
 
+.again-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
 
+.png-action,
+.select-fruit-action,
+.again-button {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  display: inline-block !important;
+  line-height: 0 !important;
+}
+.customer-instruction,
+.result-card {
+  position: relative;
+  z-index: 1;
+}
+.select-fruit-action {
+  position: relative;
+  z-index: 10;
+}
+
+.customer-instruction {
+  transform: none;
+  z-index: 1;
+}
 </style>
