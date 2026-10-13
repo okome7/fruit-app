@@ -4,6 +4,7 @@ import { nextTick } from 'vue';
 import App from '../src/App.vue';
 import QuestionText from '../src/components/QuestionText.vue';
 import { gestureQuestions, associationQuestions, finalQuestion, questionParts } from '../src/lib/questions.js';
+import { emotionExamples } from '../src/data/emotionExamples.js';
 
 vi.mock('../src/composables/useSfx.js', async () => {
   const { ref } = await import('vue');
@@ -20,6 +21,28 @@ function plainText(element) {
 }
 
 describe('complete child-friendly question readings (mounted DOM)', () => {
+  it.each(['くやしい','こうふんした','きもちいい'])('does not duplicate prolonged marks in the actual success example for %s', async (emotion) => {
+    wrapper=mount(App,{attachTo:document.body});
+    state().selectedEmotion=emotion;
+    state().correctFruit=state().fruits.find(fruit=>fruit.feeling.replace(/\n/g,'')===emotion);
+    state().screen='success'; await nextTick();await nextTick();
+    const example=wrapper.find('.example-text');
+    expect(example.text()).toBe(emotionExamples[emotion]);
+    expect(example.findAll('ruby')).toHaveLength(0);
+  });
+  it('leaves standalone long-mark runs plain while retaining readings inside katakana words', async () => {
+    wrapper=mount(App,{attachTo:document.body});await nextTick();await nextTick();
+    const paragraph=document.createElement('p');
+    const text='ー ーー げーむ ポーズ ゲーム スーパー';
+    paragraph.textContent=text;wrapper.find('.screen-frame').element.append(paragraph);
+    state().applyKatakanaReadings();
+    expect([...paragraph.querySelectorAll('rt')].map(reading=>reading.textContent)).toEqual(['ぽーず','げーむ','すーぱー']);
+    expect(plainText(paragraph)).toBe(text);
+    state().applyKatakanaReadings();
+    expect(paragraph.querySelectorAll('ruby ruby')).toHaveLength(0);
+    expect(paragraph.querySelectorAll('rt')).toHaveLength(3);
+  });
+
   it('adds exact readings and updates reactively without modifying the original words or line breaks', async () => {
     const text = 'ポーズ、ダンス、スキップ、かおマネ\n『ネコちゃん』';
     wrapper = mount(QuestionText, { props: { text }, attachTo: document.body });

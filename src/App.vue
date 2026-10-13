@@ -556,7 +556,7 @@ function applyKatakanaReadings() {
   if (!root) return;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode(node) {
-      if (!/[ァ-ヴー]/.test(node.nodeValue || '')) return NodeFilter.FILTER_REJECT;
+      if (!/[ァ-ヴ]/.test(node.nodeValue || '')) return NodeFilter.FILTER_REJECT;
       if (node.parentElement?.closest('ruby, rt, script, style, .terms-body')) return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
     }
@@ -567,7 +567,7 @@ function applyKatakanaReadings() {
     const fragment = document.createDocumentFragment();
     node.nodeValue.split(/([ァ-ヴー]+)/g).forEach((part) => {
       if (!part) return;
-      if (/^[ァ-ヴー]+$/.test(part)) {
+      if (/^[ァ-ヴー]+$/.test(part) && /[ァ-ヴ]/.test(part)) {
         const ruby = document.createElement('ruby');
         ruby.className = 'katakana-ruby';
         ruby.append(document.createTextNode(part));
