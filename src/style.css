@@ -625,6 +625,17 @@ button:focus-visible {
   border-radius: calc(0.4 * var(--scene-unit));
 }
 .confirmation-timer { left: var(--timer-scene-x); top: var(--timer-scene-y); }
+/* Enlarge only the lettering, preserving the approved timer frame and position. */
+.timer-text {
+  display: inline-block;
+  transform: scale(1.05);
+  transform-origin: center;
+}
+/* The timer is inside this button; ancestor filters would recolor its display. */
+.clerk-shop-screen .drop-zone:hover,
+.clerk-shop-screen .drop-zone:active {
+  filter: none;
+}
 .question-sign {
   position: absolute;
   left: 73%;
@@ -1319,6 +1330,9 @@ button:focus-visible {
   border: 0;
   border-radius: 0;
   background: transparent;
+}
+.final-failure-screen.success .result-actions {
+  gap: calc(2 * var(--scene-unit));
 }
 .final-failure-screen .result-actions button:first-child { width: calc(292 * var(--png-native-unit)); }
 .final-failure-screen .result-actions button img {

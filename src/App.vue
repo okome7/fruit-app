@@ -1061,7 +1061,7 @@ function retryGame() {
           :aria-disabled="!keyboardFruit || dragDisabled"
           @click="!dragDisabled && selectFruit(keyboardFruit)"
         >
-          <div v-if="screen === 'clerkShop'" class="timer">のこり　{{ formattedTime }}</div>
+          <div v-if="screen === 'clerkShop'" class="timer"><span class="timer-text">のこり　{{ formattedTime }}</span></div>
         </button>
         <p class="sr-only" aria-live="polite">
           {{ keyboardFruit ? `${keyboardFruit.fruitName}をえらびました。レジのボタンで確定できます。` : '' }}
@@ -1117,7 +1117,7 @@ function retryGame() {
         :background="screen === 'productConfirm' ? clerkShopBg : customerShopBg"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
-        <div v-if="screen === 'productConfirm'" class="timer confirmation-timer">のこり　{{ formattedTime }}</div>
+        <div v-if="screen === 'productConfirm'" class="timer confirmation-timer"><span class="timer-text">のこり　{{ formattedTime }}</span></div>
         <div class="confirm-card">
           <div class="big-fruit" role="img" :aria-label="`${selectedFruit?.fruitName}、${selectedFruit?.feeling}`">
             <img v-if="selectedFruit?.image" class="big-fruit-art" :src="selectedFruit.image" alt="" draggable="false" />

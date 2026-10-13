@@ -105,3 +105,21 @@ test('portrait help moves to the edge without changing landscape and timer keeps
   assert.match(css,/@media \(orientation: portrait\)\s*\{\s*\.help-wrap\s*\{\s*left: max\(8px, var\(--safe-left\)\)/);
   assert.match(css,/\.timer\s*\{[^}]*padding: calc\(0\.6[^}]*background: #253724;[^}]*font-size: calc\(1\.45/);
 });
+
+test('timer text enlarges without resizing its frame and basket interaction cannot tint it', () => {
+  const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
+  const app=readFileSync(new URL('../src/App.vue', import.meta.url),'utf8');
+  assert.match(css,/\.timer-text\s*\{[^}]*display: inline-block;[^}]*transform: scale\(1\.05\)/);
+  assert.match(css,/\.clerk-shop-screen \.drop-zone:hover,\s*\.clerk-shop-screen \.drop-zone:active\s*\{\s*filter: none;/);
+  assert.equal((app.match(/class="timer-text"/g)||[]).length,2);
+});
+
+test('requested success-screen button gap increases without changing button sizes or other result screens', () => {
+  const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
+  assert.match(css,/\.final-failure-screen\.success \.result-actions\s*\{\s*gap: calc\(2 \* var\(--scene-unit\)\)/);
+  assert.match(css,/\.result-actions\s*\{[^}]*gap: calc\(0\.7 \* var\(--scene-unit\)\)/);
+  for(const [width,height] of [[320,568],[390,844],[844,390],[1536,864]]) {
+    const unit=Math.min(width/100,height*874/402/100);
+    assert.ok(612*Math.min(1,unit/8.74)+2*unit<width);
+  }
+});
