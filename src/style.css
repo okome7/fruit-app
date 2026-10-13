@@ -1349,14 +1349,14 @@ button:focus-visible,
 .final-failure-screen .result-actions button {
   position: static;
   flex: 0 0 auto;
-  width: calc(320 * var(--png-native-unit));
+  width: calc(256 * var(--png-native-unit));
   height: auto;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
 }
-.final-failure-screen .result-actions button:first-child { width: calc(292 * var(--png-native-unit)); }
+.final-failure-screen .result-actions button:first-child { width: calc(233.6 * var(--png-native-unit)); }
 .final-failure-screen .result-actions button img {
   display: block;
   width: 100%;
