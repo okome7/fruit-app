@@ -3,7 +3,7 @@ import { expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
 import { fruitLabel } from '../src/lib/fruitLabel.js';
-import { shopDropZoneStyle, shopSceneStyle, fruitScenes } from '../src/lib/fruitLayout.js';
+import { shopDropZoneStyle, shopSceneStyle, fruitScenes, fruitArtSceneUnits } from '../src/lib/fruitLayout.js';
 vi.mock('../src/composables/useSfx.js', async () => {
   const { ref } = await import('vue');
   return { useSfx: () => ({ muted: ref(false), play: vi.fn(), unlock: vi.fn(), preload: vi.fn(), dispose: vi.fn(), toggle: vi.fn() }) };
@@ -23,19 +23,20 @@ it('fits both shop scenes, fruit and every emotion label without horizontal over
     for (const clerk of [false,true]) {
       const scene = fruitScenes[clerk ? 'clerk' : 'customer'];
       expect(shopSceneStyle(clerk)['--scene-aspect']).toBe(scene.width/scene.height);
+      expect(shopSceneStyle(clerk)['--fruit-art-scale']).toBe(fruitArtSceneUnits);
       for (const [vw,vh] of viewports) {
         const {width,height,unit}=fit(vw,vh,scene);
         expect(width).toBeLessThanOrEqual(vw+1e-8);
         expect(height).toBeLessThanOrEqual(vh+1e-8);
-        const artSize=Math.min(100,11*unit);
+        const artSize=Math.min(100,fruitArtSceneUnits*unit);
         const touchSize=Math.max(44,10.8*unit);
         for (const fruit of fruits) {
           const text=fruitLabel(fruit);
           expect(text.replace(/\n/g,'')).toBe(fruit.feeling.replace(/\n/g,''));
           const lines=text.split('\n');
-          const size=lines.length>1 ? Math.min(22,1.45*unit) : Math.min(26,2.4*unit);
+          const size=lines.length>1 ? Math.min(24,1.55*unit) : Math.min(26,2.4*unit);
           expect(Math.max(...lines.map(line=>[...line].length))*size).toBeLessThanOrEqual(scene.labelWidth/scene.width*width);
-          expect(lines.length*size*1.08).toBeLessThanOrEqual(scene.labelHeight/scene.height*height);
+          expect(lines.length*size*(lines.length>1 ? 1.05 : 1.08)).toBeLessThanOrEqual(scene.labelHeight/scene.height*height);
         }
         for(let i=1;i<scene.fruitX.length;i++) {
           expect((scene.fruitX[i]-scene.fruitX[i-1])/scene.width*width).toBeGreaterThanOrEqual(Math.max(artSize,touchSize));
