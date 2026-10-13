@@ -77,8 +77,10 @@ describe('independent question selection mounted-DOM QA', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.7); wrapper = mount(App, { attachTo: document.body }); await homeToQuestion();
     expect(wrapper.find('.question-card > span').text()).toBe('しつもん1'); expect(gestureQuestions).toContain(plain());
     await answer(1); expect(state().screen).toBe('failure'); await wrapper.find('.failure-screen button').trigger('click');
+    expect(state().screen).toBe('question'); expect(state().attempts).toBe(2);
     expect(wrapper.find('.question-card > span').text()).toBe('しつもん2'); expect(associationQuestions).toContain(plain());
     await answer(1); await wrapper.find('.failure-screen button').trigger('click');
+    expect(state().screen).toBe('question'); expect(state().attempts).toBe(1);
     expect(wrapper.find('.question-card > span').text()).toBe('しつもん3'); expect(plain()).toBe(finalQuestion);
     await answer(1); expect(state().screen).toBe('finalFailure');
   });

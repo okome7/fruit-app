@@ -15,8 +15,8 @@ test('disabled fruit and its descendants pass menu-dismissal taps to the backgro
 
 test('pointer focus suppression stays scoped to customer instructions and unpicked shop fruit, with keyboard cues intact', () => {
   const css = readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
-  assert.match(css, /button:focus-visible,\s*\.viewport\[data-input-modality="keyboard"\] \.customer-instruction \.select-fruit-action:focus,\s*\.viewport\[data-input-modality="keyboard"\] \.fruit-shop-screen \.fruit-card:focus:not\(\.is-picked\)\s*\{\s*outline:[^;]*solid #8a4b16/);
-  assert.match(css, /\.viewport\[data-input-modality="pointer"\] \.customer-instruction \.select-fruit-action:focus,\s*\.viewport\[data-input-modality="pointer"\] \.fruit-shop-screen \.fruit-card:focus:not\(\.is-picked\)\s*\{\s*outline: none;\s*\}/);
+  assert.match(css, /button:focus-visible,\s*\.viewport\[data-input-modality=["']keyboard["']\] \.customer-instruction \.select-fruit-action:focus,\s*\.viewport\[data-input-modality=["']keyboard["']\] \.fruit-shop-screen \.fruit-card:focus:not\(\.is-picked\)\s*\{\s*outline:[^;]*solid #8a4b16/);
+  assert.match(css, /\.viewport\[data-input-modality=["']pointer["']\] \.customer-instruction \.select-fruit-action:focus,\s*\.viewport\[data-input-modality=["']pointer["']\] \.fruit-shop-screen \.fruit-card:focus:not\(\.is-picked\)\s*\{\s*outline: none;\s*\}/);
   assert.match(css, /\.fruit-card\.is-picked\s*\{\s*outline: 3px solid #e19b22;/);
   assert.match(css, /@media \(hover: hover\) and \(pointer: fine\)\s*\{\s*\.fruit-card:hover:not\(\.is-dragging\)/);
   assert.doesNotMatch(css, /(?:^|\})\s*(?:button|\.fruit-card|\.select-fruit-action)(?::focus(?:-visible)?)?\s*\{[^}]*outline:\s*none/);
@@ -64,8 +64,8 @@ test('terms retain original typography and original PNG proportions in separate 
   const actionRule = [...css.matchAll(/\.terms-action\s*\{([^}]*)\}/g)].at(-1)[1];
   const bottom = Number(actionRule.match(/bottom:\s*([\d.]+)%/)[1]) / 100;
   assert.equal(bottom, .04);
-  assert.match(css, /\.terms-back\s*\{ left: 8\.35%; width: calc\(181 \* var\(--png-native-unit\)\)/);
-  assert.match(css, /\.terms-agree\s*\{ right: 8\.35%; width: calc\(208 \* var\(--png-native-unit\)\)/);
+  assert.match(css, /\.terms-back\s*\{\s*left: 8\.35%;\s*width: calc\(181 \* var\(--png-native-unit\)\)/);
+  assert.match(css, /\.terms-agree\s*\{\s*right: 8\.35%;\s*width: calc\(208 \* var\(--png-native-unit\)\)/);
   for (const [width,height] of [[320,568],[360,640],[390,844],[430,932],[740,300],[844,390],[1024,768],[1536,864]]) {
     const sceneHeight=width<height ? width*402/874 : height;
     const scale=Math.min(1,width/874,height/402);
@@ -81,17 +81,17 @@ test('result PNGs remain side by side with original ratios and a common responsi
   const app=readFileSync(new URL('../src/App.vue', import.meta.url),'utf8');
   assert.match(css,/--png-native-unit:\s*min\(1px, calc\(var\(--scene-unit\) \/ 8\.74\)\)/);
   assert.match(css,/\.result-actions\s*\{[^}]*left:\s*50%;[^}]*bottom:\s*3%;[^}]*flex-direction:\s*row/);
-  assert.match(css,/\.final-failure-screen \.result-actions button\s*\{[^}]*width:\s*calc\(256 \* var\(--png-native-unit\)\);[^}]*height:\s*auto;[^}]*padding:\s*0;[^}]*border:\s*0;/);
+  assert.match(css,/\.final-failure-screen \.result-actions button\s*\{[^}]*width:\s*calc\(320 \* var\(--result-png-unit\)\);[^}]*height:\s*auto;[^}]*padding:\s*0;[^}]*border:\s*0;/);
   assert.match(css,/\.result-actions\s*\{[^}]*width:\s*max-content/);
   assert.match(css,/\.final-failure-screen \.result-actions button\s*\{[^}]*flex:\s*0 0 auto/);
-  for (const [width,height] of [[320,568],[390,844],[844,390],[1536,864]]) {
+  for (const [width,height] of [[320,568],[390,844],[568,320],[740,300],[844,390],[932,430],[1536,864]]) {
     const unit=Math.min(width/100,height*874/402/100);
-    const nativeUnit=Math.min(1,unit/8.74);
-    assert.ok((233.6+256)*nativeUnit+4*unit<width, `${width}x${height}: result row overflows`);
+    const nativeUnit=(width*.64-4*unit-4)/612;
+    assert.ok((292+320)*nativeUnit+4*unit<width, `${width}x${height}: result row overflows`);
   }
-  assert.match(css,/button:first-child\s*\{ width:\s*calc\(233\.6 \* var\(--png-native-unit\)\)/);
+  assert.match(css,/button:first-child\s*\{\s*width:\s*calc\(292 \* var\(--result-png-unit\)\)/);
   assert.match(css,/\.choice img\s*\{[^}]*height:\s*auto;[^}]*object-fit:\s*contain/);
-  assert.match(app,/class="success-copy">\s*<legend><h3>/);
+  assert.match(app,/class="success-copy">\s*<legend>\s*<h3>/);
   assert.doesNotMatch(app,/<p>\s*<h3>/);
 });
 
@@ -129,16 +129,16 @@ test('timer text enlarges without resizing its frame and basket interaction cann
   assert.equal((app.match(/class="timer-text"/g)||[]).length,2);
 });
 
-test('both result screens keep the shared gap and smaller buttons inside the clear central band', () => {
+test('both result screens maximize the shared PNG row with two pixels of illustration clearance', () => {
   const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
   assert.doesNotMatch(css,/\.final-failure-screen\.success \.result-actions\s*\{/);
   assert.match(css,/\.result-actions\s*\{[^}]*gap: calc\(4 \* var\(--scene-unit\)\)/);
-  for(const [width,height] of [[320,568],[390,844],[844,390],[1536,864]]) {
+  for(const [width,height] of [[320,568],[390,844],[568,320],[740,300],[844,390],[932,430],[1536,864]]) {
     const unit=Math.min(width/100,height*874/402/100);
-    assert.ok(489.6*Math.min(1,unit/8.74)+4*unit<width);
-    const rowWidth=489.6*Math.min(1,unit/8.74)+4*unit;
+    assert.ok(width*.64-4<width);
+    const rowWidth=612*((width*.64-4*unit-4)/612)+4*unit;
     const left=(width-rowWidth)/2,right=left+rowWidth;
-    assert.ok(left>width*.19 && right<width*.81, `${width}x${height}: result row reaches the side illustrations`);
+    assert.ok(left>=width*.17+2-1e-8 && right<=width*.821-2+1e-8, `${width}x${height}: result row reaches the side illustrations`);
 
   }
 });
