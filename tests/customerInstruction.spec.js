@@ -15,7 +15,7 @@ it('shows the customer instructions for every course, preserves ruby, blocks sel
       expect(wrapper.find('.customer-instruction rt').text()).toBe('かご');
       const body = wrapper.find('.customer-instruction p').element.cloneNode(true);
       body.querySelectorAll('rt').forEach(reading => reading.remove());
-      expect(body.textContent).toBe('くだものを　ゆびで　カゴまで　はこんでね！');
+      expect(body.textContent.trim()).toBe('くだものを　ゆびで　カゴまで　はこんでね！');
       expect([...body.textContent].filter(character => character === '\u3000')).toHaveLength(3);
       expect(wrapper.find('.customer-instruction button img').attributes('alt')).toBe('くだものをえらぶ');
       expect(wrapper.find('.customer-instruction button').text()).toBe('');

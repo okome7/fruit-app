@@ -1375,6 +1375,8 @@ button:focus-visible,
 
 /* Supplied PNG pixels retain native proportions; smaller scenes scale uniformly. */
 .result-actions {
+  /* Background lower band ends at 82.1%; preserve two pixels of clearance. */
+  --result-png-unit: max(0px, calc((64cqw - 4 * var(--scene-unit) - 4px) / 612));
   position: absolute;
   left: 50%;
   bottom: 3%;
@@ -1388,14 +1390,14 @@ button:focus-visible,
 .final-failure-screen .result-actions button {
   position: static;
   flex: 0 0 auto;
-  width: calc(256 * var(--png-native-unit));
+  width: calc(320 * var(--result-png-unit));
   height: auto;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
 }
-.final-failure-screen .result-actions button:first-child { width: calc(233.6 * var(--png-native-unit)); }
+.final-failure-screen .result-actions button:first-child { width: calc(292 * var(--result-png-unit)); }
 .final-failure-screen .result-actions button img {
   display: block;
   width: 100%;

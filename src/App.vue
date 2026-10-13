@@ -1,6 +1,6 @@
 <script setup>
 import { emotionExamples } from './data/emotionExamples.js';
-import { ref, reactive, computed, watch, watchEffect, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 
 import heroImage from './assets/home-logo.png';
 import { fruitArtwork } from './lib/fruitArtwork.js';
@@ -156,22 +156,16 @@ async function toggleFullscreen() {
   }
   syncFullscreen();
 }
-const dragDisabled = ref(false);
-
-// 自動計算ロジック
-watchEffect(() => {
-  // 手動で false にされた場合は自動計算を止める
-  if (dragDisabled.value === false) return;
-
-  dragDisabled.value =
+const dragDisabled = computed(
+  () =>
     helpOpen.value ||
     homeConfirm.value ||
     questionPreviewOpen.value ||
     customerInstructionOpen.value ||
     (screen.value === 'clerkShop' &&
       ((remainingSeconds.value <= 60 && remainingSeconds.value > 0 && !oneMinuteAcknowledged.value) ||
-        (remainingSeconds.value === 0 && !timeUpAcknowledged.value)));
-});
+        (remainingSeconds.value === 0 && !timeUpAcknowledged.value)))
+);
 
 function guardHelpMenuBackground(event) {
   if (!helpOpen.value || homeConfirm.value || event.target.closest?.('.help-wrap')) return false;
@@ -704,8 +698,6 @@ onUnmounted(() => {
 });
 
 function go(next) {
-  dragDisabled.value = false;
-  customerInstructionOpen.value = false;
   if (next === 'how1' && helpOpen.value) {
     helpReturnScreen.value = screen.value;
     screen.value = 'help1';
@@ -1120,7 +1112,7 @@ function retryGame() {
           aria-labelledby="one-minute-warning-title"
         >
           <p id="one-minute-warning-title">あと１ぷん！</p>
-          <button class="png-action select-fruit-action" @click="go('clerkShop')">
+          <button class="png-action select-fruit-action" @click="closeGameDialog">
             <img :src="understandImage" alt="わかった" class="select-fruit-img" />
           </button>
         </div>
@@ -1132,7 +1124,7 @@ function retryGame() {
           aria-labelledby="time-up-warning-title"
         >
           <p id="time-up-warning-title">じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
-          <button class="png-action select-fruit-action" @click="go('clerkShop')">
+          <button class="png-action select-fruit-action" @click="closeGameDialog">
             <img :src="understandImage" alt="わかった" class="select-fruit-img" />
           </button>
         </div>

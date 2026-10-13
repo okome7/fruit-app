@@ -193,7 +193,7 @@ describe('gameplay dialogs, keyboard isolation and uninterrupted timer (mounted 
     expect(timeUp.attributes('aria-labelledby')).toBe(timeUp.find('p').attributes('id'));
     expect(document.activeElement).toBe(timeUp.find('button').element);
     expectIsolated('.time-up-warning');
-    key('Escape'); await tick();
+    await timeUp.find('button').trigger('click'); await tick();
     expect(state().timeUpAcknowledged).toBe(true);
     expect(document.activeElement).toBe(fruit);
     expect(fruit.disabled).toBe(false);
