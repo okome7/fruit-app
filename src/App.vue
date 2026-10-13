@@ -454,7 +454,12 @@ function screenImages(name) {
     question: [clerkShopBg, arrowImage, leftArrowImage],
     questionConfirm: [clerkShopBg],
     productIntro: [clerkShopBg, selectImage],
-    clerkShop: [clerkShopBg, questionCloseButton, understandImage, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
+    clerkShop: [
+      clerkShopBg,
+      questionCloseButton,
+      understandImage,
+      ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)
+    ],
     productConfirm: [clerkShopBg, yesImage, noImage, selectedFruit.value?.image].filter(Boolean),
     success: [successBg],
     failure: [failureBg, againImage],
@@ -1252,7 +1257,7 @@ function retryGame() {
           <h1>せいかい！おめでとう！</h1>
           <fieldset class="success-copy">
             <legend>
-              <h3>「{{ correctFruit?.feeling }}」ってどんなきもち？</h3>
+              <h3>「{{ correctFruit?.feeling }}」は、こんなときにつかうよ</h3>
             </legend>
             <p v-if="selectedEmotion" class="example-text">
               {{ emotionExamples[selectedEmotion.replace(/\n/g, '').trim()] }}
