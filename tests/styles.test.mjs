@@ -61,12 +61,17 @@ test('terms retain original typography and original PNG proportions in separate 
   const css = readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
   assert.match(css, /\.terms-body\s*\{[^}]*height:\s*58\.1%;[^}]*font-size:\s*calc\(1\.47 \* var\(--scene-unit\)\);[^}]*line-height:\s*1\.18/);
   assert.doesNotMatch(css, /font-size:\s*max\(12px/);
+  const actionRule = [...css.matchAll(/\.terms-action\s*\{([^}]*)\}/g)].at(-1)[1];
+  const bottom = Number(actionRule.match(/bottom:\s*([\d.]+)%/)[1]) / 100;
+  assert.equal(bottom, .04);
+  assert.match(css, /\.terms-back\s*\{ left: 8\.35%; width: calc\(181 \* var\(--png-native-unit\)\)/);
+  assert.match(css, /\.terms-agree\s*\{ right: 8\.35%; width: calc\(208 \* var\(--png-native-unit\)\)/);
   for (const [width,height] of [[320,568],[360,640],[390,844],[430,932],[740,300],[844,390],[1024,768],[1536,864]]) {
     const sceneHeight=width<height ? width*402/874 : height;
     const scale=Math.min(1,width/874,height/402);
     const textBottom=sceneHeight*.771;
-    const actionTop=sceneHeight*.98-65*scale;
-    assert.ok(textBottom<actionTop, `${width}x${height}: terms text touches actions`);
+    const actionTop=sceneHeight*(1-bottom)-65*scale;
+    assert.ok(textBottom + .8 * Math.min(width/100,height*874/402/100)<actionTop, `${width}x${height}: terms text touches action focus outline`);
     assert.ok(width*.0835+181*scale < width*(1-.0835)-208*scale, `${width}: terms actions overlap`);
   }
 });
@@ -132,4 +137,20 @@ test('both result screens share the increased gap without changing button sizes'
     const unit=Math.min(width/100,height*874/402/100);
     assert.ok(612*Math.min(1,unit/8.74)+4*unit<width);
   }
+});
+
+
+test('both fruit instruction buttons move down without resizing the panels or their content', () => {
+  const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
+  const app=readFileSync(new URL('../src/App.vue', import.meta.url),'utf8');
+  assert.match(css,/\.png-instruction-panel \.png-action\s*\{[^}]*margin-block: calc\(3 \* var\(--scene-unit\)\) 0;[^}]*position: relative;[^}]*top: var\(--scene-unit\)/);
+  assert.equal((app.match(/class="instruction-panel png-instruction-panel"/g)||[]).length,2);
+});
+
+
+test('timer moves slightly upward and only compact landscape viewports enlarge its lettering', () => {
+  const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
+  assert.match(css,/\.timer\s*\{[^}]*translate\(-50%, calc\(-50% - 0\.5 \* var\(--scene-unit\)\)\)/);
+  assert.match(css,/@media \(orientation: landscape\) and \(max-width: 1024px\) and \(max-height: 500px\)\s*\{\s*\.timer-text\s*\{[^}]*font-size: calc\(1\.85 \* var\(--scene-unit\)\)/);
+  assert.match(css,/\.timer-text\s*\{[^}]*font-size: calc\(1\.72 \* var\(--scene-unit\)\)/);
 });
