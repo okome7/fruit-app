@@ -2,6 +2,9 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
+import customerHandoffBg from '../src/assets/screens/customer-handoff-background.png';
+import successBg from '../src/assets/screens/success-background.png';
+import finalFailureBg from '../src/assets/screens/final-failure-background.png';
 import { associationQuestions, gestureQuestions, finalQuestion, selectionPrompt } from '../src/lib/questions.js';
 vi.mock('../src/composables/useSfx.js', async () => {
  const { ref }=await import('vue');
@@ -11,6 +14,17 @@ let wrapper;
 afterEach(()=>{wrapper?.unmount();wrapper=null;vi.useRealTimers();});
 const tick=async()=>{await nextTick();await nextTick();};
 describe('explicit voice-requested corrections',()=>{
+ it('uses the newly supplied backgrounds only for customer handoff, success and final failure, with valid quoted URLs',async()=>{
+  wrapper=mount(App);const s=wrapper.vm.$.setupState;
+  for(const [screen,background] of [['customerHandoff',customerHandoffBg],['success',successBg],['finalFailure',finalFailureBg]]) {
+   s.screen=screen;await tick();
+   expect(wrapper.find('.screen-frame').element.style.backgroundImage).toContain(background.replaceAll('(', '%28').replaceAll(')', '%29'));
+   expect(wrapper.find('.screen-frame').element.style.backgroundImage).not.toBe('');
+  }
+  s.screen='failure';await tick();expect(wrapper.find('.screen-frame').element.style.backgroundImage).toContain('failure-background.png');
+  s.screen='finalFailure';await tick();expect(wrapper.find('.screen-frame').element.style.backgroundImage).toContain(finalFailureBg.replaceAll('(', '%28').replaceAll(')', '%29'));
+ });
+
  it('matches all question kinds without changing the question text',()=>{
   const prompts=[...gestureQuestions,...associationQuestions,finalQuestion].map(selectionPrompt);
   expect(prompts).toEqual([

@@ -623,7 +623,7 @@ button:focus-visible,
   position: absolute;
   left: calc(50% + calc(0.3 * var(--scene-unit)));
   top: -56%;
-  transform: translate(-50%, -50%) rotate(4deg);
+  transform: translate(-50%, calc(-50% - 0.5 * var(--scene-unit))) rotate(4deg);
   padding: calc(0.6 * var(--scene-unit)) calc(0.25 * var(--scene-unit));
   /* Sampled from the clerk display at original-image pixel (1597, 312). */
   background: #253724;
@@ -647,6 +647,14 @@ button:focus-visible,
   gap: calc(0.1 * var(--scene-unit));
   font-size: calc(1.72 * var(--scene-unit));
   line-height: 1;
+}
+/* Compact landscape phone viewports get larger type, without resizing the frame. */
+@media (orientation: landscape) and (max-width: 1024px) and (max-height: 500px) {
+  .timer-text {
+    font-size: calc(1.85 * var(--scene-unit));
+    letter-spacing: -0.04em;
+    gap: 0;
+  }
 }
 /* The timer is inside this button; ancestor filters would recolor its display. */
 .clerk-shop-screen .drop-zone:hover,
@@ -1323,7 +1331,7 @@ button:focus-visible,
 
 .png-instruction-panel { top: 14%; bottom: 14%; height: auto; padding: calc(2 * var(--scene-unit)); gap: 0; }
 .png-instruction-panel > * { flex-shrink: 0; max-width: 100%; }
-.png-instruction-panel .png-action { margin-block: calc(3 * var(--scene-unit)) 0; }
+.png-instruction-panel .png-action { margin-block: calc(3 * var(--scene-unit)) 0; position: relative; top: var(--scene-unit); }
 @media (orientation: portrait) { .png-instruction-panel { left: 12%; width: 76%; top: 4%; bottom: 4%; padding: var(--scene-unit); } }
 
 /* Supplied PNG pixels retain native proportions; smaller scenes scale uniformly. */
@@ -1358,7 +1366,7 @@ button:focus-visible,
 
 /* Restore the original terms text; only the PNG action placement changes. */
 .terms-action {
-  bottom: 2%;
+  bottom: 4%;
   display: grid;
   place-items: center;
 }
