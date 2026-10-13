@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
+import successBg from '../src/assets/アプリ背景 (5).png';
 import { finishHelp } from './finishHelp.js';
 import { emotionExamples } from '../src/data/emotionExamples.js';
 import { gestureQuestions, associationQuestions } from '../src/lib/questions.js';
@@ -39,7 +40,7 @@ describe('PR24 success screen integrated with private Site behavior (mounted DOM
     expect(panel.find('h1').text()).toBe('せいかい！おめでとう！');
     expect(panel.find('h3').text()).toBe(`「${fruit.feeling}」ってどんなきもち？`);
     expect(panel.find('.example-text').text()).toBe(emotionExamples[fruit.feeling.replace(/\n/g, '').trim()]);
-    expect(wrapper.find('section').attributes('style')).toContain('success-background.png');
+    expect(wrapper.find('section').attributes('style')).toContain(successBg.replaceAll('(', '%28').replaceAll(')', '%29'));
     expect(panel.findAll('button').map((button) => button.find('img').attributes('alt'))).toEqual(['ホームへもどる', 'もういちどあそぶ']);
     expect(wrapper.find('.help-button').exists()).toBe(true);
     expect(sound.play.mock.calls).toEqual([['success']]);

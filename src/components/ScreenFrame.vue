@@ -5,7 +5,7 @@ defineProps({ background: { type: String, default: '' }, label: { type: String, 
   <section
     class="screen-frame"
     :aria-label="label"
-    :style="background ? { backgroundImage: `url(${background})` } : {}"
+    :style="background ? { backgroundImage: `url(${JSON.stringify(background.replaceAll('(', '%28').replaceAll(')', '%29'))})` } : {}"
   >
     <slot />
   </section>
