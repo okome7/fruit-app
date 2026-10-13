@@ -2,9 +2,9 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
-import customerHandoffBg from '../src/assets/アプリ背景 (4).png';
-import successBg from '../src/assets/アプリ背景 (5).png';
-import finalFailureBg from '../src/assets/アプリ背景 (6).png';
+import customerHandoffBg from '../src/assets/screens/customer-handoff-background.png';
+import successBg from '../src/assets/screens/success-background.png';
+import finalFailureBg from '../src/assets/screens/final-failure-background.png';
 import { associationQuestions, gestureQuestions, finalQuestion, selectionPrompt } from '../src/lib/questions.js';
 vi.mock('../src/composables/useSfx.js', async () => {
  const { ref }=await import('vue');

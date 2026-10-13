@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
-import successBg from '../src/assets/アプリ背景 (5).png';
+import successBg from '../src/assets/screens/success-background.png';
 import { finishHelp } from './finishHelp.js';
 import { emotionExamples } from '../src/data/emotionExamples.js';
 import { gestureQuestions, associationQuestions } from '../src/lib/questions.js';
