@@ -16,7 +16,7 @@ export const fruitScenes = {
     labelX: [[239, 550, 860, 1167], [239, 550, 860, 1167]], labelY: [379, 721],
     labelWidth: 274, labelHeight: 60,
     basket: { x: 1442, y: 650, width: 318, height: 143 },
-    timer: { x: 1597, y: 301 },
+    timer: { x: 1597, y: 312 },
     question: { x: 1345, y: 103, width: 212, height: 118 },
   },
 };
@@ -54,6 +54,8 @@ export function shopSceneStyle(clerk = false) {
   const scene = fruitScenes[clerk ? 'clerk' : 'customer'];
   const style = { '--scene-aspect': scene.width / scene.height, '--fruit-art-scale': fruitArtSceneUnits };
   if (clerk) {
+    style['--timer-scene-x'] = `${scene.timer.x / scene.width * 100}%`;
+    style['--timer-scene-y'] = `${scene.timer.y / scene.height * 100}%`;
     style['--timer-x'] = `${(scene.timer.x - scene.basket.x) / scene.basket.width * 100}%`;
     style['--timer-y'] = `${(scene.timer.y - scene.basket.y) / scene.basket.height * 100}%`;
     style['--question-left'] = `${scene.question.x / scene.width * 100}%`;

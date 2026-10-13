@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import App from '../src/App.vue';
+import { finishHelp } from './finishHelp.js';
 
 vi.mock('../src/composables/useSfx.js', async () => {
   const { ref } = await import('vue');
@@ -25,11 +26,13 @@ function key(value, options = {}, target = document.activeElement) {
 function expectIsolated(dialogSelector) {
   const dialog = wrapper.find(dialogSelector).element;
   expect(dialog.closest('[inert]')).toBe(null);
-  for (const selector of ['.sound-toggle', '.help-button', '.drop-zone']) {
+  for (const selector of ['.sound-toggle', '.drop-zone']) {
     expect(wrapper.find(selector).element.closest('[inert]')).not.toBe(null);
   }
+  const help = wrapper.find('.help-button').element;
+  expect(help.closest('[inert]')).toBe(null);
   expect(key('Tab').defaultPrevented).toBe(true);
-  expect(dialog.contains(document.activeElement)).toBe(true);
+  expect(document.activeElement).toBe(help);
   expect(key('Tab', { shiftKey: true }).defaultPrevented).toBe(true);
   expect(dialog.contains(document.activeElement)).toBe(true);
 }
@@ -57,23 +60,88 @@ describe('gameplay dialogs, keyboard isolation and uninterrupted timer (mounted 
     }
   });
 
-  it('blocks covered instruction controls even without native inert support', async () => {
+  it('keeps Help usable while blocking the covered game even without native inert support', async () => {
     await start('customerHandoff');
     await wrapper.find('.nav-arrow.next').trigger('click'); await tick();
     for (const element of wrapper.findAll('[inert]')) element.element.removeAttribute('inert');
+    const sound = wrapper.find('.sound-toggle').element;
+    sound.focus();
+    expect(document.activeElement).toBe(wrapper.find('.customer-instruction button').element);
+    expect(key('Enter', {}, sound).defaultPrevented).toBe(true);
+    for (const type of ['pointerdown', 'pointerup', 'click']) {
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      sound.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(true);
+    }
     const help = wrapper.find('.help-button').element;
     help.focus();
-    expect(document.activeElement).toBe(wrapper.find('.customer-instruction button').element);
-    expect(key('Enter', {}, help).defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(help);
+    expect(key('Enter', {}, help).defaultPrevented).toBe(false);
     for (const type of ['pointerdown', 'pointerup', 'click']) {
       const event = new Event(type, { bubbles: true, cancelable: true });
       help.dispatchEvent(event);
-      expect(event.defaultPrevented).toBe(true);
+      expect(event.defaultPrevented).toBe(false);
     }
     await tick();
-    expect(state().helpOpen).toBe(false);
+    expect(state().helpOpen).toBe(true);
+    expect(wrapper.find('.customer-instruction').exists()).toBe(false);
     expect(state().screen).toBe('customerShop');
     expect(state().customerInstructionOpen).toBe(true);
+    expect(wrapper.find('.fruit-card').element.disabled).toBe(true);
+    await wrapper.find('.help-button').trigger('click'); await tick();
+    expect(wrapper.find('.customer-instruction').exists()).toBe(true);
+    expect(document.activeElement).toBe(wrapper.find('.customer-instruction button').element);
+    expectIsolated('.customer-instruction');
+  });
+
+  it('preserves customer instructions and choices through repeated Help, guide and home-confirmation interruptions', async () => {
+    await start('customerHandoff');
+    await wrapper.find('.nav-arrow.next').trigger('click'); await tick();
+    const ids = state().displayedFruits.map(({ id }) => id);
+    for (const dismissal of ['toggle', 'background', 'guide', 'home']) {
+      const help = wrapper.find('.help-button');
+      await help.trigger('click'); await tick();
+      expect(state().helpOpen).toBe(true);
+      expect(state().customerInstructionOpen).toBe(true);
+      expect(wrapper.find('.customer-instruction').exists()).toBe(false);
+      expect(wrapper.find('.fruit-card').element.disabled).toBe(true);
+      const menu = wrapper.find('.help-menu');
+      expect(menu.element.closest('[inert]')).toBe(null);
+      const guide = menu.find('button').element;
+      guide.focus(); expect(document.activeElement).toBe(guide);
+      if (dismissal === 'guide') {
+        guide.click(); await tick();
+        expect(state().screen).toBe('help1');
+        await finishHelp(wrapper); await tick();
+      } else if (dismissal === 'home') {
+        const home = menu.findAll('button')[1];
+        await home.trigger('click'); await tick();
+        expect(state().homeConfirm).toBe(true);
+        expect(document.activeElement).toBe(wrapper.find('.home-modal-no').element);
+        expect(wrapper.find('.help-button').element.closest('[inert]')).not.toBe(null);
+        key('Tab'); expect(document.activeElement).toBe(wrapper.find('.home-modal-yes').element);
+        key('Escape'); await tick();
+        expect(state().homeConfirm).toBe(false);
+        expect(state().helpOpen).toBe(true);
+        expect(document.activeElement).toBe(home.element);
+        await help.trigger('click'); await tick();
+      } else {
+        await wrapper.find(dismissal === 'toggle' ? '.help-button' : '.screen-frame').trigger('click');
+        await tick();
+      }
+      expect(state().screen).toBe('customerShop');
+      expect(state().helpOpen).toBe(false);
+      expect(state().customerInstructionOpen).toBe(true);
+      expect(state().selectedFruit).toBe(null);
+      expect(state().displayedFruits.map(({ id }) => id)).toEqual(ids);
+      expect(wrapper.find('.customer-instruction').exists()).toBe(true);
+      expect(document.activeElement).toBe(wrapper.find('.customer-instruction button').element);
+      expectIsolated('.customer-instruction');
+    }
+    await wrapper.find('.customer-instruction button').trigger('click'); await tick();
+    expect(state().customerInstructionOpen).toBe(false);
+    expect(wrapper.findAll('[inert]')).toHaveLength(0);
+    expect(wrapper.find('.fruit-card').element.disabled).toBe(false);
   });
 
   it('focuses preview Close, traps both Tab directions and restores its exact opener after repeated dismissals', async () => {
@@ -86,7 +154,12 @@ describe('gameplay dialogs, keyboard isolation and uninterrupted timer (mounted 
       expect(document.activeElement).toBe(wrapper.find('.question-preview-close').element);
       expectIsolated('.question-preview-backdrop');
       wrapper.find('.help-button').element.click(); await tick();
+      expect(state().helpOpen).toBe(true);
+      expect(state().questionPreviewOpen).toBe(true);
+      expect(wrapper.find('.question-preview-backdrop').exists()).toBe(false);
+      wrapper.find('.help-button').element.click(); await tick();
       expect(state().helpOpen).toBe(false);
+      expect(document.activeElement).toBe(wrapper.find('.question-preview-close').element);
       if (method === 'escape') key('Escape');
       else await wrapper.find(method === 'close' ? '.question-preview-close' : '.question-preview-backdrop').trigger('click');
       await tick();
@@ -104,7 +177,7 @@ describe('gameplay dialogs, keyboard isolation and uninterrupted timer (mounted 
     await vi.advanceTimersByTimeAsync(120000); await tick();
     const warning = wrapper.find('.one-minute-warning');
     expect(warning.attributes('role')).toBe('alertdialog');
-    expect(warning.attributes('aria-modal')).toBe('true');
+    expect(warning.attributes('aria-modal')).not.toBe('true');
     expect(warning.attributes('aria-labelledby')).toBe(warning.find('p').attributes('id'));
     expect(document.activeElement).toBe(warning.find('button').element);
     expectIsolated('.one-minute-warning');
@@ -131,6 +204,40 @@ describe('gameplay dialogs, keyboard isolation and uninterrupted timer (mounted 
     await wrapper.find('.fruit-card').trigger('click', { detail: 0 });
     await wrapper.find('.drop-zone').trigger('click');
     expect(state().screen).toBe('productConfirm');
+  });
+
+  it.each([
+    ['one-minute-warning', 120000, 'oneMinuteAcknowledged'],
+    ['time-up-warning', 180000, 'timeUpAcknowledged']
+  ])('keeps Help reachable during %s and restores the unacknowledged warning', async (selector, elapsed, acknowledged) => {
+    vi.useFakeTimers(); await start('clerkShop');
+    await vi.advanceTimersByTimeAsync(elapsed); await tick();
+    const ids = state().displayedFruits.map(({ id }) => id);
+    expectIsolated(`.${selector}`);
+    const seconds = state().remainingSeconds;
+    for (let visit = 0; visit < 2; visit++) {
+      key('Tab');
+      expect(document.activeElement).toBe(wrapper.find('.help-button').element);
+      expect(key(' ', {}, document.activeElement).defaultPrevented).toBe(false);
+      document.activeElement.click(); await tick();
+      expect(state().helpOpen).toBe(true);
+      expect(wrapper.find(`.${selector}`).exists()).toBe(false);
+      expect(state()[acknowledged]).toBe(false);
+      expect(wrapper.find('.fruit-card').element.disabled).toBe(true);
+      await vi.advanceTimersByTimeAsync(5000); await tick();
+      expect(state().remainingSeconds).toBe(seconds);
+      await wrapper.find('.help-button').trigger('click'); await tick();
+      expect(state().helpOpen).toBe(false);
+      expect(state()[acknowledged]).toBe(false);
+      expect(document.activeElement).toBe(wrapper.find(`.${selector} button`).element);
+      expectIsolated(`.${selector}`);
+    }
+    expect(state().attempts).toBe(3);
+    expect(state().displayedFruits.map(({ id }) => id)).toEqual(ids);
+    await wrapper.find(`.${selector} button`).trigger('click'); await tick();
+    expect(state()[acknowledged]).toBe(true);
+    expect(wrapper.findAll('[inert]')).toHaveLength(0);
+    expect(wrapper.find('.fruit-card').element.disabled).toBe(false);
   });
 
   it('hands focus from preview to a pending warning and from an unacknowledged minute to time-up', async () => {

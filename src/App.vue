@@ -31,7 +31,6 @@ import clerkRulesBg from './assets/screens/clerk-rules-background.png';
 import successBg from './assets/screens/success-background.png';
 import failureBg from './assets/screens/failure-background.png';
 import finalFailureBg from './assets/screens/final-failure-background.png';
-import shopBg from './assets/screens/shop.webp';
 import customerShopBg from './assets/screens/customer-shop-background.png';
 import questionCloseButton from './assets/question-close-button.png';
 import clerkShopBg from './assets/screens/clerk-shop-background.png';
@@ -43,7 +42,7 @@ import HelpMenu from './components/HelpMenu.vue';
 import FruitCard from './components/FruitCard.vue';
 import SoundIcon from './components/SoundIcon.vue';
 import QuestionText from './components/QuestionText.vue';
-import { gestureQuestions, associationQuestions, finalQuestion, pickRandomQuestion } from './lib/questions.js';
+import { gestureQuestions, associationQuestions, finalQuestion, pickRandomQuestion, selectionPrompt } from './lib/questions.js';
 import { createCountdown } from './lib/countdown.js';
 import { useSfx } from './composables/useSfx.js';
 import { useModalFocus } from './composables/useModalFocus.js';
@@ -88,11 +87,10 @@ const questionPreviewDialog = ref(null);
 const oneMinuteDialog = ref(null);
 const timeUpDialog = ref(null);
 const activeGameDialogKind = computed(() => {
-  if (homeConfirm.value) return null;
+  if (homeConfirm.value || helpOpen.value) return null;
   if (screen.value === 'customerShop' && customerInstructionOpen.value) return 'customer';
   if (screen.value !== 'clerkShop') return null;
   if (questionPreviewOpen.value) return 'question';
-  if (helpOpen.value) return null;
   if (remainingSeconds.value === 0 && !timeUpAcknowledged.value) return 'timeUp';
   if (remainingSeconds.value > 0 && remainingSeconds.value <= 60 && !oneMinuteAcknowledged.value) return 'oneMinute';
   return null;
@@ -114,7 +112,8 @@ const gameDialog = computed(() => ({
   timeUp: timeUpDialog.value
 })[activeGameDialogKind.value] || null);
 const { open: openQuestionPreview, cancel: closeGameDialog } = useModalFocus(gameDialogOpen, gameDialog, gameSurface, {
-  fallbackFocus: () => gameSurface.value?.querySelector('.fruit-card:not(:disabled)')
+  fallbackFocus: () => gameSurface.value?.querySelector('.fruit-card:not(:disabled)'),
+  allowedOutside: () => gameSurface.value?.querySelector('.help-wrap')
 });
 let timerInterval;
 const countdown = createCountdown(180);
@@ -433,14 +432,14 @@ function screenImages(name) {
     courseConfirm: [menuBackground, courseImages[selectedCourse.value], yesImage, noImage],
     customerHandoff: [customerHandoff, arrowImage, leftArrowImage],
     customerShop: [customerShopBg, selectImage, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
-    customerConfirm: [shopBg, yesImage, noImage, selectedFruit.value?.image].filter(Boolean),
+    customerConfirm: [customerShopBg, yesImage, noImage, selectedFruit.value?.image].filter(Boolean),
     clerkHandoff: [clerkHandoffBg, arrowImage, leftArrowImage],
     clerkRules: [clerkRulesBg, arrowImage, leftArrowImage],
     question: [clerkShopBg, arrowImage, leftArrowImage],
     questionConfirm: [clerkShopBg],
     productIntro: [clerkShopBg, selectImage],
     clerkShop: [clerkShopBg, questionCloseButton, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
-    productConfirm: [shopBg, yesImage, noImage, selectedFruit.value?.image].filter(Boolean),
+    productConfirm: [clerkShopBg, yesImage, noImage, selectedFruit.value?.image].filter(Boolean),
     success: [successBg],
     failure: [failureBg],
     finalFailure: [finalFailureBg]
@@ -783,7 +782,7 @@ function retryGame() {
 <template>
   <main
     class="viewport"
-    :class="{ 'help-menu-open': helpOpen }"
+    :class="{ 'help-menu-open': helpOpen, 'home-confirm-open': homeConfirm }"
     @click.capture="onButtonClick"
     @pointerdown.capture="guardHelpMenuBackground"
     @pointerup.capture="guardHelpMenuBackground"
@@ -1067,9 +1066,9 @@ function retryGame() {
         <p class="sr-only" aria-live="polite">
           {{ keyboardFruit ? `${keyboardFruit.fruitName}をえらびました。レジのボタンで確定できます。` : '' }}
         </p>
-        <div v-if="activeGameDialogKind === 'customer'" ref="customerInstructionDialog" class="question-preview-backdrop customer-instruction" role="dialog" aria-modal="true" aria-label="くだもののはこびかた">
+        <div v-if="activeGameDialogKind === 'customer'" ref="customerInstructionDialog" class="question-preview-backdrop customer-instruction" role="dialog" aria-label="くだもののはこびかた">
           <div class="instruction-panel png-instruction-panel">
-            <p>くだものを　ゆびで　<ruby>カゴ<rt>かご</rt></ruby>まで　はこんでね！</p>
+            <p>くだものを　ゆびで　<br /><ruby>カゴ<rt>かご</rt></ruby>まで　はこんでね！</p>
             <button class="png-action select-fruit-action" type="button" @click="closeGameDialog"><img :src="selectImage" alt="くだものをえらぶ" /></button>
           </div>
         </div>
@@ -1078,13 +1077,12 @@ function retryGame() {
           ref="oneMinuteDialog"
           class="one-minute-warning"
           role="alertdialog"
-          aria-modal="true"
           aria-labelledby="one-minute-warning-title"
         >
           <p id="one-minute-warning-title">あと１ぷん！</p>
           <button type="button" @click="closeGameDialog">わかった</button>
         </div>
-        <div v-if="activeGameDialogKind === 'timeUp'" ref="timeUpDialog" class="time-up-warning" role="alertdialog" aria-modal="true" aria-labelledby="time-up-warning-title">
+        <div v-if="activeGameDialogKind === 'timeUp'" ref="timeUpDialog" class="time-up-warning" role="alertdialog" aria-labelledby="time-up-warning-title">
           <p id="time-up-warning-title">じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
           <button type="button" @click="closeGameDialog">わかった</button>
         </div>
@@ -1093,10 +1091,10 @@ function retryGame() {
           ref="questionPreviewDialog"
           class="question-preview-backdrop"
           role="dialog"
-          aria-modal="true"
           aria-label="しつもんのかくにん"
           @click="closeGameDialog"
         >
+          <div class="question-card question-preview-card">
           <button
             class="question-preview-close"
             type="button"
@@ -1105,7 +1103,6 @@ function retryGame() {
           >
             <img :src="questionCloseButton" alt="" />
           </button>
-          <div class="question-card question-preview-card">
             <span>しつもん{{ questionNumber }}</span>
             <p><QuestionText :text="questionText" /></p>
           </div>
@@ -1115,9 +1112,12 @@ function retryGame() {
       <ScreenFrame
         v-else-if="screen === 'customerConfirm' || screen === 'productConfirm'"
         label="商品確認画面"
-        :background="shopBg"
+        class="fruit-confirm-screen"
+        :style="shopSceneStyle(screen === 'productConfirm')"
+        :background="screen === 'productConfirm' ? clerkShopBg : customerShopBg"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
+        <div v-if="screen === 'productConfirm'" class="timer confirmation-timer">のこり　{{ formattedTime }}</div>
         <div class="confirm-card">
           <div class="big-fruit" role="img" :aria-label="`${selectedFruit?.fruitName}、${selectedFruit?.feeling}`">
             <img v-if="selectedFruit?.image" class="big-fruit-art" :src="selectedFruit.image" alt="" draggable="false" />
@@ -1187,7 +1187,7 @@ function retryGame() {
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="instruction-panel png-instruction-panel">
           <p>
-            そのうごきになる　くだものを<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！
+            {{ selectionPrompt(questionText) }}<br />ゆびで　レジまで　はこんでね！<br />じかんは　3ふんかんだよ！
           </p>
           <button class="png-action select-fruit-action" @click="go('clerkShop')"><img :src="selectImage" alt="くだものをえらぶ" /></button>
         </div>
@@ -1204,8 +1204,10 @@ function retryGame() {
             </p>
           </div>
 
-          <button type="button" @click="resetHome"><img :src="homeImage" alt="ホームへもどる" /></button>
-          <button type="button" @click="retryGame"><img :src="onemoreImage" alt="もういちどあそぶ" /></button>
+          <div class="result-actions">
+            <button type="button" @click="resetHome"><img :src="homeImage" alt="ホームへもどる" /></button>
+            <button type="button" @click="retryGame"><img :src="onemoreImage" alt="もういちどあそぶ" /></button>
+          </div>
         </div>
       </ScreenFrame>
       <ScreenFrame v-else-if="screen === 'failure'" label="失敗画面" :background="failureBg">
@@ -1221,12 +1223,14 @@ function retryGame() {
         <div class="final-failure-screen">
           <h1>しっぱい……。</h1>
           <p>せいかいは「{{ correctFruit?.feeling }}」でした…。<br />また　ちょうせんしてね！</p>
+          <div class="result-actions">
           <button type="button" class="home-button" @click="resetHome">
             <img :src="homeImage" alt="ホームへもどる" />
           </button>
           <button type="button" class="retry-button" @click="retryGame">
             <img :src="onemoreImage" alt="もういちどあそぶ" />
           </button>
+          </div>
         </div>
       </ScreenFrame>
     </div>

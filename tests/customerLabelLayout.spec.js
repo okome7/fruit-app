@@ -34,9 +34,9 @@ it('fits both shop scenes, fruit and every emotion label without horizontal over
           const text=fruitLabel(fruit);
           expect(text.replace(/\n/g,'')).toBe(fruit.feeling.replace(/\n/g,''));
           const lines=text.split('\n');
-          const size=lines.length>1 ? Math.min(22,1.45*unit) : Math.min(26,2.4*unit);
+          const size=lines.length>1 ? Math.min(24,1.55*unit) : Math.min(26,2.4*unit);
           expect(Math.max(...lines.map(line=>[...line].length))*size).toBeLessThanOrEqual(scene.labelWidth/scene.width*width);
-          expect(lines.length*size*1.08).toBeLessThanOrEqual(scene.labelHeight/scene.height*height);
+          expect(lines.length*size*(lines.length>1 ? 1.05 : 1.08)).toBeLessThanOrEqual(scene.labelHeight/scene.height*height);
         }
         for(let i=1;i<scene.fruitX.length;i++) {
           expect((scene.fruitX[i]-scene.fruitX[i-1])/scene.width*width).toBeGreaterThanOrEqual(Math.max(artSize,touchSize));

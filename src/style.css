@@ -23,6 +23,7 @@ body {
 .game-surface[inert] {
   pointer-events: none;
 }
+.home-confirm-open .help-wrap { visibility: hidden; }
 /* Disabled controls may not dispatch click. While the menu is open, let a tap
    on fruit reach the background dismissal guard instead of the disabled button. */
 .help-menu-open .fruit-card:disabled,
@@ -40,6 +41,7 @@ body {
     calc((100vw - var(--safe-left) - var(--safe-right)) / 100),
     calc((var(--view-height) - var(--safe-top) - var(--safe-bottom)) * 874 / 402 / 100)
   );
+  --png-native-unit: min(1px, calc(var(--scene-unit) / 8.74));
   position: relative;
   width: 100%;
   height: var(--view-height);
@@ -171,9 +173,9 @@ button:focus-visible {
 .start-button {
   position: absolute;
   bottom: max(4.975%, calc(var(--safe-bottom) + 4px));
-  left: 38.558%;
-  width: 22.883%;
-  height: 16.169%;
+  left: calc(50% - 104 * var(--png-native-unit));
+  width: calc(208 * var(--png-native-unit));
+  height: auto;
 }
 .nav-arrow {
   position: absolute;
@@ -351,7 +353,7 @@ button:focus-visible {
   position: absolute;
   left: 32px;
   top: max(8px, var(--safe-top));
-  z-index: 20;
+  z-index: 45;
 }
 .help-button {
   display: block;
@@ -475,20 +477,21 @@ button:focus-visible {
 .choice {
   position: absolute;
   bottom: 6.2%;
-  height: 15.5%;
+  height: auto;
 }
 .choice img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
 }
 .choice.no {
   left: 17%;
-  width: 18.6%;
+  width: calc(181 * var(--png-native-unit));
 }
 .choice.yes {
   right: 17%;
-  width: 17%;
+  width: calc(152 * var(--png-native-unit));
 }
 .fruit-grid,
 .fruit-slot {
@@ -611,12 +614,14 @@ button:focus-visible {
   top: -56%;
   transform: translate(-50%, -50%) rotate(4deg);
   padding: calc(1 * var(--scene-unit)) calc(0.4 * var(--scene-unit));
-  background: #000;
+  /* Sampled from the clerk display at original-image pixel (1597, 312). */
+  background: #253724;
   color: #fff;
   font-size: calc(1.6 * var(--scene-unit));
   white-space: nowrap;
   border-radius: calc(0.4 * var(--scene-unit));
 }
+.confirmation-timer { left: var(--timer-scene-x); top: var(--timer-scene-y); }
 .question-sign {
   position: absolute;
   left: 73%;
@@ -643,8 +648,8 @@ button:focus-visible {
 }
 .question-preview-close {
   position: absolute;
-  top: 20%;
-  right: 20%;
+  top: calc(-2.4 * var(--scene-unit));
+  right: calc(-2.4 * var(--scene-unit));
   z-index: 2;
   width: calc(4.8 * var(--scene-unit));
   height: calc(4.8 * var(--scene-unit));
@@ -826,7 +831,7 @@ button:focus-visible {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(2.2 * var(--scene-unit));
+  font-size: calc(2.75 * var(--scene-unit));
   line-height: 1.65;
   text-align: center;
 }
@@ -839,7 +844,6 @@ button:focus-visible {
 }
 .customer-instruction .instruction-panel button {
   position: relative;
-  top: calc(1.5 * var(--scene-unit));
 }
 .result {
   position: absolute;
@@ -959,22 +963,23 @@ button:focus-visible {
   max-height: calc(var(--view-height) - var(--safe-top) - var(--safe-bottom) - 16px);
   overflow-y: auto;
   padding: calc(2.5 * var(--scene-unit));
-  border: calc(0.18 * var(--scene-unit)) solid #6b3d18;
-  border-radius: calc(5.8 * var(--scene-unit));
-  background: #fffdf5;
+  border: calc(0.45 * var(--scene-unit)) solid #d09050;
+  border-radius: calc(2 * var(--scene-unit));
+  background: #fffdf4f2;
+  color: #5a2a13;
   text-align: center;
   box-shadow: 0 calc(0.8 * var(--scene-unit)) calc(0.8 * var(--scene-unit)) #0004;
 }
 .home-modal h2 {
   margin: 0 0 calc(1.5 * var(--scene-unit));
-  color: #663d17;
+  color: #5a2a13;
   font-size: max(20px, calc(3 * var(--scene-unit)));
   font-weight: 400;
   line-height: 1.5;
 }
 .home-modal p {
   margin: 0 0 calc(2.5 * var(--scene-unit));
-  color: #663d17;
+  color: #5a2a13;
   font-size: max(14px, calc(2.1 * var(--scene-unit)));
   line-height: 1.6;
 }
@@ -1162,11 +1167,13 @@ button:focus-visible {
   white-space: pre;
 }
 .fruit-shop-screen .fruit-slot > .fruit-feeling--multiline {
-  font-size: min(22px, calc(1.45 * var(--scene-unit))) !important;
+  font-size: min(24px, calc(1.55 * var(--scene-unit))) !important;
+  line-height: 1.05;
   white-space: pre;
 }
 
 /* Fit each shop scene; artwork and labels use its same scale. */
+.screen-frame.fruit-confirm-screen,
 .screen-frame.fruit-shop-screen {
   --scene-unit: min(
     calc((100vw - var(--safe-left) - var(--safe-right)) / 100),
@@ -1217,7 +1224,8 @@ button:focus-visible {
 
 /* Use the same single full-frame background as the other landscape screens. */
 @media (orientation: landscape) {
-  .screen-frame.fruit-shop-screen {
+  .screen-frame.fruit-confirm-screen,
+.screen-frame.fruit-shop-screen {
     width: 100%;
     height: 100%;
     aspect-ratio: auto;
@@ -1230,19 +1238,22 @@ button:focus-visible {
 
 /* Only the fruit confirmation uses these supplied PNG actions. */
 .confirm-card .confirm-actions {
-  width: min(100%, calc(36 * var(--scene-unit)));
+  width: auto;
+  margin-top: calc(2.3 * var(--scene-unit));
   gap: calc(4 * var(--scene-unit));
   align-items: center;
   justify-content: center;
 }
 .confirm-card .confirm-actions button {
-  flex: 1 1 0;
+  flex: 0 0 auto;
+  width: calc(152 * var(--png-native-unit));
   min-width: 0;
   padding: 0;
   border: 0;
   background: transparent;
   border-radius: 0;
 }
+.confirm-card .confirm-actions button:first-child { width: calc(181 * var(--png-native-unit)); }
 .confirm-card .confirm-actions img {
   display: block;
   width: 100%;
@@ -1264,79 +1275,93 @@ button:focus-visible {
 .instruction-panel .select-fruit-action {
   display: grid;
   place-items: center;
-  width: min(100%, calc(32 * var(--scene-unit)));
+  width: calc(320 * var(--png-native-unit));
   margin-inline: auto;
 }
 .home-modal-actions .png-action {
   display: grid;
   place-items: center;
-  width: min(40%, calc(16 * var(--scene-unit)));
+  width: calc(152 * var(--png-native-unit));
   min-width: 44px;
 }
-.help-menu .png-action { display: grid; place-items: center; }
-.help-menu .png-action img { width: calc(100% - 12px); }
+.home-modal-actions .png-action:first-child { width: calc(181 * var(--png-native-unit)); }
 .confirm-card .confirm-actions button { min-height: 44px; display: grid; place-items: center; }
 @media (orientation: portrait) {
   .confirm-card { inset: 4% 12%; padding: var(--scene-unit); }
 }
 
-.png-instruction-panel { top: 14%; bottom: 14%; height: auto; padding: calc(2 * var(--scene-unit)); gap: var(--scene-unit); }
+.png-instruction-panel { top: 14%; bottom: 14%; height: auto; padding: calc(2 * var(--scene-unit)); gap: 0; }
 .png-instruction-panel > * { flex-shrink: 0; max-width: 100%; }
-.png-instruction-panel .png-action { margin-block: 0; }
+.png-instruction-panel .png-action { margin-block: calc(2 * var(--scene-unit)) 0; }
 @media (orientation: portrait) { .png-instruction-panel { left: 12%; width: 76%; top: 4%; bottom: 4%; padding: var(--scene-unit); } }
 
-/* Keep the pre-PNG result control boxes; only the supplied images paint them. */
-.final-failure-screen button {
-  height: calc(5.52 * var(--scene-unit));
+/* Supplied PNG pixels retain native proportions; smaller scenes scale uniformly. */
+.result-actions {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(0.7 * var(--scene-unit));
+}
+.final-failure-screen .result-actions button {
+  position: static;
+  width: calc(320 * var(--png-native-unit));
+  height: auto;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
 }
-.final-failure-screen button:first-of-type,
-.final-failure-screen button:last-of-type { background: transparent; }
-.final-failure-screen button img {
+.final-failure-screen .result-actions button:first-child { width: calc(292 * var(--png-native-unit)); }
+.final-failure-screen .result-actions button img {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: contain;
 }
 
-/* Terms stay scrollable above two separate PNG controls at every aspect ratio. */
-.terms-body {
-  height: 46%;
-  font-size: max(12px, calc(1.47 * var(--scene-unit)));
-  line-height: 1.55;
-  overflow-wrap: break-word;
-}
+/* Restore the original terms text; only the PNG action placement changes. */
 .terms-action {
-  bottom: 4%;
-  min-height: 44px;
+  bottom: 2%;
   display: grid;
   place-items: center;
 }
-.terms-back { left: 8.35%; width: min(26%, 181px); }
-.terms-agree { right: 8.35%; width: min(26%, 208px); }
-.terms-action img { max-height: calc(10 * var(--scene-unit)); object-fit: contain; }
+.terms-back { left: 8.35%; width: calc(181 * var(--png-native-unit)); }
+.terms-agree { right: 8.35%; width: calc(208 * var(--png-native-unit)); }
+.terms-action img { height: auto; object-fit: contain; }
 
-/* Result copy wraps in its own area, above the illustrated children/actions. */
+/* A compact version of the question card, with the original emotion copy. */
 .success-copy {
   position: absolute;
-  top: 32%;
-  left: 11%;
-  width: 78%;
-  display: flex;
-  flex-direction: column;
-  gap: calc(1 * var(--scene-unit));
+  top: 34%;
+  left: 20%;
+  width: 60%;
+  padding: calc(2.7 * var(--scene-unit)) calc(2 * var(--scene-unit)) calc(1.3 * var(--scene-unit));
+  border: calc(0.45 * var(--scene-unit)) solid #d09050;
+  border-radius: calc(2 * var(--scene-unit));
+  background: #fffdf4f2;
+  color: #5a2a13;
   text-align: center;
 }
 .success-copy h3 {
+  position: absolute;
+  top: calc(-2.4 * var(--scene-unit));
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 98%;
   margin: 0;
-  font-size: calc(2.5 * var(--scene-unit));
+  padding: calc(0.6 * var(--scene-unit)) calc(1.5 * var(--scene-unit));
+  border-radius: calc(3 * var(--scene-unit));
+  background: #ffdd78;
+  font-size: calc(2.2 * var(--scene-unit));
+  font-weight: 500;
   line-height: 1.5;
   white-space: normal;
   overflow-wrap: break-word;
-  line-break: strict;
 }
 .final-failure-screen .success-copy .example-text {
   position: static;

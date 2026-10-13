@@ -28,3 +28,15 @@ const wordPattern = new RegExp(`(${Object.keys(readings).sort((a, b) => b.length
 export function questionParts(text) {
   return text.split(wordPattern).filter(Boolean).map((part) => ({ text: part, reading: readings[part] || null }));
 }
+
+// Match the cue the customer just gave, rather than calling every answer a movement.
+export function selectionPrompt(question) {
+  if (question === associationQuestions[0]) return 'そのおとから　おもいうかぶ　くだものを';
+  if (question === associationQuestions[1]) return 'そのあじから　おもいうかぶ　くだものを';
+  if (question === associationQuestions[2]) return 'そのどうぶつから　おもいうかぶ　くだものを';
+  if (question === finalQuestion) return 'そのいいかたから　おもいうかぶ　くだものを';
+  if (question === gestureQuestions[2]) return 'そのひょうじょうになる　くだものを';
+  if (question === gestureQuestions[1] || question === gestureQuestions[5]) return 'そのポーズになる　くだものを';
+  if (question === gestureQuestions[3]) return 'そのダンスになる　くだものを';
+  return 'そのうごきになる　くだものを';
+}

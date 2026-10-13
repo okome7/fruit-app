@@ -10,9 +10,19 @@ export function useModalFocus(isOpen, dialog, background, options = {}) {
   let isolated = [];
   const outsideEvents = ['click', 'pointerdown', 'pointerup', 'keyup'];
 
+  function allowedRoots() {
+    const outside = options.allowedOutside?.();
+    return [dialog.value, ...(Array.isArray(outside) ? outside : [outside])]
+      .filter(Boolean);
+  }
+  function isAllowed(element) {
+    return allowedRoots().some((root) => root.contains(element));
+  }
   function buttons() {
-    return Array.from(dialog.value?.querySelectorAll('button:not(:disabled)') || [])
-      .filter((button) => button.tabIndex >= 0 && !button.hidden);
+    return [...new Set(allowedRoots().flatMap((root) => [
+      ...(root.matches('button:not(:disabled)') ? [root] : []),
+      ...root.querySelectorAll('button:not(:disabled)')
+    ]))].filter((button) => button.tabIndex >= 0 && !button.closest('[hidden], [inert]'));
   }
   function focusInside() {
     (buttons()[0] || dialog.value)?.focus({ preventScroll: true });
@@ -27,13 +37,16 @@ export function useModalFocus(isOpen, dialog, background, options = {}) {
     const modal = dialog.value;
     if (!root || !modal) return;
     const targets = [];
-    if (root.contains(modal)) {
-      // An in-scene dialog must stay interactive while its siblings, including
-      // the viewport controls, leave the focus and accessibility trees.
-      for (let child = modal; child && child !== root; child = child.parentElement) {
-        targets.push(...Array.from(child.parentElement?.children || []).filter((element) => element !== child));
-      }
-    } else targets.push(root);
+    const allowed = allowedRoots();
+    // Preserve only the paths to the dialog and explicitly allowed controls.
+    // A sibling such as Help must remain reachable without exposing the game.
+    function collect(element) {
+      if (allowed.includes(element)) return;
+      if (allowed.some((target) => element.contains(target))) {
+        for (const child of element.children) collect(child);
+      } else targets.push(element);
+    }
+    collect(root);
     for (const element of targets) {
       if (!element.hasAttribute('inert')) {
         element.setAttribute('inert', '');
@@ -50,11 +63,11 @@ export function useModalFocus(isOpen, dialog, background, options = {}) {
     event.stopImmediatePropagation();
   }
   function guardOutside(event) {
-    if (!isOpen.value || dialog.value?.contains(event.target)) return;
+    if (!isOpen.value || isAllowed(event.target)) return;
     stop(event);
   }
   function guardFocus(event) {
-    if (isOpen.value && dialog.value && !dialog.value.contains(event.target)) focusInside();
+    if (isOpen.value && dialog.value && !isAllowed(event.target)) focusInside();
   }
   function onKeyDown(event) {
     if (!isOpen.value) return;
@@ -73,7 +86,7 @@ export function useModalFocus(isOpen, dialog, background, options = {}) {
       targets[next].focus({ preventScroll: true });
       return;
     }
-    if (!dialog.value?.contains(event.target)) {
+    if (!isAllowed(event.target)) {
       stop(event);
       focusInside();
     }
