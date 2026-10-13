@@ -1270,7 +1270,7 @@ function retryGame() {
         <div class="failure-screen">
           <h1>しっぱい……。</h1>
           <p>もういちど　おきゃくさんに　しつもんを　してみよう！<br />チャンスは　あと{{ attempts }}かい！</p>
-          <button class="png-action select-fruit-action" @click="go('clerkShop')">
+          <button class="png-action select-fruit-action" @click="go('question')">
             <img :src="againImage" a lt="もういっかい！" />
           </button>
         </div>
