@@ -13,6 +13,15 @@ test('disabled fruit and its descendants pass menu-dismissal taps to the backgro
   assert.match(css, /\.help-menu-open \.fruit-card:disabled,\s*\.help-menu-open \.fruit-card:disabled \*\s*\{\s*pointer-events:\s*none;\s*\}/);
 });
 
+test('pointer focus suppression stays scoped to customer instructions and unpicked shop fruit, with keyboard cues intact', () => {
+  const css = readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
+  assert.match(css, /button:focus-visible,\s*\.viewport\[data-input-modality="keyboard"\] \.customer-instruction \.select-fruit-action:focus,\s*\.viewport\[data-input-modality="keyboard"\] \.fruit-shop-screen \.fruit-card:focus:not\(\.is-picked\)\s*\{\s*outline:[^;]*solid #8a4b16/);
+  assert.match(css, /\.viewport\[data-input-modality="pointer"\] \.customer-instruction \.select-fruit-action:focus,\s*\.viewport\[data-input-modality="pointer"\] \.fruit-shop-screen \.fruit-card:focus:not\(\.is-picked\)\s*\{\s*outline: none;\s*\}/);
+  assert.match(css, /\.fruit-card\.is-picked\s*\{\s*outline: 3px solid #e19b22;/);
+  assert.match(css, /@media \(hover: hover\) and \(pointer: fine\)\s*\{\s*\.fruit-card:hover:not\(\.is-dragging\)/);
+  assert.doesNotMatch(css, /(?:^|\})\s*(?:button|\.fruit-card|\.select-fruit-action)(?::focus(?:-visible)?)?\s*\{[^}]*outline:\s*none/);
+});
+
 test('landscape scenery fills the viewport without adding an outer scene inset', () => {
   const css = readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
   const viewport = css.match(/\.viewport\s*\{([^}]*)\}/)[1];
@@ -73,7 +82,7 @@ test('result PNGs remain side by side with original ratios and a common responsi
   for (const [width,height] of [[320,568],[390,844],[844,390],[1536,864]]) {
     const unit=Math.min(width/100,height*874/402/100);
     const nativeUnit=Math.min(1,unit/8.74);
-    assert.ok((292+320)*nativeUnit+.7*unit<width, `${width}x${height}: result row overflows`);
+    assert.ok((292+320)*nativeUnit+4*unit<width, `${width}x${height}: result row overflows`);
   }
   assert.match(css,/button:first-child\s*\{ width:\s*calc\(292 \* var\(--png-native-unit\)\)/);
   assert.match(css,/\.choice img\s*\{[^}]*height:\s*auto;[^}]*object-fit:\s*contain/);
@@ -109,17 +118,18 @@ test('portrait help moves to the edge without changing landscape and timer keeps
 test('timer text enlarges without resizing its frame and basket interaction cannot tint it', () => {
   const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
   const app=readFileSync(new URL('../src/App.vue', import.meta.url),'utf8');
-  assert.match(css,/\.timer-text\s*\{[^}]*display: inline-block;[^}]*transform: scale\(1\.05\)/);
+  assert.match(css,/\.timer-sizing\s*\{[^}]*display: inline-block;[^}]*visibility: hidden/);
+  assert.match(css,/\.timer-text\s*\{[^}]*position: absolute;[^}]*inset: calc\(0\.1[^}]*font-size: calc\(1\.72/);
   assert.match(css,/\.clerk-shop-screen \.drop-zone:hover,\s*\.clerk-shop-screen \.drop-zone:active\s*\{\s*filter: none;/);
   assert.equal((app.match(/class="timer-text"/g)||[]).length,2);
 });
 
-test('requested success-screen button gap increases without changing button sizes or other result screens', () => {
+test('both result screens share the increased gap without changing button sizes', () => {
   const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
-  assert.match(css,/\.final-failure-screen\.success \.result-actions\s*\{\s*gap: calc\(2 \* var\(--scene-unit\)\)/);
-  assert.match(css,/\.result-actions\s*\{[^}]*gap: calc\(0\.7 \* var\(--scene-unit\)\)/);
+  assert.doesNotMatch(css,/\.final-failure-screen\.success \.result-actions\s*\{/);
+  assert.match(css,/\.result-actions\s*\{[^}]*gap: calc\(4 \* var\(--scene-unit\)\)/);
   for(const [width,height] of [[320,568],[390,844],[844,390],[1536,864]]) {
     const unit=Math.min(width/100,height*874/402/100);
-    assert.ok(612*Math.min(1,unit/8.74)+2*unit<width);
+    assert.ok(612*Math.min(1,unit/8.74)+4*unit<width);
   }
 });

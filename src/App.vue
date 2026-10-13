@@ -46,6 +46,7 @@ import { gestureQuestions, associationQuestions, finalQuestion, pickRandomQuesti
 import { createCountdown } from './lib/countdown.js';
 import { useSfx } from './composables/useSfx.js';
 import { useModalFocus } from './composables/useModalFocus.js';
+import { useInputModality } from './composables/useInputModality.js';
 
 //ここから追加
 import noImage from './assets/screens/いいえ_2.png';
@@ -62,6 +63,7 @@ import selectImage from './assets/screens/くだものをえらぶ.png';
 import tapImage from './assets/screens/けってい.png';
 
 const imagePreloader = createImagePreloader();
+const inputModality = useInputModality();
 const clerkFruit = ref(null);
 const screen = ref('home');
 const history = ref([]);
@@ -782,6 +784,7 @@ function retryGame() {
 <template>
   <main
     class="viewport"
+    :data-input-modality="inputModality"
     :class="{ 'help-menu-open': helpOpen, 'home-confirm-open': homeConfirm }"
     @click.capture="onButtonClick"
     @pointerdown.capture="guardHelpMenuBackground"
@@ -1061,7 +1064,7 @@ function retryGame() {
           :aria-disabled="!keyboardFruit || dragDisabled"
           @click="!dragDisabled && selectFruit(keyboardFruit)"
         >
-          <div v-if="screen === 'clerkShop'" class="timer"><span class="timer-text">のこり　{{ formattedTime }}</span></div>
+          <div v-if="screen === 'clerkShop'" class="timer"><span class="timer-sizing" aria-hidden="true">のこり　{{ formattedTime }}</span><span class="timer-text"><span>のこり</span><span>{{ formattedTime }}</span></span></div>
         </button>
         <p class="sr-only" aria-live="polite">
           {{ keyboardFruit ? `${keyboardFruit.fruitName}をえらびました。レジのボタンで確定できます。` : '' }}
@@ -1117,7 +1120,7 @@ function retryGame() {
         :background="screen === 'productConfirm' ? clerkShopBg : customerShopBg"
       >
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
-        <div v-if="screen === 'productConfirm'" class="timer confirmation-timer"><span class="timer-text">のこり　{{ formattedTime }}</span></div>
+        <div v-if="screen === 'productConfirm'" class="timer confirmation-timer"><span class="timer-sizing" aria-hidden="true">のこり　{{ formattedTime }}</span><span class="timer-text"><span>のこり</span><span>{{ formattedTime }}</span></span></div>
         <div class="confirm-card">
           <div class="big-fruit" role="img" :aria-label="`${selectedFruit?.fruitName}、${selectedFruit?.feeling}`">
             <img v-if="selectedFruit?.image" class="big-fruit-art" :src="selectedFruit.image" alt="" draggable="false" />

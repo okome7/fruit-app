@@ -144,10 +144,18 @@ button {
 button:active {
   filter: brightness(0.68) saturate(1.35);
 }
-button:focus-visible {
+button:focus-visible,
+.viewport[data-input-modality="keyboard"] .customer-instruction .select-fruit-action:focus,
+.viewport[data-input-modality="keyboard"] .fruit-shop-screen .fruit-card:focus:not(.is-picked) {
   outline: calc(0.45 * var(--scene-unit)) solid #8a4b16;
   outline-offset: calc(0.35 * var(--scene-unit));
   border-radius: calc(1 * var(--scene-unit));
+}
+/* Keep programmatic modal/return focus accessible without a selection-like
+   frame after a tap. Real picked fruit retains its separate gold outline. */
+.viewport[data-input-modality="pointer"] .customer-instruction .select-fruit-action:focus,
+.viewport[data-input-modality="pointer"] .fruit-shop-screen .fruit-card:focus:not(.is-picked) {
+  outline: none;
 }
 .katakana-ruby {
   ruby-position: over;
@@ -625,11 +633,20 @@ button:focus-visible {
   border-radius: calc(0.4 * var(--scene-unit));
 }
 .confirmation-timer { left: var(--timer-scene-x); top: var(--timer-scene-y); }
-/* Enlarge only the lettering, preserving the approved timer frame and position. */
-.timer-text {
+/* Retain the approved frame's intrinsic size, then fill it with larger type. */
+.timer-sizing {
   display: inline-block;
-  transform: scale(1.05);
-  transform-origin: center;
+  visibility: hidden;
+}
+.timer-text {
+  position: absolute;
+  inset: calc(0.1 * var(--scene-unit));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(0.1 * var(--scene-unit));
+  font-size: calc(1.72 * var(--scene-unit));
+  line-height: 1;
 }
 /* The timer is inside this button; ancestor filters would recolor its display. */
 .clerk-shop-screen .drop-zone:hover,
@@ -1319,7 +1336,7 @@ button:focus-visible {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: calc(0.7 * var(--scene-unit));
+  gap: calc(4 * var(--scene-unit));
 }
 .final-failure-screen .result-actions button {
   position: static;
@@ -1330,9 +1347,6 @@ button:focus-visible {
   border: 0;
   border-radius: 0;
   background: transparent;
-}
-.final-failure-screen.success .result-actions {
-  gap: calc(2 * var(--scene-unit));
 }
 .final-failure-screen .result-actions button:first-child { width: calc(292 * var(--png-native-unit)); }
 .final-failure-screen .result-actions button img {
