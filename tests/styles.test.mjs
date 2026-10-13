@@ -158,3 +158,24 @@ test('timer moves slightly upward and only compact landscape viewports enlarge i
   assert.match(css,/@media \(orientation: landscape\) and \(max-width: 1024px\) and \(max-height: 500px\)\s*\{\s*\.timer-text\s*\{[^}]*font-size: calc\(1\.85 \* var\(--scene-unit\)\)/);
   assert.match(css,/\.timer-text\s*\{[^}]*font-size: calc\(1\.72 \* var\(--scene-unit\)\)/);
 });
+
+test('intermediate failure paints only the retry PNG and fits phones and PC', () => {
+  const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
+  assert.doesNotMatch(css,/\.failure-screen button\s*\{/);
+  assert.match(css,/\.failure-screen \.failure-retry-button\s*\{[^}]*width: 29%;[^}]*padding: 0;[^}]*border: 0;[^}]*background: transparent;[^}]*box-shadow: none/);
+  assert.match(css,/\.failure-retry-button img\s*\{[^}]*width: 100%;[^}]*height: auto;[^}]*object-fit: contain/);
+  for(const [width,height] of [[320,568],[390,844],[568,320],[740,300],[844,390],[1536,864]]) {
+    const sceneHeight=width<height?width*402/874:height;
+    const imageWidth=width*.29,imageHeight=imageWidth*65/292;
+    assert.ok(width*.355+imageWidth<width);
+    assert.ok(sceneHeight*.77+imageHeight<sceneHeight,`${width}x${height}: retry exceeds the frame`);
+  }
+});
+
+test('warning PNGs are the sole surface and pointer focus does not paint a second frame', () => {
+  const css=readFileSync(new URL('../src/style.css',import.meta.url),'utf8');
+  assert.doesNotMatch(css,/\.one-minute-warning button,\s*\.time-up-warning button/);
+  assert.match(css,/\.time-up-warning \.warning-ack-button\s*\{[^}]*min-height: 44px;[^}]*padding: 0;[^}]*border: 0;[^}]*background: transparent/);
+  assert.match(css,/data-input-modality='pointer'\] \.warning-ack-button:focus,[^}]*\.failure-retry-button:focus\s*\{ outline: none/);
+  assert.match(css,/data-input-modality='keyboard'\] \.warning-ack-button:focus,[^}]*\.failure-retry-button:focus\s*\{[^}]*outline:[^;]*solid #8a4b16/);
+});

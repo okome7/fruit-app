@@ -454,10 +454,10 @@ function screenImages(name) {
     question: [clerkShopBg, arrowImage, leftArrowImage],
     questionConfirm: [clerkShopBg],
     productIntro: [clerkShopBg, selectImage],
-    clerkShop: [clerkShopBg, questionCloseButton, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
+    clerkShop: [clerkShopBg, questionCloseButton, understandImage, ...displayedFruits.value.map((fruit) => fruit.image).filter(Boolean)],
     productConfirm: [clerkShopBg, yesImage, noImage, selectedFruit.value?.image].filter(Boolean),
     success: [successBg],
-    failure: [failureBg],
+    failure: [failureBg, againImage],
     finalFailure: [finalFailureBg]
   };
   const withMenu = [
@@ -1112,7 +1112,7 @@ function retryGame() {
           aria-labelledby="one-minute-warning-title"
         >
           <p id="one-minute-warning-title">あと１ぷん！</p>
-          <button class="png-action select-fruit-action" @click="closeGameDialog">
+          <button class="warning-ack-button" type="button" @click="closeGameDialog">
             <img :src="understandImage" alt="わかった" class="select-fruit-img" />
           </button>
         </div>
@@ -1124,7 +1124,7 @@ function retryGame() {
           aria-labelledby="time-up-warning-title"
         >
           <p id="time-up-warning-title">じかんぎれ！<br />くだものを　ひとつ　えらんでね</p>
-          <button class="png-action select-fruit-action" @click="closeGameDialog">
+          <button class="warning-ack-button" type="button" @click="closeGameDialog">
             <img :src="understandImage" alt="わかった" class="select-fruit-img" />
           </button>
         </div>
@@ -1270,8 +1270,8 @@ function retryGame() {
         <div class="failure-screen">
           <h1>しっぱい……。</h1>
           <p>もういちど　おきゃくさんに　しつもんを　してみよう！<br />チャンスは　あと{{ attempts }}かい！</p>
-          <button class="png-action select-fruit-action" @click="go('question')">
-            <img :src="againImage" a lt="もういっかい！" />
+          <button class="failure-retry-button" type="button" @click="go('question')">
+            <img :src="againImage" alt="もういっかい！" />
           </button>
         </div>
       </ScreenFrame>

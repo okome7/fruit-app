@@ -176,6 +176,10 @@ describe('gameplay dialogs, keyboard isolation and uninterrupted timer (mounted 
     const ids = state().displayedFruits.map(({ id }) => id);
     await vi.advanceTimersByTimeAsync(120000); await tick();
     const warning = wrapper.find('.one-minute-warning');
+    expect(warning.findAll('button')).toHaveLength(1);
+    expect(warning.findAll('img')).toHaveLength(1);
+    expect(warning.find('button').text()).toBe('');
+    expect(warning.find('img').attributes('alt')).toBe('わかった');
     expect(warning.attributes('role')).toBe('alertdialog');
     expect(warning.attributes('aria-modal')).not.toBe('true');
     expect(warning.attributes('aria-labelledby')).toBe(warning.find('p').attributes('id'));
@@ -189,6 +193,10 @@ describe('gameplay dialogs, keyboard isolation and uninterrupted timer (mounted 
     expect(fruit.disabled).toBe(false);
     await vi.advanceTimersByTimeAsync(59000); await tick();
     const timeUp = wrapper.find('.time-up-warning');
+    expect(timeUp.findAll('button')).toHaveLength(1);
+    expect(timeUp.findAll('img')).toHaveLength(1);
+    expect(timeUp.find('button').text()).toBe('');
+    expect(timeUp.find('img').attributes('alt')).toBe('わかった');
     expect(timeUp.attributes('role')).toBe('alertdialog');
     expect(timeUp.attributes('aria-labelledby')).toBe(timeUp.find('p').attributes('id'));
     expect(document.activeElement).toBe(timeUp.find('button').element);

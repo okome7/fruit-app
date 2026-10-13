@@ -76,6 +76,12 @@ it('keeps each shop drop target in its own artwork coordinates and preserves oth
       expect(wrapper.find('section').classes()).toContain('fruit-shop-screen');
       expect(wrapper.find('main').classes()).not.toContain('fruit-shop-viewport');
       expect(wrapper.find('.drop-zone').element.style.left).toBe(shopDropZoneStyle(clerk).left);
+      if(clerk) {
+        const style=shopSceneStyle(true),target=fruitScenes.clerk.basket,timer=fruitScenes.clerk.timer;
+        expect(target.x+parseFloat(style['--timer-x'])/100*target.width).toBeCloseTo(timer.x);
+        expect(target.y+parseFloat(style['--timer-y'])/100*target.height).toBeCloseTo(timer.y);
+      }
+
       expect(wrapper.find('.drop-zone').element.style.top).toBe(shopDropZoneStyle(clerk).top);
     }
   } finally { wrapper.unmount(); }
