@@ -37,6 +37,5 @@ export function selectionPrompt(question) {
   if (question === finalQuestion) return 'そのいいかたから　おもいうかぶ　くだものを';
   if (question === gestureQuestions[2]) return 'そのひょうじょうになる　くだものを';
   if (question === gestureQuestions[1] || question === gestureQuestions[5]) return 'そのポーズになる　くだものを';
-  if (question === gestureQuestions[3]) return 'そのダンスになる　くだものを';
   return 'そのうごきになる　くだものを';
 }

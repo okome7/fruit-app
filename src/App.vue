@@ -1197,12 +1197,12 @@ function retryGame() {
         <HelpMenu :open="helpOpen" @toggle="helpOpen = !helpOpen" @guide="go('how1')" @home="openHomeConfirm" />
         <div class="final-failure-screen success">
           <h1>せいかい！おめでとう！</h1>
-          <div class="success-copy">
-            <h3>「{{ correctFruit?.feeling }}」ってどんなきもち？</h3>
+          <fieldset class="success-copy">
+            <legend><h3>「{{ correctFruit?.feeling }}」ってどんなきもち？</h3></legend>
             <p v-if="selectedEmotion" class="example-text">
               {{ emotionExamples[selectedEmotion.replace(/\n/g, '').trim()] }}
             </p>
-          </div>
+          </fieldset>
 
           <div class="result-actions">
             <button type="button" @click="resetHome"><img :src="homeImage" alt="ホームへもどる" /></button>

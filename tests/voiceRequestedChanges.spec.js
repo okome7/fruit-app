@@ -15,7 +15,7 @@ describe('explicit voice-requested corrections',()=>{
   const prompts=[...gestureQuestions,...associationQuestions,finalQuestion].map(selectionPrompt);
   expect(prompts).toEqual([
    'そのうごきになる　くだものを','そのポーズになる　くだものを','そのひょうじょうになる　くだものを',
-   'そのダンスになる　くだものを','そのうごきになる　くだものを','そのポーズになる　くだものを',
+   'そのうごきになる　くだものを','そのうごきになる　くだものを','そのポーズになる　くだものを',
    'そのおとから　おもいうかぶ　くだものを','そのあじから　おもいうかぶ　くだものを',
    'そのどうぶつから　おもいうかぶ　くだものを','そのいいかたから　おもいうかぶ　くだものを']);
  });

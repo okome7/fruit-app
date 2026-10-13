@@ -62,15 +62,22 @@ test('terms retain original typography and original PNG proportions in separate 
   }
 });
 
-test('result PNGs use original ratios and common responsive scale, centered away from illustrations', () => {
+test('result PNGs remain side by side with original ratios and a common responsive scale', () => {
   const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
   const app=readFileSync(new URL('../src/App.vue', import.meta.url),'utf8');
   assert.match(css,/--png-native-unit:\s*min\(1px, calc\(var\(--scene-unit\) \/ 8\.74\)\)/);
-  assert.match(css,/\.result-actions\s*\{[^}]*left:\s*50%;[^}]*bottom:\s*3%;[^}]*flex-direction:\s*column/);
+  assert.match(css,/\.result-actions\s*\{[^}]*left:\s*50%;[^}]*bottom:\s*3%;[^}]*flex-direction:\s*row/);
   assert.match(css,/\.final-failure-screen \.result-actions button\s*\{[^}]*width:\s*calc\(320 \* var\(--png-native-unit\)\);[^}]*height:\s*auto;[^}]*padding:\s*0;[^}]*border:\s*0;/);
+  assert.match(css,/\.result-actions\s*\{[^}]*width:\s*max-content/);
+  assert.match(css,/\.final-failure-screen \.result-actions button\s*\{[^}]*flex:\s*0 0 auto/);
+  for (const [width,height] of [[320,568],[390,844],[844,390],[1536,864]]) {
+    const unit=Math.min(width/100,height*874/402/100);
+    const nativeUnit=Math.min(1,unit/8.74);
+    assert.ok((292+320)*nativeUnit+.7*unit<width, `${width}x${height}: result row overflows`);
+  }
   assert.match(css,/button:first-child\s*\{ width:\s*calc\(292 \* var\(--png-native-unit\)\)/);
   assert.match(css,/\.choice img\s*\{[^}]*height:\s*auto;[^}]*object-fit:\s*contain/);
-  assert.match(app,/class="success-copy">\s*<h3>/);
+  assert.match(app,/class="success-copy">\s*<legend><h3>/);
   assert.doesNotMatch(app,/<p>\s*<h3>/);
 });
 
@@ -84,4 +91,17 @@ test('specified text and timer changes preserve scene geometry and use sampled b
   assert.match(css,/\.instruction-panel\s*\{[^}]*font-size:\s*calc\(2\.75 \* var\(--scene-unit\)\)/);
   assert.match(css,/\.fruit-shop-screen \.fruit-slot > \.fruit-feeling--multiline\s*\{[^}]*1\.55[^}]*line-height: 1\.05;[^}]*white-space: pre/);
   assert.match(css,/\.timer\s*\{[^}]*background: #253724/);
+});
+
+test('success heading removes only the yellow background and retains the brown explanation frame', () => {
+  const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
+  assert.match(css,/\.success-copy h3\s*\{[^}]*background:\s*transparent/);
+  assert.match(css,/\.success-copy\s*\{[^}]*border:[^;]*#d09050;[^}]*background:\s*#fffdf4f2/);
+});
+
+test('portrait help moves to the edge without changing landscape and timer keeps sampled green in a smaller box', () => {
+  const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
+  assert.match(css,/\.help-wrap\s*\{[^}]*left:\s*32px/);
+  assert.match(css,/@media \(orientation: portrait\)\s*\{\s*\.help-wrap\s*\{\s*left: max\(8px, var\(--safe-left\)\)/);
+  assert.match(css,/\.timer\s*\{[^}]*padding: calc\(0\.6[^}]*background: #253724;[^}]*font-size: calc\(1\.45/);
 });
