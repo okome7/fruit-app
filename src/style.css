@@ -750,17 +750,25 @@ button:focus-visible,
   font-size: calc(2.6 * var(--scene-unit));
   line-height: 1.7;
 }
-.one-minute-warning button,
-.time-up-warning button {
-  margin-top: calc(2 * var(--scene-unit));
-  min-width: calc(14 * var(--scene-unit));
-  padding: calc(0.8 * var(--scene-unit)) calc(2 * var(--scene-unit));
-  border: calc(0.3 * var(--scene-unit)) solid #dd8b00;
-  border-radius: calc(4 * var(--scene-unit));
-  background: linear-gradient(#ffd948, #ffae00);
-  color: #5a2a13;
-  font-size: calc(2.1 * var(--scene-unit));
-  font-weight: 700;
+.one-minute-warning .warning-ack-button,
+.time-up-warning .warning-ack-button {
+  display: grid;
+  place-items: center;
+  margin: var(--scene-unit) auto 0;
+  width: calc(208 * var(--png-native-unit));
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.warning-ack-button img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 .confirm-card {
   position: absolute;
@@ -952,19 +960,23 @@ button:focus-visible,
   font-size: calc(2.75 * var(--scene-unit));
   line-height: 1.8;
 }
-.failure-screen button {
+/* The retry PNG is the sole visible button surface. */
+.failure-screen .failure-retry-button {
   position: absolute;
   left: 35.5%;
   top: 77%;
   width: 29%;
-  padding: calc(1.3 * var(--scene-unit)) calc(1 * var(--scene-unit));
-  border: calc(0.3 * var(--scene-unit)) solid #dd8b00;
-  border-radius: calc(4 * var(--scene-unit));
-  background: linear-gradient(#ffd948, #ffae00);
-  color: #5a2a13;
-  font-size: calc(3.2 * var(--scene-unit));
-  font-weight: 700;
-  white-space: nowrap;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.failure-screen .failure-retry-button img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 .final-failure-screen {
   position: absolute;
@@ -1470,4 +1482,14 @@ button:focus-visible,
   width: 80%;
   white-space: pre-line;
   overflow-wrap: break-word;
+}
+
+/* Automatic dialog focus must not paint a second frame after a touch. */
+.viewport[data-input-modality='pointer'] .warning-ack-button:focus,
+.viewport[data-input-modality='pointer'] .failure-retry-button:focus { outline: none; }
+.viewport[data-input-modality='keyboard'] .warning-ack-button:focus,
+.viewport[data-input-modality='keyboard'] .failure-retry-button:focus {
+  outline: calc(0.45 * var(--scene-unit)) solid #8a4b16;
+  outline-offset: calc(0.35 * var(--scene-unit));
+  border-radius: calc(1 * var(--scene-unit));
 }

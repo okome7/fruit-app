@@ -4,6 +4,7 @@ import { nextTick } from 'vue';
 import App from '../src/App.vue';
 import clerkShopBg from '../src/assets/screens/clerk-shop-background.png';
 import questionCloseButton from '../src/assets/question-close-button.png';
+import againImage from '../src/assets/screens/もういっかい！.png';
 import { finishHelp } from './finishHelp.js';
 import { gestureQuestions, associationQuestions, finalQuestion } from '../src/lib/questions.js';
 vi.mock('../src/composables/useSfx.js', async () => {
@@ -76,7 +77,14 @@ describe('independent question selection mounted-DOM QA', () => {
   it('advances Q1 gesture, Q2 association, and fixed Q3 through actual failed guesses', async () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.7); wrapper = mount(App, { attachTo: document.body }); await homeToQuestion();
     expect(wrapper.find('.question-card > span').text()).toBe('しつもん1'); expect(gestureQuestions).toContain(plain());
-    await answer(1); expect(state().screen).toBe('failure'); await wrapper.find('.failure-screen button').trigger('click');
+    await answer(1); expect(state().screen).toBe('failure');
+    expect(wrapper.findAll('.failure-screen button')).toHaveLength(1);
+    const retry=wrapper.find('.failure-retry-button');
+    expect(retry.findAll('img')).toHaveLength(1);
+    expect(retry.find('img').attributes('src')).toBe(againImage);
+    expect(retry.find('img').attributes('alt')).toBe('もういっかい！');
+    expect(retry.text()).toBe('');
+    await retry.trigger('click');
     expect(state().screen).toBe('question'); expect(state().attempts).toBe(2);
     expect(wrapper.find('.question-card > span').text()).toBe('しつもん2'); expect(associationQuestions).toContain(plain());
     await answer(1); await wrapper.find('.failure-screen button').trigger('click');

@@ -15,7 +15,8 @@ export const fruitScenes = {
     fruitX: [248, 550, 853, 1150], fruitY: [249, 589],
     labelX: [[239, 550, 860, 1167], [239, 550, 860, 1167]], labelY: [379, 721],
     labelWidth: 274, labelHeight: 60,
-    basket: { x: 1442, y: 650, width: 318, height: 143 },
+    // Full visible register, from its monitor to the outer receiving tray.
+    basket: { x: 1338, y: 250, width: 440, height: 566 },
     timer: { x: 1597, y: 312 },
     question: { x: 1345, y: 103, width: 212, height: 118 },
   },
