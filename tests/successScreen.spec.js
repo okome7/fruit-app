@@ -38,7 +38,7 @@ describe('PR24 success screen integrated with private Site behavior (mounted DOM
     expect(panel.classes()).toContain('final-failure-screen');
     expect(panel.classes()).not.toContain('result');
     expect(panel.find('h1').text()).toBe('せいかい！おめでとう！');
-    expect(panel.find('h3').text()).toBe(`「${fruit.feeling}」ってどんなきもち？`);
+    expect(panel.find('h3').text()).toBe(`「${fruit.feeling}」は、こんなときにつかうよ`);
     expect(panel.find('.example-text').text()).toBe(emotionExamples[fruit.feeling.replace(/\n/g, '').trim()]);
     expect(wrapper.find('section').attributes('style')).toContain(successBg.replaceAll('(', '%28').replaceAll(')', '%29'));
     expect(panel.findAll('button').map((button) => button.find('img').attributes('alt'))).toEqual(['ホームへもどる', 'もういちどあそぶ']);
@@ -47,7 +47,7 @@ describe('PR24 success screen integrated with private Site behavior (mounted DOM
     // Every feeling, including embedded line breaks, is represented accurately.
     for (const candidate of state().fruits) {
       state().correctFruit = candidate; state().selectedEmotion = candidate.feeling; await nextTick();
-      expect(panel.find('h3').text()).toBe(`「${candidate.feeling}」ってどんなきもち？`);
+      expect(panel.find('h3').text()).toBe(`「${candidate.feeling}」は、こんなときにつかうよ`);
       expect(panel.find('.example-text').text()).toBe(emotionExamples[candidate.feeling.replace(/\n/g, '').trim()]);
     }
   });
