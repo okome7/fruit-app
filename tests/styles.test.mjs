@@ -93,10 +93,10 @@ test('specified text and timer changes preserve scene geometry and use sampled b
   assert.match(css,/\.timer\s*\{[^}]*background: #253724/);
 });
 
-test('success heading removes only the yellow background and retains the brown explanation frame', () => {
+test('success explanation background is transparent and retains the brown frame and heading', () => {
   const css=readFileSync(new URL('../src/style.css', import.meta.url),'utf8');
   assert.match(css,/\.success-copy h3\s*\{[^}]*background:\s*transparent/);
-  assert.match(css,/\.success-copy\s*\{[^}]*border:[^;]*#d09050;[^}]*background:\s*#fffdf4f2/);
+  assert.match(css,/\.success-copy\s*\{[^}]*border:[^;]*#d09050;[^}]*background:\s*transparent/);
 });
 
 test('portrait help moves to the edge without changing landscape and timer keeps sampled green in a smaller box', () => {
