@@ -23,7 +23,9 @@ body {
 .game-surface[inert] {
   pointer-events: none;
 }
-.home-confirm-open .help-wrap { visibility: hidden; }
+.home-confirm-open .help-wrap {
+  visibility: hidden;
+}
 /* Disabled controls may not dispatch click. While the menu is open, let a tap
    on fruit reach the background dismissal guard instead of the disabled button. */
 .help-menu-open .fruit-card:disabled,
@@ -132,6 +134,18 @@ body {
   pointer-events: none;
 }
 
+.png-action,
+.select-fruit-action,
+.again-button {
+  display: inline-block; /* ← これが決定的 */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  line-height: 0; /* ← ボタンの行の高さを消す */
+}
+
 button {
   appearance: none;
   border: 0;
@@ -145,16 +159,16 @@ button:active {
   filter: brightness(0.68) saturate(1.35);
 }
 button:focus-visible,
-.viewport[data-input-modality="keyboard"] .customer-instruction .select-fruit-action:focus,
-.viewport[data-input-modality="keyboard"] .fruit-shop-screen .fruit-card:focus:not(.is-picked) {
+.viewport[data-input-modality='keyboard'] .customer-instruction .select-fruit-action:focus,
+.viewport[data-input-modality='keyboard'] .fruit-shop-screen .fruit-card:focus:not(.is-picked) {
   outline: calc(0.45 * var(--scene-unit)) solid #8a4b16;
   outline-offset: calc(0.35 * var(--scene-unit));
   border-radius: calc(1 * var(--scene-unit));
 }
 /* Keep programmatic modal/return focus accessible without a selection-like
    frame after a tap. Real picked fruit retains its separate gold outline. */
-.viewport[data-input-modality="pointer"] .customer-instruction .select-fruit-action:focus,
-.viewport[data-input-modality="pointer"] .fruit-shop-screen .fruit-card:focus:not(.is-picked) {
+.viewport[data-input-modality='pointer'] .customer-instruction .select-fruit-action:focus,
+.viewport[data-input-modality='pointer'] .fruit-shop-screen .fruit-card:focus:not(.is-picked) {
   outline: none;
 }
 .katakana-ruby {
@@ -364,7 +378,9 @@ button:focus-visible,
   z-index: 45;
 }
 @media (orientation: portrait) {
-  .help-wrap { left: max(8px, var(--safe-left)); }
+  .help-wrap {
+    left: max(8px, var(--safe-left));
+  }
 }
 .help-button {
   display: block;
@@ -632,7 +648,10 @@ button:focus-visible,
   white-space: nowrap;
   border-radius: calc(0.4 * var(--scene-unit));
 }
-.confirmation-timer { left: var(--timer-scene-x); top: var(--timer-scene-y); }
+.confirmation-timer {
+  left: var(--timer-scene-x);
+  top: var(--timer-scene-y);
+}
 /* Retain the approved frame's intrinsic size, then fill it with larger type. */
 .timer-sizing {
   display: inline-block;
@@ -1256,7 +1275,7 @@ button:focus-visible,
 /* Use the same single full-frame background as the other landscape screens. */
 @media (orientation: landscape) {
   .screen-frame.fruit-confirm-screen,
-.screen-frame.fruit-shop-screen {
+  .screen-frame.fruit-shop-screen {
     width: 100%;
     height: 100%;
     aspect-ratio: auto;
@@ -1264,8 +1283,12 @@ button:focus-visible,
 }
 
 /* Align the visible pear glyph, including its leaf, with the plate center. */
-.fruit-card--pear .fruit-emoji { transform: translateY(-0.08em); }
-.fruit-card--pear .fruit-face { transform: translate(-50%, calc(-50% - 0.34em)); }
+.fruit-card--pear .fruit-emoji {
+  transform: translateY(-0.08em);
+}
+.fruit-card--pear .fruit-face {
+  transform: translate(-50%, calc(-50% - 0.34em));
+}
 
 /* Only the fruit confirmation uses these supplied PNG actions. */
 .confirm-card .confirm-actions {
@@ -1284,7 +1307,9 @@ button:focus-visible,
   background: transparent;
   border-radius: 0;
 }
-.confirm-card .confirm-actions button:first-child { width: calc(181 * var(--png-native-unit)); }
+.confirm-card .confirm-actions button:first-child {
+  width: calc(181 * var(--png-native-unit));
+}
 .confirm-card .confirm-actions img {
   display: block;
   width: 100%;
@@ -1302,7 +1327,12 @@ button:focus-visible,
   background: transparent;
   min-height: 44px;
 }
-.png-action img { display: block; width: 100%; height: auto; object-fit: contain; }
+.png-action img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
 .instruction-panel .select-fruit-action {
   display: grid;
   place-items: center;
@@ -1315,16 +1345,44 @@ button:focus-visible,
   width: calc(152 * var(--png-native-unit));
   min-width: 44px;
 }
-.home-modal-actions .png-action:first-child { width: calc(181 * var(--png-native-unit)); }
-.confirm-card .confirm-actions button { min-height: 44px; display: grid; place-items: center; }
+.home-modal-actions .png-action:first-child {
+  width: calc(181 * var(--png-native-unit));
+}
+.confirm-card .confirm-actions button {
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+}
 @media (orientation: portrait) {
-  .confirm-card { inset: 4% 12%; padding: var(--scene-unit); }
+  .confirm-card {
+    inset: 4% 12%;
+    padding: var(--scene-unit);
+  }
 }
 
-.png-instruction-panel { top: 14%; bottom: 14%; height: auto; padding: calc(2 * var(--scene-unit)); gap: 0; }
-.png-instruction-panel > * { flex-shrink: 0; max-width: 100%; }
-.png-instruction-panel .png-action { margin-block: calc(3 * var(--scene-unit)) 0; }
-@media (orientation: portrait) { .png-instruction-panel { left: 12%; width: 76%; top: 4%; bottom: 4%; padding: var(--scene-unit); } }
+.png-instruction-panel {
+  top: 14%;
+  bottom: 14%;
+  height: auto;
+  padding: calc(2 * var(--scene-unit));
+  gap: 0;
+}
+.png-instruction-panel > * {
+  flex-shrink: 0;
+  max-width: 100%;
+}
+.png-instruction-panel .png-action {
+  margin-block: calc(3 * var(--scene-unit)) 0;
+}
+@media (orientation: portrait) {
+  .png-instruction-panel {
+    left: 12%;
+    width: 76%;
+    top: 4%;
+    bottom: 4%;
+    padding: var(--scene-unit);
+  }
+}
 
 /* Supplied PNG pixels retain native proportions; smaller scenes scale uniformly. */
 .result-actions {
@@ -1348,7 +1406,9 @@ button:focus-visible,
   border-radius: 0;
   background: transparent;
 }
-.final-failure-screen .result-actions button:first-child { width: calc(292 * var(--png-native-unit)); }
+.final-failure-screen .result-actions button:first-child {
+  width: calc(292 * var(--png-native-unit));
+}
 .final-failure-screen .result-actions button img {
   display: block;
   width: 100%;
@@ -1362,9 +1422,18 @@ button:focus-visible,
   display: grid;
   place-items: center;
 }
-.terms-back { left: 8.35%; width: calc(181 * var(--png-native-unit)); }
-.terms-agree { right: 8.35%; width: calc(208 * var(--png-native-unit)); }
-.terms-action img { height: auto; object-fit: contain; }
+.terms-back {
+  left: 8.35%;
+  width: calc(181 * var(--png-native-unit));
+}
+.terms-agree {
+  right: 8.35%;
+  width: calc(208 * var(--png-native-unit));
+}
+.terms-action img {
+  height: auto;
+  object-fit: contain;
+}
 
 /* A compact version of the question card, with the original emotion copy. */
 .success-copy {
