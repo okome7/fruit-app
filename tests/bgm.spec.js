@@ -14,6 +14,25 @@ let wrapper;
 afterEach(() => { wrapper?.unmount(); document.body.innerHTML=''; vi.unstubAllGlobals(); });
 
 describe('BGM integration (mounted DOM; not real audio output)', () => {
+  it('first OFF stays silent and first ON starts one player without a generic button sound', async () => {
+    const players=[];
+    vi.stubGlobal('Audio',class {
+      paused=true;
+      constructor() { this.play=vi.fn(() => {this.paused=false; return Promise.resolve();}); this.pause=vi.fn(() => {this.paused=true;}); players.push(this); }
+      removeAttribute() {} load() {}
+    });
+    wrapper=mount(App,{attachTo:document.body});
+    const sfx=wrapper.vm.$.setupState.sfx;
+    const toggle=wrapper.find('.sound-toggle');
+    await toggle.find('svg').trigger('click');
+    expect(players).toHaveLength(0);
+    expect(sfx.play).not.toHaveBeenCalled(); expect(sfx.unlock).not.toHaveBeenCalled();
+    await toggle.find('svg').trigger('click');
+    expect(players).toHaveLength(1); expect(players[0].play).toHaveBeenCalledTimes(1);
+    expect(sfx.play).not.toHaveBeenCalled();
+    await toggle.trigger('click');
+    expect(players[0].muted).toBe(true); expect(players[0].paused).toBe(true);
+  });
   it('starts on Start, survives screen changes, follows sound toggle and stops on unmount', async () => {
     const players=[];
     vi.stubGlobal('Audio',class {

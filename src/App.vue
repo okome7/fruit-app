@@ -840,6 +840,7 @@ function retryGame() {
         <button
           class="sound-toggle"
           type="button"
+          data-sfx-skip
           :aria-label="muted ? '音をオンにする' : '音をオフにする'"
           :title="muted ? '音をオンにする' : '音をオフにする'"
           :aria-pressed="!muted"
