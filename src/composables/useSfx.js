@@ -256,9 +256,7 @@ export function createSfxController(options = {}) {
   }
 
   function toggle() {
-    // ミュート解除時に必ず unlock を呼ぶ
-    this.unlock();
-
+    // Apply OFF before any audio initialization. ON unlocks below in the same gesture.
     const next = setMuted(!muted.value);
 
     // ミュート解除した瞬間に preload も走らせる
