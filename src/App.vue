@@ -2,7 +2,7 @@
 import { emotionExamples } from './data/emotionExamples.js';
 import { ref, reactive, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 
-import heroImage from './assets/home-logo.png';
+import heroImage from './assets/logo.png';
 import { fruitArtwork } from './lib/fruitArtwork.js';
 import arrowImage from './assets/right.png';
 import leftArrowImage from './assets/left.png';
