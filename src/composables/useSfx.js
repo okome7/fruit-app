@@ -2,8 +2,8 @@ import { readonly, ref } from 'vue';
 
 const AUDIO_BASE = `${import.meta.env?.BASE_URL ?? '/'}audio/`;
 export const SFX_URLS = Object.freeze({
-  button: `${AUDIO_BASE}button-soft.wav`,
-  drop: `${AUDIO_BASE}button-soft.wav`,
+  button: `${AUDIO_BASE}button.wav`,
+  drop: `${AUDIO_BASE}button.wav`,
   success: `${AUDIO_BASE}newsuccess-soft-v3.wav`,
   retry: `${AUDIO_BASE}newretry-soft-v3.wav`
 });
