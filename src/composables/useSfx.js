@@ -35,9 +35,9 @@ export function createSfxController(options = {}) {
   } catch {
     /* Private mode. */
   }
-  // Every new page starts ON. Fetching bytes is safe before interaction;
-  // context creation, playback-session selection and resume still wait for a tap.
-  const muted = ref(options.initialMuted ?? false);
+  // Every new page starts OFF, regardless of previously saved ON/OFF.
+  // Only an explicit ON gesture enables audio for this app session.
+  const muted = ref(options.initialMuted ?? true);
   let context = null;
   let gain = null;
   const buffers = new Map();

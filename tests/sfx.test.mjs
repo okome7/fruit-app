@@ -262,22 +262,27 @@ test("one failed sound can retry without discarding other cached sounds", async 
   f.sfx.dispose();
 });
 
-test("every page starts ON but preloads only bytes until a real interaction", async () => {
-  const session = { type: 'auto' };
-  const f = fixture({ initialMuted: undefined, audioSession: session,
-    storage: { getItem: () => '1', setItem() {} } });
-  assert.equal(f.sfx.muted.value, false);
-  assert.equal(await f.sfx.preload(), true);
-  assert.deepEqual([f.calls.contexts, f.calls.fetches, f.calls.decodes, f.calls.resumes], [0, 1, 0, 0]);
-  assert.equal(session.type, 'auto');
-  assert.equal(f.calls.voices.length, 0);
-  const firstTap = f.sfx.play();
-  assert.equal(f.calls.contexts, 1);
-  assert.equal(f.calls.resumes, 1);
-  assert.equal(session.type, 'playback');
-  assert.equal(await firstTap, true);
-  assert.equal(f.calls.voices.length, 1);
-  f.sfx.dispose();
+test("every page starts OFF regardless of saved preference; only ON initializes playback", async () => {
+  for (const saved of ['0', '1', undefined]) {
+    const session = { type: 'auto' };
+    const f = fixture({ initialMuted: undefined, audioSession: session,
+      storage: { getItem: () => saved, setItem() {} } });
+    assert.equal(f.sfx.muted.value, true);
+    assert.equal(await f.sfx.preload(), false);
+    assert.equal(await f.sfx.play(), false);
+    assert.equal(await f.sfx.unlock(), false);
+    assert.deepEqual([f.calls.contexts, f.calls.fetches, f.calls.decodes, f.calls.resumes], [0, 0, 0, 0]);
+    assert.equal(session.type, 'auto');
+    assert.equal(f.sfx.toggle(), false);
+    assert.equal(f.calls.contexts, 1);
+    assert.equal(f.calls.resumes, 1);
+    assert.equal(session.type, 'playback');
+    await new Promise(setImmediate);
+    assert.equal(f.calls.voices.length, 1);
+    assert.equal(f.sfx.toggle(), true);
+    assert.equal(f.calls.voices[0].stops, 1);
+    f.sfx.dispose();
+  }
 });
 
 test("OFF as the first action does not create or resume audio", async () => {
