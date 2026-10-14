@@ -8,6 +8,7 @@ import arrowImage from './assets/right.png';
 import leftArrowImage from './assets/left.png';
 import helpIcon from './assets/question.png';
 import { createImagePreloader } from './lib/imagePreloader.js';
+import { createBgmController } from './lib/bgm.js';
 import { fruitSlotStyle, shopDropZoneStyle, shopSceneStyle } from './lib/fruitLayout.js';
 import { fruitLabel } from './lib/fruitLabel.js';
 import backgroundImage from './assets/background.webp';
@@ -140,6 +141,12 @@ const overBasket = ref(false);
 const keyboardFruit = ref(null);
 const sfx = useSfx();
 const muted = sfx.muted;
+const bgm = createBgmController({ initialMuted: muted.value });
+watch(muted, (value) => bgm.setMuted(value), { flush: 'sync' });
+function toggleSound() {
+  sfx.toggle();
+  if (!muted.value) void bgm.startFromGesture();
+}
 const fullscreenAvailable = ref(false);
 const fullscreenActive = ref(false);
 const fullscreenNotice = ref('');
@@ -187,6 +194,9 @@ function onButtonClick(event) {
     return;
   }
   const button = event.target.closest('button');
+  if (!button?.closest('.sound-toggle') && !button?.disabled && button?.getAttribute('aria-disabled') !== 'true') {
+    void bgm.startFromGesture();
+  }
   if (!button) {
     void sfx.unlock();
     void sfx.preload();
@@ -693,12 +703,15 @@ onMounted(() => {
   fullscreenAvailable.value = Boolean(document.fullscreenEnabled && document.documentElement.requestFullscreen);
   syncFullscreen();
   document.addEventListener('fullscreenchange', syncFullscreen);
+  document.addEventListener('visibilitychange', bgm.syncVisibility);
 });
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
+  bgm.dispose();
   sfx.dispose();
   imagePreloader.dispose();
   document.removeEventListener('fullscreenchange', syncFullscreen);
+  document.removeEventListener('visibilitychange', bgm.syncVisibility);
   webMcpLifecycle?.abort();
 });
 
@@ -830,7 +843,7 @@ function retryGame() {
           :aria-label="muted ? '音をオンにする' : '音をオフにする'"
           :title="muted ? '音をオンにする' : '音をオフにする'"
           :aria-pressed="!muted"
-          @click="sfx.toggle()"
+          @click="toggleSound"
         >
           <SoundIcon :muted="muted" />
         </button>
